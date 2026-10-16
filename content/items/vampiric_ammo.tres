@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="ItemDefinition" load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://game/items/item_definition.gd" id="item"]
+[ext_resource type="Script" path="res://game/items/item_trigger.gd" id="trigger"]
+[ext_resource type="Script" path="res://game/items/item_condition.gd" id="condition"]
+[ext_resource type="Script" path="res://game/items/item_effect.gd" id="effect"]
+
+[sub_resource type="Resource" id="Eligible"]
+script = ExtResource("condition")
+required_tags = PackedStringArray("weapon")
+
+[sub_resource type="Resource" id="Heal"]
+script = ExtResource("effect")
+amount = 5.0
+
+[sub_resource type="Resource" id="Kill"]
+script = ExtResource("trigger")
+condition = SubResource("Eligible")
+effects = Array[ExtResource("effect")]([SubResource("Heal")])
+
+[resource]
+script = ExtResource("item")
+id = &"vampiric_ammo"
+display_name = "Vampiric Ammo"
+description = "Your weapon kills heal 5 HP, including owned explosion kills."
+tags = PackedStringArray("healing")
+triggers = Array[ExtResource("trigger")]([SubResource("Kill")])

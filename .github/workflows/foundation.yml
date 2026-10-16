@@ -5,6 +5,12 @@ on:
       development-builds:
         type: boolean
         default: false
+      build-type:
+        type: string
+        default: development
+      release-tag:
+        type: string
+        default: ''
 
 permissions:
   contents: read
@@ -68,7 +74,7 @@ jobs:
         run: test "$VALIDATION_RESULT" = success && test "$TEST_RESULT" = success
 
   development-builds:
-    name: Development build (${{ matrix.platform }})
+    name: ${{ inputs.build-type == 'release' && 'Release' || 'Development' }} build (${{ matrix.platform }})
     needs: foundation-gate
     if: inputs.development-builds
     strategy:
@@ -88,13 +94,33 @@ jobs:
       - uses: ./.github/actions/setup
         with:
           templates: 'true'
+          release-templates: ${{ inputs.build-type == 'release' && 'true' || 'false' }}
       - name: Export development build and smoke its native executable
-        run: python tools/dev.py export --platform ${{ matrix.platform }}
+        shell: bash
+        env:
+          BUILD_TYPE: ${{ inputs.build-type }}
+          RELEASE_TAG: ${{ inputs.release-tag }}
+        run: python tools/dev.py export --platform ${{ matrix.platform }} --build-type "$BUILD_TYPE" --tag "$RELEASE_TAG"
       - name: Upload development build
+        if: inputs.build-type == 'development'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: DeadCircuit-${{ matrix.platform }}-${{ github.sha }}
           path: build/${{ matrix.platform }}/
+          if-no-files-found: error
+          retention-days: 14
+      - name: Verify and package native release
+        if: inputs.build-type == 'release'
+        shell: bash
+        env:
+          RELEASE_TAG: ${{ inputs.release-tag }}
+        run: python tools/release.py package --platform ${{ matrix.platform }} --tag "$RELEASE_TAG"
+      - name: Upload native release package
+        if: inputs.build-type == 'release'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: release-platform-${{ matrix.platform }}-${{ github.sha }}
+          path: build/release-packages/${{ matrix.platform }}/
           if-no-files-found: error
           retention-days: 14
       - name: Upload build reports

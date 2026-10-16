@@ -5,9 +5,11 @@ extends Node
 signal wave_started(number: int, count: int)
 signal changed
 signal completed
+signal wave_cleared(number: int)
 
-enum State { IDLE, ACTIVE, COMPLETED, STOPPED }
+enum State { IDLE, ACTIVE, COMPLETED, STOPPED, WAITING_FOR_REWARD }
 
+var wait_for_reward: bool = false
 var definition: WaveDefinition
 var state: State = State.IDLE
 var wave_number: int = 0
@@ -68,7 +70,25 @@ func stop() -> void:
 func _advance_if_clear(token: int, cleared_wave: int) -> void:
 	if token == session_token and state == State.ACTIVE and wave_number == cleared_wave:
 		if remaining() == 0:
-			_begin_wave()
+			if wait_for_reward:
+				state = State.WAITING_FOR_REWARD
+				wave_cleared.emit(wave_number)
+				changed.emit()
+			else:
+				_begin_wave()
+
+
+func continue_after_reward(token: int, cleared_wave: int) -> bool:
+	if (
+		token != session_token
+		or state != State.WAITING_FOR_REWARD
+		or wave_number != cleared_wave
+		or remaining() != 0
+	):
+		return false
+	state = State.ACTIVE
+	_begin_wave()
+	return true
 
 
 func _begin_wave() -> void:

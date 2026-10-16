@@ -4,6 +4,9 @@ inputs:
   templates:
     description: Install development export templates.
     default: 'false'
+  release-templates:
+    description: Also install matching release export templates.
+    default: 'false'
 runs:
   using: composite
   steps:
@@ -21,6 +24,9 @@ runs:
     - if: inputs.templates != 'true'
       shell: bash
       run: python tools/bootstrap.py
-    - if: inputs.templates == 'true'
+    - if: inputs.templates == 'true' && inputs.release-templates != 'true'
       shell: bash
       run: python tools/bootstrap.py --templates
+    - if: inputs.release-templates == 'true'
+      shell: bash
+      run: python tools/bootstrap.py --templates --release-templates

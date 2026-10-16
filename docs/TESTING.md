@@ -39,10 +39,21 @@ with the configured enemy count. No gate or engine warning severity is reduced.
 Async scene fixtures use queued teardown so they are not freed inside startup
 signal emission. Time-based physics tests use broad tolerances, not exact frames.
 
+v0.0.2 adds per-player ownership, unique acquisition, base-definition immutability,
+ordered stat composition, fixed offers, independent multishot physics, attributed
+explosions with world occlusion, non-recursion and owned/clamped healing. Gameplay
+tests verify between-wave gating, single/invalid/stale selection, real keyboard
+selection, separate player choices and build/offer reset. The five-wave regression
+also selects rewards and verifies fresh base stats after completion restart.
+Content validation covers nested modifier/condition/trigger/effect schemas and
+the authored five-item catalog. Determinism tests verify acquisition-order-independent
+stats and fixed offers alongside the unchanged seeded fixtures.
+
 The gameplay-oriented requirements below remain mandatory when their systems
-are introduced. Item/modifier tests await v0.0.2; seeded gameplay awaits v0.0.3.
+are introduced. Authoritative seeded gameplay remains deferred to v0.0.3.
 Synthetic input and automated completion do not replace a real keyboard/mouse
-playthrough. The Windows artifact acceptance checklist is in COMBAT_SANDBOX.md.
+playthrough. v0.0.1's passed record is in COMBAT_SANDBOX.md; v0.0.2's Windows
+manual acceptance passed on 2026-10-16, recorded in ITEM_SYSTEM.md.
 
 ## Validation Layers (contracts)
 
@@ -203,6 +214,29 @@ smoke validation
 When a reproducible bug is fixed, add a test reproducing the failure when practical.
 
 The test should fail before the fix and pass afterward.
+
+## Release verification
+
+release.yml adds approval and packaging around the existing foundation.yml gates;
+it does not replace or reduce any test, engine warning level, or smoke requirement.
+Tag format, both version files and origin/main ancestry are checked before the full
+validation → native tests → fresh native release exports sequence. Failed native
+Windows or Linux startup, missing packages/checksums, inconsistent provenance and
+corrupted archives prevent publication. Only the final job can write a release.
+
+Python harness coverage additionally tests semantic-tag/pre-release policy, annotated
+tags and main-history rejection in temporary local Git repositories, version
+mismatches, checksum corruption, missing native smoke/platforms, cross-run packages,
+ZIP member safety and Linux execute bits. Mocked GitHub tests cover existing-release
+refusal, remote-tag movement, preserving generated notes, upload failure, draft-only
+cleanup, incomplete assets, and pre-release/stable publication policy. Workflow
+structure tests preserve permissions, dependencies and ordinary dev/PR triggers.
+
+Use the documented release-dry-run Actions input to exercise native builds and
+packaging without a tag or release. Only this unpublished rehearsal bypasses tag/
+main ancestry; a tag push must satisfy those checks. Passing mocks/dry runs is not
+a claim that a live release was published. The first real publication remains a
+deliberate accepted-milestone tag. Never modify the manual v0.0.1 release as a test.
 
 ## Manual Playtesting
 

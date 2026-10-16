@@ -1,10 +1,12 @@
 # v0.0.1 — Combat Sandbox
 
-Phase 0 is complete as **v0.0.0 — Development Foundation** on main. The current
-dev implementation is the completed and accepted v0.0.1 milestone. Windows
+Phase 0 is complete as **v0.0.0 — Development Foundation**. The current
+main implementation is the completed and accepted v0.0.1 milestone. Windows
 development artifact manual acceptance **PASSED** on 2026-10-16, as confirmed by
-the project owner. PR #7 awaits review/merge; there is no release tag. The next
-active milestone is v0.0.2 — Item / Synergy Proof; its implementation has not begun.
+the project owner. PR #7 is merged and the v0.0.1 pre-release was published manually. The next
+candidate on dev is v0.0.2 — Item / Synergy Proof, pending its own manual acceptance.
+This document records the accepted v0.0.1 baseline; see ITEM_SYSTEM.md for current
+item choices, build rules and the v0.0.2 Windows playtest checklist.
 
 ## Play
 
@@ -99,6 +101,7 @@ player while preserving explicit identity and multiple-target selection. Network
 items, modifiers, procedural rooms, bosses, rewards and progression are absent.
 
 Development exports are unsigned. Actions artifacts expire after 14 days and Linux
-ZIP downloads may need `chmod +x DeadCircuit.x86_64`. Review and merge PR #7 before
-separately authorizing a v0.0.1 release tag. The next active milestone is
-v0.0.2 — Item / Synergy Proof; no v0.0.2 implementation is part of this closeout.
+ZIP downloads may need `chmod +x DeadCircuit.x86_64`. The manual v0.0.1 pre-release
+is preserved; future release approval follows DEVELOPMENT.md. The next gameplay milestone is
+v0.0.2 — Item / Synergy Proof. Its candidate extends this baseline with items;
+the v0.0.1 acceptance record does not approve the new item milestone.

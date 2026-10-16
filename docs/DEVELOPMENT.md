@@ -1,11 +1,14 @@
 # Dead Circuit development foundation
 
-Phase 0 (`v0.0.0 — Development Foundation`) is complete and preserved on main.
-The dev milestone `v0.0.1 — Combat Sandbox` is complete and manually accepted;
+Phase 0 (`v0.0.0 — Development Foundation`) is complete.
+`v0.0.1 — Combat Sandbox` is complete, manually accepted and merged to main;
 see [COMBAT_SANDBOX.md](COMBAT_SANDBOX.md) for controls, implementation boundaries,
-and the passed Windows artifact acceptance record. v0.0.2 — Item / Synergy Proof
-is the next active milestone; implementation has not begun. Multiplayer remains
-unimplemented. The pinned foundation toolchain and CI gates are preserved.
+and the passed Windows artifact acceptance record. Its GitHub pre-release was
+published manually and is preserved. v0.0.2 — Item / Synergy Proof is complete and
+manually accepted on 2026-10-16; see ITEM_SYSTEM.md for its acceptance record.
+Promotion to main is approved; no tag/release is created by the closeout.
+Multiplayer remains unimplemented. The pinned foundation toolchain and CI gates
+are preserved.
 
 ## Requirements and setup
 
@@ -93,13 +96,16 @@ The directories in ARCHITECTURE.md exist with placeholders until needed. The ent
 scene injects the content sandbox into the bootstrap; reusable combat/session
 mechanics remain in game/. Prototype weapon/enemy/wave definitions and the arena
 remain in content/. Tools and test fixtures stay outside game/.
-No roguelike run generation or item systems are implemented. Tests are organized into unit/,
-integration/, determinism/, gameplay/, fixtures/, and Python harness/.
+Reusable item/modifier/event/effect mechanics live in game/items/; concrete items
+live in content/items/. Full roguelike run generation is not implemented.
+Tests are organized into unit/, integration/, determinism/, gameplay/, fixtures/,
+and Python harness/.
 
 The content validator verifies directory availability, explicit weapon/enemy/wave
-schemas, unique IDs, numeric bounds, and scene/spawn/navigation structure. Unknown
-files remain errors. Add schema checks and invalid fixtures alongside future
-content Resource types; see ADRs 0002 and 0003.
+and item schemas, unique IDs, nested trigger/effect bounds, catalog references,
+and scene/spawn/navigation structure. Unknown files remain errors. Add schema
+checks and invalid fixtures alongside future
+content Resource types; see ADRs 0002, 0003 and 0005.
 
 ## Builds, versioning and CI
 
@@ -131,6 +137,94 @@ Dependabot are targeted to dev; engine/GUT updates require a lockfile review.
 The stable Foundation gate is suitable for a future required branch check.
 Repository branch protection itself is an administrative follow-up; this workflow
 does not modify main, merge PRs, deploy, or publish releases.
+
+## Approved-tag releases
+
+The dedicated release.yml publishes only version-tag pushes. Ordinary branch
+pushes retain the existing CI behavior. VERSION and project.godot describe the
+current candidate (0.0.2); the existing manual v0.0.1 pre-release is untouched.
+
+For each future milestone:
+
+1. Finish implementation on dev and pass automated CI.
+2. Perform and record manual acceptance when required.
+3. Merge the accepted milestone and release infrastructure to main.
+4. Confirm VERSION and project.godot application/config/version agree.
+5. Create an annotated tag on the accepted main commit and push it deliberately.
+6. Wait for release.yml to validate, test, build, package and publish successfully.
+
+Example for a future **accepted** v0.0.2, after its version files are updated:
+
+```sh
+git switch main
+git pull --ff-only origin main
+git tag -a v0.0.2 -m "Dead Circuit v0.0.2 — Item / Synergy Proof"
+git push origin v0.0.2
+```
+
+Tags must be exactly vMAJOR.MINOR.PATCH, with no leading zeros, suffixes or build
+metadata. The tag's commit must be reachable from fetched origin/main. Malformed
+tags, version disagreement or unaccepted branch history fail before build work.
+The workflow does not invent versions, create tags, or promote past releases.
+
+All v0.x.y releases are GitHub pre-releases, permanently, and are never marked as
+the latest stable release. v1.0.0 and higher default to stable releases with normal
+GitHub latest selection. Titles are `Dead Circuit <tag>`. GitHub-generated release
+notes are preserved with verified tag, commit, engine, platform and status details.
+
+release-gates.yml reuses the unchanged foundation validation/test gates and fresh
+native exports. Release builds use matching pinned release templates and Godot's
+--export-release mode. Native startup smoke runs before packaging on each OS.
+Development exports continue to default to debug mode and their existing paths.
+Install release templates locally only when needed:
+
+```sh
+python tools/bootstrap.py --templates --release-templates
+python tools/dev.py export --platform windows --build-type release --tag v0.0.2
+```
+
+The local release export requires a clean worktree and matching version. A cross
+export is not a native smoke pass and cannot become a release ZIP. Native CI builds
+provide that proof. All builds remain unsigned; no signing credentials are used.
+Embedded metadata contains tag/version, SHA, engine, build type and build/run IDs.
+The external per-platform metadata additionally records platform/native smoke.
+
+The final GitHub Release has four assets:
+
+- `DeadCircuit-<tag>-windows-x86_64.zip`
+- `DeadCircuit-<tag>-linux-x86_64.zip`
+- `SHA256SUMS.txt` covering both ZIPs and combined metadata
+- `build-metadata.json` containing both native builds' provenance
+
+Each ZIP contains its executable, per-platform metadata and internal checksums.
+Linux ZIPs preserve execute permission. Both ZIPs must agree on commit, engine,
+build and workflow-run identity; fresh packages come from the same workflow run.
+Validation/build reports and unpublished packages also remain Actions artifacts
+for 14 days. Release assets are separate from that Actions retention period.
+
+Workflow permissions default to contents: read. Only the final publication job has
+contents: write, using GitHub's GITHUB_TOKEN through GitHub CLI. No additional secret
+is required. A draft is created only after all four assets verify, then uploaded
+assets are checked before publication. A failed upload removes this run's draft
+where possible. If cleanup or a network response is ambiguous, inspect the failed
+run and named draft; tags are never removed. An existing release or draft causes
+a clear failure without changing any asset. Re-running after a successful publish
+therefore safely fails instead of overwriting history.
+
+Use Actions **Dead Circuit CI → Run workflow → release-dry-run: true** on an
+inspected branch to rehearse the full pipeline before merging release.yml. After
+it is on main, **Publish approved version → Run workflow** is also a dry run.
+Dry runs derive the label from VERSION and may bypass actual-tag/main-history
+approval for feature-branch testing. They still run every gate and native build,
+but cannot publish. Their current-version filenames are unpublished test assets;
+use the commit SHA and release-plan.json to distinguish them from accepted releases.
+Do not create a production tag merely to test this workflow.
+
+Ensure Actions is enabled and repository/organization policy permits the publication
+job's GITHUB_TOKEN contents: write and the pinned official actions. Tag protection
+or rulesets restricting version-tag creation to maintainers are an optional
+administrative safeguard; automation does not configure them. See
+[ADR 0004](adr/0004-approved-tag-release-publishing.md).
 
 Avoid storing active Git checkouts in synchronizing folders when possible.
 OneDrive can rename `.git/HEAD` and `.git/config` into conflict copies, preventing
