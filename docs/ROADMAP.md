@@ -70,12 +70,15 @@ The player can launch the game, survive waves, kill enemies, die, and restart wi
 
 ## v0.0.2 — Item / Synergy Proof
 
-Status: Implemented candidate (`0.0.2`) on dev, pending manual Windows acceptance.
+Status: Complete and accepted (`0.0.2`). The project owner confirmed Windows
+manual acceptance **PASSED** on 2026-10-16 and approved promotion to main.
 Per-player item builds, ordered modifiers, source-aware triggers/effects, five
 prototype items, post-wave choices and build visibility are implemented. Automated
 tests cover composition, attribution, non-recursive explosions, healing, selection
 and reset. See [ITEM_SYSTEM.md](ITEM_SYSTEM.md) for exact rules and the manual gate.
-No v0.0.2 tag/release is approved or created. v0.0.3 has not begun.
+No v0.0.2 tag/release is created. Movement, combat feel, item balance and visuals
+remain prototype quality. v0.0.3 is the next milestone and has a separate local
+candidate; none of its gameplay is included in this v0.0.2 closeout.
 
 Goal:
 

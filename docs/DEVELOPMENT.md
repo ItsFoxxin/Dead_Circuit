@@ -4,8 +4,9 @@ Phase 0 (`v0.0.0 — Development Foundation`) is complete.
 `v0.0.1 — Combat Sandbox` is complete, manually accepted and merged to main;
 see [COMBAT_SANDBOX.md](COMBAT_SANDBOX.md) for controls, implementation boundaries,
 and the passed Windows artifact acceptance record. Its GitHub pre-release was
-published manually and is preserved. The dev candidate is v0.0.2 — Item / Synergy
-Proof; see ITEM_SYSTEM.md for implemented contracts and pending manual acceptance.
+published manually and is preserved. v0.0.2 — Item / Synergy Proof is complete and
+manually accepted on 2026-10-16; see ITEM_SYSTEM.md for its acceptance record.
+Promotion to main is approved; no tag/release is created by the closeout.
 Multiplayer remains unimplemented. The pinned foundation toolchain and CI gates
 are preserved.
 

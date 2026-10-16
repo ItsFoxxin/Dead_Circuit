@@ -52,8 +52,8 @@ stats and fixed offers alongside the unchanged seeded fixtures.
 The gameplay-oriented requirements below remain mandatory when their systems
 are introduced. Authoritative seeded gameplay remains deferred to v0.0.3.
 Synthetic input and automated completion do not replace a real keyboard/mouse
-playthrough. v0.0.1's passed record is in COMBAT_SANDBOX.md; v0.0.2's pending
-Windows acceptance checklist is in ITEM_SYSTEM.md.
+playthrough. v0.0.1's passed record is in COMBAT_SANDBOX.md; v0.0.2's Windows
+manual acceptance passed on 2026-10-16, recorded in ITEM_SYSTEM.md.
 
 ## Validation Layers (contracts)
 

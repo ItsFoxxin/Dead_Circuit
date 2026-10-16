@@ -19,12 +19,14 @@ clean restart. Windows development artifact manual acceptance **PASSED** on
 feel, balance, visuals, AI and polish are not finalized.
 See [Combat Sandbox](docs/COMBAT_SANDBOX.md) for controls and the acceptance record.
 
-The `dev` branch implements the **v0.0.2 — Item / Synergy Proof candidate**:
+**v0.0.2 — Item / Synergy Proof is complete and accepted**:
 five unique items, per-player builds, composable modifiers and kill effects,
-between-wave choices and build visibility. Manual Windows acceptance remains
-pending; see [Item System](docs/ITEM_SYSTEM.md) for rules and the playtest checklist.
+between-wave choices and build visibility. The project owner confirmed manual
+Windows acceptance on 2026-10-16 and approved promotion to main. See
+[Item System](docs/ITEM_SYSTEM.md) for rules and the acceptance record.
 v0.0.1's manual pre-release is preserved. Approved-tag release automation remains
-in place; no v0.0.2 tag/release is created and v0.0.3 has not begun.
+in place; no v0.0.2 tag/release is created. The next milestone is v0.0.3 — Seeded
+Runs; its separate candidate is not included in this accepted v0.0.2 milestone.
 
 For setup, validation, tests, and exports, see [Development](docs/DEVELOPMENT.md).
 

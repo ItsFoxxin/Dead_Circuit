@@ -264,10 +264,13 @@ player and no networking. Final completion offers no item. A text HUD shows owne
 items, shot count/damage and fire rate. Restart clears items, modified values,
 offers, effects and session actors along with existing combat state.
 
-## v0.0.2 Windows artifact acceptance — pending
+## v0.0.2 Windows artifact acceptance — PASSED
 
-The v0.0.1 acceptance remains complete. The item candidate requires a new manual
-Windows development-artifact playthrough; it is not approved for tagging/release.
+The project owner confirmed the v0.0.2 Windows development artifact is good and
+approved promotion to main on 2026-10-16. Manual acceptance **PASSED** for the Item /
+Synergy Proof milestone. The earlier v0.0.1 acceptance remains complete. This does
+not finalize movement/combat feel, item balance, visuals, UI or effects. No tag or
+release is created by this closeout. The milestone's manual checklist is retained:
 
 1. Launch, clear wave one and confirm three distinct choices appear with combat stopped.
 2. Select Split Chamber by mouse or keyboard; confirm two shots per pull, one round
@@ -282,4 +285,4 @@ Windows development-artifact playthrough; it is not approved for tagging/release
    wave one, correct counts and no stale effects/offers. Also exercise pause/resume.
 
 Balance, production effects/UI and subjective build interest remain manual feedback.
-The next milestone, v0.0.3 seeded runs, is not implemented by this candidate.
+The separate v0.0.3 seeded-run candidate is not part of this acceptance record.
