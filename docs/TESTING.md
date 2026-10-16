@@ -8,28 +8,41 @@ Dead Circuit should build automated verification alongside gameplay systems.
 
 The goal is to detect regressions before they become difficult to isolate.
 
-## Executable Phase 0 Harness
+## Executable Development Harness
 
 Run `python tools/dev.py validate` using the development venv after bootstrap.
 See [DEVELOPMENT.md](DEVELOPMENT.md) for installation and individual commands.
-GUT suites cover build metadata and content validation (unit), scene lifecycle
-and instance isolation (integration), a main-scene launch path (future gameplay
-test location), and seeded test fixtures (determinism). Independent headless
+GUT suites retain build metadata, content validation, scene lifecycle, independent
+instance state, launch, and seeded fixtures. v0.0.1 adds health/context, weapon
+ammo/cooldown/reload, wave bookkeeping and stale-callback rejection; integration
+tests exercise actual physics hitscan, wall occlusion, melee, multiple target
+candidates, and navigation pursuit. Gameplay tests exercise synthetic local input,
+gravity/grounding/wall collision, sprint, mouse-look limits, five-wave completion,
+death, pause, restart and discarded actor/timer state. Independent headless
 processes also compare fixture RNG sequences. These fixtures do not implement
 the authoritative gameplay RNG scheduled for v0.0.3.
 
 Python harness regression tests verify failure detection for zero-exit engine
 errors, missing smoke markers, nonzero exits, and absent/empty/failed/pending
-JUnit reports. Content validation reports zero schemas/definitions in Phase 0
-and rejects unregistered content. It does not yet validate gameplay semantics.
+JUnit reports. Content validation now verifies the explicit prototype schemas,
+IDs, numeric bounds, and scene dependencies/arena structure. Tests cover invalid
+numeric values, duplicate IDs, wrong wave counts, and unregistered content.
 
 CI runs validation before native Windows/Linux test suites, then permits dev
 build exports. Each native exported executable must reach the launch marker and
 exit cleanly before its artifact is uploaded. Logs, JUnit XML, JSON summaries,
 build metadata and checksum files are preserved in Actions artifacts.
 
-The gameplay-oriented required tests below remain mandatory when their systems
-are introduced. Phase 0 does not add combat or run behavior to satisfy examples.
+The main launch smoke still requires build provenance and its success marker;
+it now waits for navigation synchronization, an initialized player and wave one
+with the configured enemy count. No gate or engine warning severity is reduced.
+Async scene fixtures use queued teardown so they are not freed inside startup
+signal emission. Time-based physics tests use broad tolerances, not exact frames.
+
+The gameplay-oriented requirements below remain mandatory when their systems
+are introduced. Item/modifier tests await v0.0.2; seeded gameplay awaits v0.0.3.
+Synthetic input and automated completion do not replace a real keyboard/mouse
+playthrough. The Windows artifact acceptance checklist is in COMBAT_SANDBOX.md.
 
 ## Validation Layers (contracts)
 

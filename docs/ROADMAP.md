@@ -10,7 +10,7 @@ Prototype work should become the foundation of the real game wherever practical.
 
 Status: Complete. The foundation at `13c00c2` passed local and native Windows/Linux
 CI validation and exports. Its Windows CI artifact was manually launched successfully.
-Phase 0 is closed; the next implementation milestone is the v0.0.1 candidate.
+Phase 0 is closed.
 
 Goal:
 
@@ -29,6 +29,17 @@ Requirements:
 - development build artifact generation
 
 ## v0.0.1 — Combat Sandbox
+
+Status: Complete and accepted (`0.0.1`) on dev. Windows development artifact manual
+acceptance **PASSED** on 2026-10-16, as confirmed by the project owner.
+Automated coverage includes health,
+attributed hitscan damage, ammo/reload, wave progression, navigation/melee, input/
+collision, death, completion, and session reset. The Phase 0 harness and native
+development exports remain required. See [COMBAT_SANDBOX.md](COMBAT_SANDBOX.md).
+
+Movement and combat feel are accepted as an early prototype foundation only.
+Movement, weapon feel, balance, visuals, AI and combat polish are not finalized.
+PR #7 remains the review/merge gate; no release tag has been created.
 
 Goal:
 
@@ -56,6 +67,9 @@ Success criteria:
 The player can launch the game, survive waves, kill enemies, die, and restart without broken state.
 
 ## v0.0.2 — Item / Synergy Proof
+
+Status: Next active milestone. Implementation has not begun; the v0.0.1 closeout
+adds no v0.0.2 gameplay.
 
 Goal:
 

@@ -1,7 +1,11 @@
 # Dead Circuit development foundation
 
-Phase 0 is v0.0.0. It provides a launch screen and development tooling; the
-v0.0.1 Combat Sandbox and multiplayer remain unimplemented.
+Phase 0 (`v0.0.0 — Development Foundation`) is complete and preserved on main.
+The dev milestone `v0.0.1 — Combat Sandbox` is complete and manually accepted;
+see [COMBAT_SANDBOX.md](COMBAT_SANDBOX.md) for controls, implementation boundaries,
+and the passed Windows artifact acceptance record. v0.0.2 — Item / Synergy Proof
+is the next active milestone; implementation has not begun. Multiplayer remains
+unimplemented. The pinned foundation toolchain and CI gates are preserved.
 
 ## Requirements and setup
 
@@ -35,7 +39,7 @@ python3.12 -m venv .venv
 Omit `--templates` when only editing/testing. The bootstrap verifies SHA-256
 checksums of both new and cached downloads before extracting. Dependencies stay
 local and ignored; GUT's upstream MIT license is retained in addons/gut/.
-Press Run Project in Godot to open the minimal launch surface. No editor plugin
+Press Run Project in Godot to open the combat sandbox. No editor plugin
 needs to be enabled to run command-line tests. The GUT plugin may optionally be
 enabled locally for interactive test discovery.
 
@@ -85,15 +89,17 @@ Commit Godot-generated `.gd.uid` files for first-party scripts; ignore .godot/.
 
 ## Structure and boundaries
 
-The directories in ARCHITECTURE.md exist with placeholders until needed. The only
-runtime implementation is game/core/bootstrap.tscn plus its typed script and a
-small read-only build-info utility. Tools and test fixtures stay outside game/.
-No run systems or gameplay data are implemented. Tests are organized into unit/,
+The directories in ARCHITECTURE.md exist with placeholders until needed. The entry
+scene injects the content sandbox into the bootstrap; reusable combat/session
+mechanics remain in game/. Prototype weapon/enemy/wave definitions and the arena
+remain in content/. Tools and test fixtures stay outside game/.
+No roguelike run generation or item systems are implemented. Tests are organized into unit/,
 integration/, determinism/, gameplay/, fixtures/, and Python harness/.
 
-The content validator currently verifies directory availability and rejects all
-unregistered definitions. Add schema checks and invalid fixtures alongside future
-content Resource types; see ADR 0002.
+The content validator verifies directory availability, explicit weapon/enemy/wave
+schemas, unique IDs, numeric bounds, and scene/spawn/navigation structure. Unknown
+files remain errors. Add schema checks and invalid fixtures alongside future
+content Resource types; see ADRs 0002 and 0003.
 
 ## Builds, versioning and CI
 

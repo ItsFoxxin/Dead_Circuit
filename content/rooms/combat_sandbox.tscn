@@ -1,0 +1,24 @@
+[gd_scene load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://game/run/combat_session.gd" id="1"]
+[ext_resource type="PackedScene" path="res://content/rooms/greybox_arena.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://game/player/player.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://content/enemies/basic_zombie.tscn" id="4"]
+[ext_resource type="Resource" path="res://content/weapons/prototype_pistol.tres" id="5"]
+[ext_resource type="Resource" path="res://content/rooms/prototype_waves.tres" id="6"]
+[ext_resource type="Script" path="res://game/run/wave_manager.gd" id="7"]
+[ext_resource type="PackedScene" path="res://game/ui/combat_hud.tscn" id="8"]
+
+[node name="CombatSandbox" type="Node3D"]
+script = ExtResource("1")
+player_scene = ExtResource("3")
+enemy_scene = ExtResource("4")
+weapon_definition = ExtResource("5")
+wave_definition = ExtResource("6")
+
+[node name="Arena" parent="." instance=ExtResource("2")]
+
+[node name="Waves" type="Node" parent="."]
+script = ExtResource("7")
+
+[node name="HUD" parent="." instance=ExtResource("8")]
