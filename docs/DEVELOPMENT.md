@@ -1,8 +1,10 @@
 # Dead Circuit development foundation
 
 Phase 0 (`v0.0.0 — Development Foundation`) is complete and preserved on main.
-The dev candidate is `v0.0.1 — Combat Sandbox`; see [COMBAT_SANDBOX.md](COMBAT_SANDBOX.md)
-for controls, implementation boundaries, and manual acceptance. Multiplayer remains
+The dev milestone `v0.0.1 — Combat Sandbox` is complete and manually accepted;
+see [COMBAT_SANDBOX.md](COMBAT_SANDBOX.md) for controls, implementation boundaries,
+and the passed Windows artifact acceptance record. v0.0.2 — Item / Synergy Proof
+is the next active milestone; implementation has not begun. Multiplayer remains
 unimplemented. The pinned foundation toolchain and CI gates are preserved.
 
 ## Requirements and setup

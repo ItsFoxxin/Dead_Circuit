@@ -1,8 +1,10 @@
-# v0.0.1 Combat Sandbox candidate
+# v0.0.1 — Combat Sandbox
 
 Phase 0 is complete as **v0.0.0 — Development Foundation** on main. The current
-dev implementation is the v0.0.1 candidate. It is awaiting manual acceptance;
-there is no release tag. v0.0.2 has not begun.
+dev implementation is the completed and accepted v0.0.1 milestone. Windows
+development artifact manual acceptance **PASSED** on 2026-10-16, as confirmed by
+the project owner. PR #7 awaits review/merge; there is no release tag. The next
+active milestone is v0.0.2 — Item / Synergy Proof; its implementation has not begun.
 
 ## Play
 
@@ -61,35 +63,42 @@ now initializes the combat scene, explicit player, navigation and first wave.
 Automated tests cover the gameplay contracts, including real physics queries and
 synthetic movement input. These checks do not claim a human playthrough.
 
-## Windows artifact acceptance — pending
+## Windows artifact acceptance — PASSED
 
-Use the artifact matching the candidate's commit SHA and record the build ID,
-tester, date, and any issue found. The Phase 0 artifact's successful manual launch
-does not verify this new gameplay build.
+The project owner confirmed manual acceptance of the v0.0.1 Windows development
+artifact on 2026-10-16. The Combat Sandbox is accepted for its intended milestone
+scope. The accepted manual scope is:
 
-1. Launch and confirm HUD, arena, pistol and pursuing zombies are visible.
-2. Move in all directions, sprint, aim vertically/horizontally, and collide with walls.
-3. Fire at zombies: ammunition decreases, damage applies, and a second body hit kills.
-4. Empty a magazine; confirm further shots do not fire. Reload and check reserve transfer.
-5. Take melee damage; verify attack cooldown and HP updates.
-6. Survive all five waves; verify advancement waits for the last enemy to die.
-7. Verify COMBAT SANDBOX COMPLETE and inactive combat; restart.
-8. Confirm full health/ammo, spawn position, first wave and fresh enemies.
-9. Intentionally die; verify YOU DIED, stopped combat and a working restart.
-10. Repeat restart after death/completion/pause; confirm no extra enemies or stale timers.
+- [x] WASD movement works.
+- [x] Sprint works.
+- [x] Mouse look works.
+- [x] Collision is usable.
+- [x] Pistol firing works.
+- [x] Ammunition and reload work.
+- [x] Zombies pursue and attack.
+- [x] Player health/death work.
+- [x] All five waves function.
+- [x] Completion state works.
+- [x] Death restart works.
+- [x] Completion restart works.
+- [x] Pause/resume works.
+- [x] No obvious stale-state issues were observed.
 
-Also check cursor capture/release, HUD legibility at the intended window size,
-and whether movement, aiming, firing and combat pressure feel usable.
+Movement and combat feel are accepted only as an early prototype foundation.
+This acceptance does not finalize movement, weapon feel, balance, visuals, AI,
+or combat polish. Automated checks remain separate evidence from this manual pass.
 
 ## Limitations and next gate
 
 The current arena is open and primitive; navigation has no internal obstacles,
 crowd avoidance or advanced tactics. Enemies have capsule visuals. The pistol has
-no production audio, animation, recoil or final model. Combat feel and difficulty
-need manual feedback. The local session currently instantiates one controllable
+no production audio, animation, recoil or final model. Movement/combat polish and
+balance remain future work beyond this accepted prototype. The local session
+currently instantiates one controllable
 player while preserving explicit identity and multiple-target selection. Networking,
 items, modifiers, procedural rooms, bosses, rewards and progression are absent.
 
 Development exports are unsigned. Actions artifacts expire after 14 days and Linux
-ZIP downloads may need `chmod +x DeadCircuit.x86_64`. After the acceptance checklist
-and milestone approval, the next planned work is v0.0.2 — Item / Synergy Proof.
+ZIP downloads may need `chmod +x DeadCircuit.x86_64`. Review and merge PR #7 before
+separately authorizing a v0.0.1 release tag. The next active milestone is
+v0.0.2 — Item / Synergy Proof; no v0.0.2 implementation is part of this closeout.
