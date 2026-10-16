@@ -4,9 +4,10 @@ Phase 0 (`v0.0.0 — Development Foundation`) is complete.
 `v0.0.1 — Combat Sandbox` is complete, manually accepted and merged to main;
 see [COMBAT_SANDBOX.md](COMBAT_SANDBOX.md) for controls, implementation boundaries,
 and the passed Windows artifact acceptance record. Its GitHub pre-release was
-published manually and is preserved. v0.0.2 — Item / Synergy Proof is the next
-gameplay milestone; this release-automation change includes no item gameplay. Multiplayer remains
-unimplemented. The pinned foundation toolchain and CI gates are preserved.
+published manually and is preserved. The dev candidate is v0.0.2 — Item / Synergy
+Proof; see ITEM_SYSTEM.md for implemented contracts and pending manual acceptance.
+Multiplayer remains unimplemented. The pinned foundation toolchain and CI gates
+are preserved.
 
 ## Requirements and setup
 
@@ -94,13 +95,16 @@ The directories in ARCHITECTURE.md exist with placeholders until needed. The ent
 scene injects the content sandbox into the bootstrap; reusable combat/session
 mechanics remain in game/. Prototype weapon/enemy/wave definitions and the arena
 remain in content/. Tools and test fixtures stay outside game/.
-No roguelike run generation or item systems are implemented. Tests are organized into unit/,
-integration/, determinism/, gameplay/, fixtures/, and Python harness/.
+Reusable item/modifier/event/effect mechanics live in game/items/; concrete items
+live in content/items/. Full roguelike run generation is not implemented.
+Tests are organized into unit/, integration/, determinism/, gameplay/, fixtures/,
+and Python harness/.
 
 The content validator verifies directory availability, explicit weapon/enemy/wave
-schemas, unique IDs, numeric bounds, and scene/spawn/navigation structure. Unknown
-files remain errors. Add schema checks and invalid fixtures alongside future
-content Resource types; see ADRs 0002 and 0003.
+and item schemas, unique IDs, nested trigger/effect bounds, catalog references,
+and scene/spawn/navigation structure. Unknown files remain errors. Add schema
+checks and invalid fixtures alongside future
+content Resource types; see ADRs 0002, 0003 and 0005.
 
 ## Builds, versioning and CI
 
@@ -136,8 +140,8 @@ does not modify main, merge PRs, deploy, or publish releases.
 ## Approved-tag releases
 
 The dedicated release.yml publishes only version-tag pushes. Ordinary branch
-pushes retain the existing CI behavior. VERSION and project.godot stay at 0.0.1
-for this infrastructure task; the existing manual v0.0.1 pre-release is untouched.
+pushes retain the existing CI behavior. VERSION and project.godot describe the
+current candidate (0.0.2); the existing manual v0.0.1 pre-release is untouched.
 
 For each future milestone:
 
@@ -175,7 +179,7 @@ Install release templates locally only when needed:
 
 ```sh
 python tools/bootstrap.py --templates --release-templates
-python tools/dev.py export --platform windows --build-type release --tag v0.0.1
+python tools/dev.py export --platform windows --build-type release --tag v0.0.2
 ```
 
 The local release export requires a clean worktree and matching version. A cross

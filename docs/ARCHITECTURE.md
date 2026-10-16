@@ -266,3 +266,14 @@ Enemies receive a list of valid player candidates, not a global player singleton
 Concrete definitions, the five-wave configuration, enemy scene and greybox arena
 live in content/. No item, procedural run, or networking system is introduced.
 See [ADR 0003](adr/0003-combat-sandbox-authority-and-content.md).
+
+## v0.0.2 item boundary
+
+PlayerItemBuild owns per-player acquisition state and derives weapon values from
+immutable definitions. Item triggers consume source-aware local combat events and
+request reusable healing/explosion effects; core mechanics reference no item IDs.
+CombatSession coordinates per-player offers and the wave reward gate. The concrete
+five-item catalog is injected by content/rooms/combat_sandbox.tscn. Fixed offers
+use no gameplay randomness. Secondary damage is attributed and bounded; restart
+recreates builds and rejects stale selection commands. See
+[ADR 0005](adr/0005-item-composition-and-wave-choices.md).

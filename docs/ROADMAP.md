@@ -70,20 +70,24 @@ The player can launch the game, survive waves, kill enemies, die, and restart wi
 
 ## v0.0.2 — Item / Synergy Proof
 
-Status: Next active milestone. Implementation has not begun; the v0.0.1 closeout
-adds no v0.0.2 gameplay.
+Status: Implemented candidate (`0.0.2`) on dev, pending manual Windows acceptance.
+Per-player item builds, ordered modifiers, source-aware triggers/effects, five
+prototype items, post-wave choices and build visibility are implemented. Automated
+tests cover composition, attribution, non-recursive explosions, healing, selection
+and reset. See [ITEM_SYSTEM.md](ITEM_SYSTEM.md) for exact rules and the manual gate.
+No v0.0.2 tag/release is approved or created. v0.0.3 has not begun.
 
 Goal:
 
 Prove that independent item effects compose correctly.
 
-Initial items may include:
+Implemented prototype items:
 
-- damage increase
-- fire-rate increase
+- Heavy Lead
+- Rapid Mechanism
 - Split Chamber
 - Volatile Rounds
-- basic healing/lifesteal effect
+- Vampiric Ammo
 
 Critical requirement:
 

@@ -39,10 +39,21 @@ with the configured enemy count. No gate or engine warning severity is reduced.
 Async scene fixtures use queued teardown so they are not freed inside startup
 signal emission. Time-based physics tests use broad tolerances, not exact frames.
 
+v0.0.2 adds per-player ownership, unique acquisition, base-definition immutability,
+ordered stat composition, fixed offers, independent multishot physics, attributed
+explosions with world occlusion, non-recursion and owned/clamped healing. Gameplay
+tests verify between-wave gating, single/invalid/stale selection, real keyboard
+selection, separate player choices and build/offer reset. The five-wave regression
+also selects rewards and verifies fresh base stats after completion restart.
+Content validation covers nested modifier/condition/trigger/effect schemas and
+the authored five-item catalog. Determinism tests verify acquisition-order-independent
+stats and fixed offers alongside the unchanged seeded fixtures.
+
 The gameplay-oriented requirements below remain mandatory when their systems
-are introduced. Item/modifier tests await v0.0.2; seeded gameplay awaits v0.0.3.
+are introduced. Authoritative seeded gameplay remains deferred to v0.0.3.
 Synthetic input and automated completion do not replace a real keyboard/mouse
-playthrough. The Windows artifact acceptance checklist is in COMBAT_SANDBOX.md.
+playthrough. v0.0.1's passed record is in COMBAT_SANDBOX.md; v0.0.2's pending
+Windows acceptance checklist is in ITEM_SYSTEM.md.
 
 ## Validation Layers (contracts)
 
