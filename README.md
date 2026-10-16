@@ -12,16 +12,17 @@ The design takes inspiration from the escalating survival pressure of wave-based
 
 Phase 0 (`v0.0.0 — Development Foundation`) is complete: a minimal Godot
 launch surface, typed GDScript, automated validation, and development exports.
-The `dev` branch contains the completed and accepted **v0.0.1 — Combat Sandbox**: first-person
+The `main` branch contains the completed and accepted **v0.0.1 — Combat Sandbox**: first-person
 movement, one hitscan pistol, pursuing melee zombies, five waves, HUD, death and
 clean restart. Windows development artifact manual acceptance **PASSED** on
 2026-10-16. Movement and combat are accepted as an early prototype foundation;
 feel, balance, visuals, AI and polish are not finalized.
 See [Combat Sandbox](docs/COMBAT_SANDBOX.md) for controls and the acceptance record.
 
-The next active milestone is **v0.0.2 — Item / Synergy Proof**. Its implementation
-has not begun; this closeout adds no v0.0.2 gameplay. PR #7 remains the merge gate
-for v0.0.1; no release tag has been created.
+The next gameplay milestone is **v0.0.2 — Item / Synergy Proof**. PR #7 is merged;
+v0.0.1 was published manually as a GitHub pre-release. Release automation adds
+approved-tag validation, fresh native release builds and publishing for future
+milestones; it includes no v0.0.2 gameplay and preserves the manual release.
 
 For setup, validation, tests, and exports, see [Development](docs/DEVELOPMENT.md).
 

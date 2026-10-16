@@ -10,6 +10,10 @@ on:
         description: Produce development artifacts after all gates pass.
         type: boolean
         default: false
+      release-dry-run:
+        description: Rehearse release gates and packaging without publishing or creating tags.
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -20,6 +24,13 @@ concurrency:
 
 jobs:
   foundation:
+    if: github.event_name != 'workflow_dispatch' || !inputs.release-dry-run
     uses: ./.github/workflows/foundation.yml
     with:
       development-builds: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/dev') || (github.event_name == 'workflow_dispatch' && inputs.development-builds) }}
+
+  release-dry-run:
+    if: github.event_name == 'workflow_dispatch' && inputs.release-dry-run
+    uses: ./.github/workflows/release-gates.yml
+    with:
+      dry-run: true

@@ -1,0 +1,87 @@
+name: Reusable release verification and packaging
+on:
+  workflow_call:
+    inputs:
+      tag:
+        type: string
+        default: ''
+      dry-run:
+        type: boolean
+        default: true
+    outputs:
+      tag:
+        value: ${{ jobs.approval.outputs.tag }}
+
+permissions:
+  contents: read
+
+jobs:
+  approval:
+    name: Version and main-history approval
+    runs-on: ubuntu-24.04
+    outputs:
+      tag: ${{ steps.approval.outputs.tag }}
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.12'
+      - name: Refresh accepted main history
+        run: git fetch --no-tags origin +refs/heads/main:refs/remotes/origin/main
+      - name: Validate tag and matching project versions
+        id: approval
+        env:
+          RELEASE_TAG: ${{ inputs.tag }}
+          DRY_RUN: ${{ inputs.dry-run }}
+        run: |
+          if [ "$DRY_RUN" = true ]; then
+            python tools/release.py validate --tag "$RELEASE_TAG" --dry-run
+          else
+            python tools/release.py validate --tag "$RELEASE_TAG"
+          fi
+      - name: Upload approval report
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: release-approval
+          path: reports/release-plan.json
+          if-no-files-found: warn
+          retention-days: 14
+
+  foundation:
+    needs: approval
+    uses: ./.github/workflows/foundation.yml
+    with:
+      development-builds: true
+      build-type: release
+      release-tag: ${{ needs.approval.outputs.tag }}
+
+  packages:
+    name: Verify complete release asset set
+    needs: [approval, foundation]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.12'
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          pattern: release-platform-*-${{ github.sha }}
+          merge-multiple: true
+          path: build/release-input
+      - name: Verify ZIP contents, native smoke provenance and checksums
+        env:
+          RELEASE_TAG: ${{ needs.approval.outputs.tag }}
+        run: python tools/release.py assemble --tag "$RELEASE_TAG"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: release-assets-${{ github.sha }}
+          path: build/release-assets/
+          if-no-files-found: error
+          retention-days: 14

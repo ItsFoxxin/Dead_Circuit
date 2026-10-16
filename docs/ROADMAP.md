@@ -30,7 +30,7 @@ Requirements:
 
 ## v0.0.1 — Combat Sandbox
 
-Status: Complete and accepted (`0.0.1`) on dev. Windows development artifact manual
+Status: Complete and accepted (`0.0.1`) on main. Windows development artifact manual
 acceptance **PASSED** on 2026-10-16, as confirmed by the project owner.
 Automated coverage includes health,
 attributed hitscan damage, ammo/reload, wave progression, navigation/melee, input/
@@ -39,7 +39,9 @@ development exports remain required. See [COMBAT_SANDBOX.md](COMBAT_SANDBOX.md).
 
 Movement and combat feel are accepted as an early prototype foundation only.
 Movement, weapon feel, balance, visuals, AI and combat polish are not finalized.
-PR #7 remains the review/merge gate; no release tag has been created.
+PR #7 merged at `dc4299a`. The v0.0.1 GitHub pre-release was published manually.
+Approved-tag release automation is separate infrastructure; it adds no gameplay
+and preserves that historical pre-release. See DEVELOPMENT.md and ADR 0004.
 
 Goal:
 
