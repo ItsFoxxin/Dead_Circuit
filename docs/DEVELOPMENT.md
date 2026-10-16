@@ -162,6 +162,9 @@ Use the exact accepted main-history SHA, even when newer development exists.
 This action publishes; **Publish approved version → Run workflow** remains a dry
 run. Ordinary main/dev pushes remain validation-only. See ADR 0007. Existing
 releases are never overwritten; failed gates can resume using a matching tag.
+The manual publisher runs trusted tooling from the workflow revision against a
+separate checkout of the approved game commit. It verifies the original dispatch
+inputs as well as source/tag/main ancestry and same-run native asset provenance.
 
 Example for a future **accepted** v0.0.2, after its version files are updated:
 

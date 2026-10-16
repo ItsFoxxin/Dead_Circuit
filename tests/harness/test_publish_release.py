@@ -116,6 +116,66 @@ def test_workflow_dispatch_cannot_publish(monkeypatch):
     assert publisher.main() == 1
 
 
+@pytest.fixture
+def manual_publication(tmp_path, monkeypatch):
+    event = tmp_path / "event.json"
+    event.write_text(json.dumps({"inputs": {"tag": "v0.0.2", "commit": SHA}}))
+    monkeypatch.setenv("GITHUB_EVENT_NAME", "workflow_dispatch")
+    monkeypatch.setenv("GITHUB_REF", "refs/heads/main")
+    monkeypatch.setenv("GITHUB_REPOSITORY", "owner/repo")
+    monkeypatch.setenv("GITHUB_WORKFLOW_REF", "owner/repo/.github/workflows/publish-main.yml@refs/heads/main")
+    monkeypatch.setenv("GITHUB_EVENT_PATH", str(event))
+    monkeypatch.setattr(sys, "argv", ["publish_release.py", "--tag", "v0.0.2",
+                                     "--approved-commit", SHA, "--source-root", str(tmp_path)])
+    # Restore the module root after the command's explicit source selection.
+    monkeypatch.setattr(publisher.release, "ROOT", publisher.release.ROOT)
+    calls = []
+    monkeypatch.setattr(publisher, "publish", lambda *args, **kwargs: calls.append((args, kwargs)))
+    return event, calls
+
+
+def test_explicit_main_dispatch_selects_approved_source(manual_publication):
+    event, calls = manual_publication
+    assert publisher.main() == 0
+    assert publisher.release.ROOT == event.parent
+    assert calls[0][1] == {"expected_commit": SHA}
+
+
+@pytest.mark.parametrize("key,value", [
+    ("GITHUB_EVENT_NAME", "push"), ("GITHUB_REF", "refs/heads/dev"),
+    ("GITHUB_WORKFLOW_REF", "owner/repo/.github/workflows/release.yml@refs/heads/main"),
+    ("GITHUB_WORKFLOW_REF", "other/repo/.github/workflows/publish-main.yml@refs/heads/main")])
+def test_other_events_branches_and_dry_run_workflow_cannot_use_manual_path(manual_publication, monkeypatch, key, value):
+    _, calls = manual_publication
+    monkeypatch.setenv(key, value)
+    assert publisher.main() == 1
+    assert calls == []
+
+
+def test_dispatch_inputs_must_match_original_approval(manual_publication):
+    event, calls = manual_publication
+    event.write_text(json.dumps({"inputs": {"tag": "v0.0.2", "commit": "b" * 40}}))
+    assert publisher.main() == 1
+    assert calls == []
+
+
+def test_explicit_publication_rejects_different_source_head(publication):
+    directory, state, _ = publication
+    with pytest.raises(RuntimeError, match="explicitly approved"):
+        publisher.publish("owner/repo", "v0.0.2", directory, expected_commit="b" * 40)
+    assert state["calls"] == []
+
+
+def test_original_tag_push_still_publishes(monkeypatch):
+    monkeypatch.setenv("GITHUB_EVENT_NAME", "push")
+    monkeypatch.setenv("GITHUB_REF", "refs/tags/v0.0.2")
+    monkeypatch.setattr(sys, "argv", ["publish_release.py", "--tag", "v0.0.2"])
+    calls = []
+    monkeypatch.setattr(publisher, "publish", lambda *args, **kwargs: calls.append(args))
+    assert publisher.main() == 0
+    assert calls[0][1] == "v0.0.2"
+
+
 @pytest.mark.parametrize("status,missing_ok,expected", [(404, True, None), (500, True, RuntimeError),
                                                       (404, False, RuntimeError)])
 def test_api_not_found_is_distinguished_from_permission_or_server_failure(monkeypatch, status, missing_ok, expected):

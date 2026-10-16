@@ -89,6 +89,13 @@ def test_manual_workflow_preserves_native_gates_and_explicit_source_checkout():
     assert workflow["jobs"]["prepare"]["if"] == "github.ref == 'refs/heads/main'"
     assert workflow["jobs"]["gates"]["with"]["dry-run"] == "false"
     assert set(workflow["jobs"]["publish"]["needs"]) == {"prepare", "gates"}
+    publish_steps = workflow["jobs"]["publish"]["steps"]
+    assert publish_steps[0]["with"]["ref"] == "${{ github.sha }}"
+    assert publish_steps[0]["with"]["path"] == "release-tooling"
+    assert publish_steps[1]["with"]["ref"] == "${{ needs.prepare.outputs.commit }}"
+    assert publish_steps[1]["with"]["path"] == "release-source"
+    assert "--approved-commit" in publish_steps[-1]["run"]
+    assert "--source-root release-source" in publish_steps[-1]["run"]
     for job in ("prepare", "publish"):
         assert workflow["jobs"][job]["permissions"] == {"contents": "write"}
     foundation = load("foundation.yml")
