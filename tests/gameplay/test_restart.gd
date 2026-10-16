@@ -100,3 +100,22 @@ func test_pause_freezes_combat_and_resumes_same_attempt() -> void:
 	session.set_paused(false)
 	assert_true(session.local_player.combat_enabled)
 	assert_eq(session.waves.session_token, token)
+
+
+func test_pause_click_reaches_gui_before_empty_space_resume() -> void:
+	session.interactive = true
+	session.set_paused(true)
+	var click: InputEventAction = InputEventAction.new()
+	click.action = &"fire"
+	click.pressed = true
+	session._input(click)
+	assert_true(session.paused, "GUI must get first chance to receive the click")
+	var token: int = session.waves.session_token
+	session.hud.restart_button.pressed.emit()
+	await session.session_started
+	assert_gt(session.waves.session_token, token)
+	session.set_paused(true)
+	session._unhandled_input(click)
+	assert_false(session.paused)
+	assert_true(session.local_player.suppress_fire_until_release)
+	assert_eq(session.local_player.weapon.magazine, 12)

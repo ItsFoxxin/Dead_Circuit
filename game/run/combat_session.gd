@@ -83,12 +83,16 @@ func restart_session() -> void:
 func _input(event: InputEvent) -> void:
 	if not interactive:
 		return
-	if event.is_action_pressed("restart") and state in [State.DEAD, State.COMPLETED]:
+	if event.is_action_pressed("restart") and (state in [State.DEAD, State.COMPLETED] or paused):
 		restart_session()
 		get_viewport().set_input_as_handled()
 	elif event.is_action_pressed("release_mouse") and state == State.ACTIVE:
 		set_paused(not paused)
-	elif event.is_action_pressed("fire") and paused:
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	# Let GUI buttons receive the click before treating empty-space clicks as resume.
+	if interactive and paused and event.is_action_pressed("fire"):
 		local_player.suppress_fire_until_release = true
 		set_paused(false)
 		get_viewport().set_input_as_handled()
