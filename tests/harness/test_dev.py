@@ -1,6 +1,7 @@
 """Failure-path coverage for the harness, which must never report false success."""
 
 import importlib.util
+import copy
 import sys
 from pathlib import Path
 
@@ -62,3 +63,47 @@ def test_development_files_cannot_leak_into_export(path):
     output = "Storing File: res://game/core/utilities/build_metadata.json\nStoring File: res://" + path
     with pytest.raises(RuntimeError, match="leaked"):
         dev.verify_export_manifest(output)
+
+
+def run_probe_fixture():
+    choices = [["a", "b", "c"], ["b", "c", "d"], ["c", "d", "e"], ["d", "e"], []]
+    return [{"wave": index + 1, "spawn_order": list(range(12)), "choices": choices[index],
+             "build_order": list("abcd"[:min(index + 1, 4)]),
+             "draw_count": (25, 39, 52, 64, 64)[index]} for index in range(5)]
+
+
+def test_complete_matching_production_run_probes_pass():
+    records = run_probe_fixture()
+    dev.verify_run_samples([records, copy.deepcopy(records)])
+
+
+def test_production_run_process_divergence_fails():
+    records = run_probe_fixture()
+    changed = copy.deepcopy(records)
+    changed[0]["spawn_order"].reverse()
+    with pytest.raises(RuntimeError, match="diverged"):
+        dev.verify_run_samples([records, changed])
+
+
+@pytest.mark.parametrize("failure", ["empty", "missing-wave", "duplicate-spawn", "owned-item",
+                                     "duplicate-choice", "no-draws", "missing-choices", "build-order"])
+def test_incomplete_or_invalid_production_run_probe_fails(failure):
+    records = run_probe_fixture()
+    if failure == "empty":
+        records = []
+    elif failure == "missing-wave":
+        records.pop()
+    elif failure == "duplicate-spawn":
+        records[0]["spawn_order"][1] = 0
+    elif failure == "owned-item":
+        records[1]["choices"][0] = "a"
+    elif failure == "duplicate-choice":
+        records[0]["choices"][1] = "a"
+    elif failure == "no-draws":
+        records[0]["draw_count"] = 0
+    elif failure == "build-order":
+        records[1]["build_order"].reverse()
+    else:
+        del records[0]["choices"]
+    with pytest.raises(RuntimeError, match="Incomplete|Invalid"):
+        dev.verify_run_samples([records, copy.deepcopy(records)])

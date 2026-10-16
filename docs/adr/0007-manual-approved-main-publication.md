@@ -40,8 +40,9 @@ publication paths serialize on the same version tag.
 Main merges alone still do not publish automatically. The deliberate manual action
 records approval and then performs the complete release pipeline. The owner has
 authorized releasing accepted main milestones; future agents should include this
-step when promoting such a milestone. v0.0.3 dev integration is not acceptance for
-main or a release. Major-zero versions remain pre-releases; historical v0.0.1 is
+step when promoting such a milestone. Dev integration alone is not acceptance for
+main or a release; v0.0.3's separate owner approval is recorded in SEEDED_RUNS.md.
+Major-zero versions remain pre-releases; historical v0.0.1 is
 preserved. Failed gates leave the tag for inspection and publish no release.
 
 ## Verification

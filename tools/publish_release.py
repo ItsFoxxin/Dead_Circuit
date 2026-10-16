@@ -54,6 +54,9 @@ def publish(repo: str, tag: str, directory: Path, *, expected_commit: str = "") 
              f"- Status: {'Pre-release (pre-1.0 prototype milestone)' if plan['prerelease'] else 'Stable release'}\n"
              "- See build-metadata.json and SHA256SUMS.txt for provenance and verification.\n\n"
              + generated["body"])
+    authored_notes = release.ROOT / "docs/release-notes" / f"{tag}.md"
+    if authored_notes.is_file():
+        notes = authored_notes.read_text(encoding="utf-8").strip() + "\n\n---\n\n" + notes
     latest = "false" if plan["prerelease"] else "legacy"
     created = api(repo, "releases", method="POST", payload={
         "tag_name": tag, "target_commitish": plan["commit_sha"], "name": f"Dead Circuit {tag}",

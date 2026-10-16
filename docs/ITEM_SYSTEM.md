@@ -248,13 +248,16 @@ Vampiric Ammo requires the weapon tag, so eligible secondary kills also heal the
 source player. Healing clamps to maximum health and cannot resurrect. Repeated
 damage to an already dead entity produces no additional kill or heal.
 
-## Prototype choices and build visibility
+## v0.0.2 prototype choices and build visibility
 
 After waves 1–4, combat progression waits for item selection. The authored catalog
 order is Split Chamber, Volatile Rounds, Heavy Lead, Rapid Mechanism, Vampiric Ammo.
 Offer the first three distinct unowned items, or all remaining items if fewer than
 three remain. This fixed, testable policy deliberately uses no RNG. Choose Split
 Chamber after wave one and Volatile Rounds after wave two for the key synergy test.
+This describes the accepted v0.0.2 artifact. On the v0.0.3 dev
+v0.0.3 candidate, seeded sampling supersedes this offer policy; see
+[SEEDED_RUNS.md](SEEDED_RUNS.md). Item composition and ownership rules are unchanged.
 
 The authority validates player ID, session token, cleared wave and offered item ID.
 One valid selection grants one item before the next wave; stale, invalid and double

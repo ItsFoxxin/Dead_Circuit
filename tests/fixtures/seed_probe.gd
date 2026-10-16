@@ -1,5 +1,5 @@
 extends SceneTree
-## Test-only fixture. Does not implement the future authoritative run RNG.
+## Preserve the original engine fixture; run_probe.gd also checks actual gameplay rolls.
 
 
 func _initialize() -> void:

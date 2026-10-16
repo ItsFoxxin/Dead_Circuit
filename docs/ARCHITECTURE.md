@@ -277,3 +277,15 @@ five-item catalog is injected by content/rooms/combat_sandbox.tscn. Fixed offers
 use no gameplay randomness. Secondary damage is attributed and bounded; restart
 recreates builds and rejects stale selection commands. See
 [ADR 0005](adr/0005-item-composition-and-wave-choices.md).
+
+## v0.0.3 seeded authority boundary
+
+CombatSession owns RunRandom under game/core/rng/ and injects it into authoritative
+item offers. The same sequence rolls authored enemy spawn-marker permutations.
+Eligible items are ordered by stable ID and offers by player ID before sampling;
+no player, UI, physics callback or effect owns independent gameplay randomness.
+Replay resets the seed alongside combat/build state; an explicit changed seed
+uses the same reset path. This supersedes the fixed spawn/offer policies above.
+Content still supplies the arena, item catalog and five-wave definition. There is
+no room-transition framework, procedural graph, saved run or networking. See
+[ADR 0006](adr/0006-authoritative-seeded-run-choices.md).

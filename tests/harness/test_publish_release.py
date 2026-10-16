@@ -109,6 +109,21 @@ def test_moved_remote_tag_prevents_creating_release(publication):
     assert not any(method == "POST" for _, method, _ in state["calls"])
 
 
+def test_authored_notes_lead_body_while_generated_notes_and_provenance_remain(publication, monkeypatch):
+    directory, state, _ = publication
+    source = directory.parent / (directory.name + "_source")
+    notes = source / "docs/release-notes/v0.0.3.md"
+    notes.parent.mkdir(parents=True)
+    notes.write_text("# Dead Circuit v0.0.3 — Seeded Runs\n\n## Included\n\n- Seeded offers\n", encoding="utf-8")
+    monkeypatch.setattr(publisher.release, "ROOT", source)
+    publisher.publish("owner/repo", "v0.0.3", directory)
+    body = next(payload["body"] for path, method, payload in state["calls"]
+                if path == "releases" and method == "POST")
+    assert body.startswith("# Dead Circuit v0.0.3 — Seeded Runs")
+    assert "Exact generated notes preserved." in body and SHA in body
+    assert "## Validation" not in body
+
+
 def test_workflow_dispatch_cannot_publish(monkeypatch):
     monkeypatch.setenv("GITHUB_EVENT_NAME", "workflow_dispatch")
     monkeypatch.setenv("GITHUB_REF", "refs/heads/main")

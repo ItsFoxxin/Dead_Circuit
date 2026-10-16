@@ -21,6 +21,7 @@ player_scene = ExtResource("3")
 enemy_scene = ExtResource("4")
 weapon_definition = ExtResource("5")
 wave_definition = ExtResource("6")
+run_seed = 12345
 item_catalog = Array[ExtResource("14")]([ExtResource("9"), ExtResource("10"), ExtResource("11"), ExtResource("12"), ExtResource("13")])
 
 [node name="Arena" parent="." instance=ExtResource("2")]

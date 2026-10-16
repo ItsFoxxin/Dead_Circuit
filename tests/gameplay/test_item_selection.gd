@@ -29,9 +29,10 @@ func test_wave_waits_for_one_valid_choice_and_applies_it_before_next_wave() -> v
 	var offer: ItemOffer = session.item_offers[session.local_player_id]
 	assert_false(session.select_item(offer.player_id, &"bad", offer.session_token, 1))
 	assert_false(session.select_item(999, offer.choices[0].id, offer.session_token, 1))
-	var selected: ItemDefinition = offer.choices[2]
+	var selected: ItemDefinition = offer.choices[1]
 	assert_eq(selected.id, &"heavy_lead")
 	assert_true(session.select_item(offer.player_id, selected.id, offer.session_token, 1))
+	assert_true(session.local_player.items.owns(selected.id))
 	assert_eq(session.local_player.weapon.combat_stats().damage, 39.0)
 	assert_eq(session.waves.wave_number, 2)
 	assert_eq(session.enemies.size(), 5)
@@ -39,17 +40,20 @@ func test_wave_waits_for_one_valid_choice_and_applies_it_before_next_wave() -> v
 	assert_true(session.local_player.suppress_fire_until_release)
 	assert_false(session.select_item(offer.player_id, offer.choices[0].id, offer.session_token, 1))
 	assert_eq(session.local_player.items.definitions().size(), 1)
-	assert_string_contains(session.hud.build_text.text, "Heavy Lead")
+	assert_string_contains(session.hud.build_text.text, selected.display_name)
 
 
 func test_gui_button_grants_once_and_stale_choice_cannot_affect_restart() -> void:
 	await _clear_wave()
 	var offer: ItemOffer = session.item_offers[session.local_player_id]
+	var selected_id: StringName = offer.choices[0].id
 	var button: Button = session.hud.choices.get_child(0) as Button
 	button.pressed.emit()
 	button.pressed.emit()
 	assert_eq(session.local_player.items.definitions().size(), 1)
-	assert_eq(session.local_player.weapon.combat_stats().shot_count, 2)
+	assert_true(session.local_player.items.owns(selected_id))
+	assert_eq(selected_id, &"rapid_mechanism")
+	assert_eq(session.local_player.weapon.combat_stats().fire_rate, 5.0)
 	session.restart_session()
 	await session.session_started
 	assert_false(session.select_item(offer.player_id, offer.choices[0].id, offer.session_token, 1))
@@ -106,7 +110,10 @@ func test_independent_players_choose_separately_before_shared_wave_advances() ->
 	assert_true(session.select_item(first.player_id, first.choices[0].id, first.session_token, 1))
 	assert_eq(session.state, CombatSession.State.SELECTING_ITEM)
 	assert_eq(session.waves.wave_number, 1)
-	assert_true(session.select_item(22, second.choices[1].id, second.session_token, 1))
+	var other_id: StringName = second.choices[0].id
+	if other_id == first.choices[0].id:
+		other_id = second.choices[1].id
+	assert_true(session.select_item(22, other_id, second.session_token, 1))
 	assert_eq(session.waves.wave_number, 2)
 	assert_ne(session.local_player.items.definitions()[0].id, other.items.definitions()[0].id)
 
