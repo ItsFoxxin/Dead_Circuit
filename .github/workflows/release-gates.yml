@@ -8,6 +8,9 @@ on:
       dry-run:
         type: boolean
         default: true
+      source-ref:
+        type: string
+        default: ''
     outputs:
       tag:
         value: ${{ jobs.approval.outputs.tag }}
@@ -24,6 +27,7 @@ jobs:
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
         with:
+          ref: ${{ inputs.source-ref || github.sha }}
           fetch-depth: 0
           persist-credentials: false
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
@@ -58,6 +62,7 @@ jobs:
       development-builds: true
       build-type: release
       release-tag: ${{ needs.approval.outputs.tag }}
+      source-ref: ${{ inputs.source-ref }}
 
   packages:
     name: Verify complete release asset set
@@ -66,6 +71,7 @@ jobs:
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
         with:
+          ref: ${{ inputs.source-ref || github.sha }}
           persist-credentials: false
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:

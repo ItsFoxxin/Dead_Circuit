@@ -11,6 +11,9 @@ on:
       release-tag:
         type: string
         default: ''
+      source-ref:
+        type: string
+        default: ''
 
 permissions:
   contents: read
@@ -23,6 +26,7 @@ jobs:
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
         with:
+          ref: ${{ inputs.source-ref || github.sha }}
           persist-credentials: false
       - uses: ./.github/actions/setup
       - name: Import, formatting, lint, harness, content and headless smoke
@@ -48,6 +52,7 @@ jobs:
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
         with:
+          ref: ${{ inputs.source-ref || github.sha }}
           persist-credentials: false
       - uses: ./.github/actions/setup
       - name: Unit, integration, gameplay launch and deterministic suites
@@ -90,6 +95,7 @@ jobs:
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
         with:
+          ref: ${{ inputs.source-ref || github.sha }}
           persist-credentials: false
       - uses: ./.github/actions/setup
         with:

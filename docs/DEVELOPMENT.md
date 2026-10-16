@@ -153,6 +153,16 @@ For each future milestone:
 5. Create an annotated tag on the accepted main commit and push it deliberately.
 6. Wait for release.yml to validate, test, build, package and publish successfully.
 
+The owner requests a release with update notes as part of each accepted main
+milestone promotion. In GitHub Actions, **Publish accepted main milestone → Run
+workflow** on **main** accepts the approved version tag and full accepted commit
+SHA. It creates the annotated tag and runs the same complete native release gates
+and publisher. No local Git authentication or additional secret is needed.
+Use the exact accepted main-history SHA, even when newer development exists.
+This action publishes; **Publish approved version → Run workflow** remains a dry
+run. Ordinary main/dev pushes remain validation-only. See ADR 0007. Existing
+releases are never overwritten; failed gates can resume using a matching tag.
+
 Example for a future **accepted** v0.0.2, after its version files are updated:
 
 ```sh
