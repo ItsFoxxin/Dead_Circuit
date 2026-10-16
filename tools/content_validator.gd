@@ -52,7 +52,15 @@ func _validate_definition(path: String, errors: PackedStringArray) -> void:
 		var weapon: WeaponDefinition = resource
 		id = weapon.id
 		errors.append_array(weapon.validation_errors())
-	elif resource is EnemyDefinition and "/enemies/" in path:
+	elif resource is BossDefinition and "/bosses/" in path:
+		var boss: BossDefinition = resource
+		id = boss.id
+		errors.append_array(boss.validation_errors())
+	elif resource is ClearDropDefinition and "/loot_tables/" in path:
+		var drop: ClearDropDefinition = resource
+		id = drop.id
+		errors.append_array(drop.validation_errors())
+	elif resource is EnemyDefinition and not resource is BossDefinition and "/enemies/" in path:
 		var enemy: EnemyDefinition = resource
 		id = enemy.id
 		errors.append_array(enemy.validation_errors())
@@ -70,7 +78,14 @@ func _validate_definition(path: String, errors: PackedStringArray) -> void:
 				errors.append("Room scene requires a CombatArena root: " + path)
 			elif not scene.get_node_or_null("Exit") is Marker3D:
 				errors.append("Room scene requires an exit marker: " + path)
+			if room.boss_scene != null and not scene.get_node_or_null("BossSpawn") is Marker3D:
+				errors.append("Boss room requires a boss spawn: " + path)
 			scene.free()
+		if room.boss_scene != null:
+			var actor: Node = room.boss_scene.instantiate()
+			if not actor is BossEnemy:
+				errors.append("Boss room requires a BossEnemy scene: " + path)
+			actor.free()
 	elif resource is RunDefinition and "/rooms/" in path:
 		var run: RunDefinition = resource
 		id = run.id
@@ -107,7 +122,17 @@ func _validate_scene(path: String, errors: PackedStringArray) -> void:
 		errors.append("Cannot load content scene: " + path)
 		return
 	var root: Node = packed.instantiate()
-	if root is MeleeEnemy and "/enemies/" in path:
+	if root is BossEnemy and "/bosses/" in path:
+		var boss: BossEnemy = root
+		if not boss.definition is BossDefinition:
+			errors.append("Boss scene requires a BossDefinition: " + path)
+		if not root.get_node_or_null("Health") is HealthComponent:
+			errors.append("Boss scene requires health: " + path)
+		if not root.get_node_or_null("Navigation") is NavigationAgent3D:
+			errors.append("Boss scene requires navigation: " + path)
+		if not root.get_node_or_null("Telegraph") is MeshInstance3D:
+			errors.append("Boss scene requires an attack telegraph: " + path)
+	elif root is MeleeEnemy and not root is BossEnemy and "/enemies/" in path:
 		var enemy: MeleeEnemy = root
 		if enemy.definition == null or not root.get_node_or_null("Health") is HealthComponent:
 			errors.append("Enemy scene requires definition and health: " + path)
@@ -125,6 +150,11 @@ func _validate_scene(path: String, errors: PackedStringArray) -> void:
 			errors.append("Room run requires status HUD: " + path)
 		if not run.get_node_or_null("HUD/ExitHint") is Label:
 			errors.append("Room run requires exit hint HUD: " + path)
+		if run.clear_drops != null:
+			errors.append_array(run.clear_drops.validation_errors())
+			if not run.clear_drops.resource_path.begins_with("res://content/loot_tables/"):
+				errors.append("Room supplies must reference an authored drop definition: " + path)
+		_validate_room_run(run, path, errors)
 	elif root is CombatSession and "/rooms/" in path:
 		var session: CombatSession = root
 		if session.player_scene == null or session.enemy_scene == null:
@@ -139,6 +169,31 @@ func _validate_scene(path: String, errors: PackedStringArray) -> void:
 	else:
 		errors.append("No registered content schema for: " + path)
 	root.free()
+
+
+func _validate_room_run(run: RoomRunSession, path: String, errors: PackedStringArray) -> void:
+	if run.definition == null:
+		return
+	for room: RoomDefinition in run.definition.rooms:
+		if room == null:
+			continue
+		if (
+			run.clear_drops != null
+			and room.kind in [RoomDefinition.Kind.COMBAT, RoomDefinition.Kind.BOSS]
+			and room.scene != null
+		):
+			var arena: Node = room.scene.instantiate()
+			if not arena.get_node_or_null("SupplySpawn") is Marker3D:
+				errors.append("Clear-supply rooms require an authored supply spawn: " + path)
+			arena.free()
+		if room.boss_scene == null:
+			continue
+		if run.wave_rewards_enabled:
+			errors.append("First-boss route cannot grant per-wave items: " + path)
+		if run.clear_drops == null:
+			errors.append("First-boss route requires clear-supply configuration: " + path)
+		if not run.get_node_or_null("HUD/BossStatus") is Label:
+			errors.append("Boss route requires health/state HUD: " + path)
 
 
 func _validate_item_catalog(

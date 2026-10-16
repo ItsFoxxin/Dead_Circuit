@@ -15,9 +15,14 @@ v0.0.3 is complete and accepted by the owner on 2026-10-16, with main promotion
 and release authorized. Its version remains 0.0.3.
 See [SEEDED_RUNS.md](SEEDED_RUNS.md) for
 seed controls, exact reproducibility limits and the acceptance record.
-The owner authorized the separate v0.0.4 candidate for dev after v0.0.3 promotion.
-Current dev metadata is 0.0.4, with manual acceptance pending. See
-[ROOM_FRAMEWORK.md](ROOM_FRAMEWORK.md). It is not part of the accepted v0.0.3 release.
+The owner accepted v0.0.4 and approved main promotion/release on 2026-10-16.
+This release retains version 0.0.4; see [ROOM_FRAMEWORK.md](ROOM_FRAMEWORK.md).
+v0.0.5 is authorized to move from local work to dev for testing. It is not
+approved for main or release. v0.0.6 has not started.
+
+The v0.0.5 dev candidate uses version 0.0.5; see [FIRST_BOSS.md](FIRST_BOSS.md).
+The owner authorized dev promotion on 2026-10-16. Manual acceptance and main/release
+approval remain pending. v0.0.6 is not started.
 
 ## Requirements and setup
 
@@ -155,7 +160,7 @@ does not modify main, merge PRs, deploy, or publish releases.
 
 The dedicated release.yml publishes only version-tag pushes. Ordinary branch
 pushes retain the existing CI behavior. VERSION and project.godot describe the
-current dev candidate (0.0.4); the existing manual v0.0.1
+current dev candidate (0.0.5); the existing manual v0.0.1
 pre-release is untouched.
 
 For each future milestone:

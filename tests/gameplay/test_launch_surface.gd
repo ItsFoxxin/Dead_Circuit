@@ -14,3 +14,7 @@ func test_main_scene_remains_loadable() -> void:
 	assert_eq(instance.run.progress.current_room().kind, RoomDefinition.Kind.START)
 	assert_eq(instance.run.combat.waves.remaining(), 0)
 	assert_eq(instance.run.run_random.draw_count, 0)
+	assert_false(instance.run.wave_rewards_enabled)
+	assert_not_null(instance.run.definition.rooms[-1].boss_scene)
+	assert_not_null(instance.run.boss_status)
+	assert_not_null(instance.run.clear_drops)

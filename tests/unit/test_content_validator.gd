@@ -90,7 +90,7 @@ func test_item_schema_rejects_invalid_nested_effects_and_stacking() -> void:
 func test_authored_item_schema_and_catalog_are_valid() -> void:
 	var validator: ContentValidator = Validator.new()
 	assert_eq(validator.validate().size(), 0)
-	assert_eq(validator.definition_count, 13)
+	assert_eq(validator.definition_count, 17)
 
 
 func test_authored_sandbox_seed_must_fit_supported_input_range() -> void:
@@ -127,3 +127,22 @@ func test_route_order_is_validated_without_changing_reusable_definition() -> voi
 	var errors: PackedStringArray = Validator.new().validate(ROOT)
 	assert_eq(errors.size(), 1)
 	assert_string_contains(errors[0], "start, combat, treasure, boss order")
+
+
+func test_invalid_drop_configuration_is_rejected() -> void:
+	var drop: ClearDropDefinition = ClearDropDefinition.new()
+	drop.id = &"invalid_drop"
+	drop.chance_percent = 101
+	ResourceSaver.save(drop, ROOT.path_join("loot_tables/invalid.tres"))
+	assert_false(Validator.new().validate(ROOT).is_empty())
+
+
+func test_boss_room_requires_a_spawn_marker_and_a_boss_scene() -> void:
+	var room: RoomDefinition = (
+		load("res://content/rooms/first_boss_room.tres").duplicate() as RoomDefinition
+	)
+	room.id = &"invalid_boss_room"
+	room.scene = load("res://content/rooms/greybox_room.tscn") as PackedScene
+	room.boss_scene = load("res://content/enemies/basic_zombie.tscn") as PackedScene
+	ResourceSaver.save(room, ROOT.path_join("rooms/invalid_boss.tres"))
+	assert_eq(Validator.new().validate(ROOT).size(), 2)

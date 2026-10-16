@@ -6,6 +6,7 @@
 
 [node name="RoomRole" type="Label3D" parent="."]
 position = Vector3(0, 5, -18)
+billboard = 1
 text = "Boss Staging - encounter in v0.0.5"
 font_size = 80
 outline_size = 14

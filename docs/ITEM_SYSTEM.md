@@ -289,3 +289,12 @@ release is created by this closeout. The milestone's manual checklist is retaine
 
 Balance, production effects/UI and subjective build interest remain manual feedback.
 The separate v0.0.3 seeded-run candidate is not part of this acceptance record.
+
+## v0.0.5 dev candidate pacing
+
+The owner requested fewer build items: one Treasure Room choice and one boss
+choice per floor, with no per-wave upgrades in the new First Boss launch route.
+Reuse the existing unique-item definitions, seeded offers, ownership and selection
+guards. Small seeded room-clear supplies restore health/ammo and are not build
+items. Older sandbox/staging fixtures preserve their historical behavior. See
+FIRST_BOSS.md and ADR 0009; v0.0.4 is accepted for main/release and v0.0.5 awaits manual acceptance on dev.

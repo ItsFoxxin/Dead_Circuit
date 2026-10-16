@@ -36,10 +36,17 @@ and authorized main promotion and release. See [Seeded Runs](docs/SEEDED_RUNS.md
 **[Download accepted game releases for Windows/Linux](https://github.com/ItsFoxxin/Dead_Circuit/releases).**
 Choose a game ZIP under Assets; Source code archives are for development.
 
-The **v0.0.4 — Room Framework dev candidate** adds an authored start/combat/
+**v0.0.4 — Room Framework is complete and accepted**. The owner approved
+main promotion and release on 2026-10-16. It adds an authored start/combat/
 treasure/boss-staging route, persistent player state and whole-run restart.
-Manual verification is pending. Actual boss combat remains v0.0.5 work. See
-[Room Framework](docs/ROOM_FRAMEWORK.md). v0.0.4 is not included in v0.0.3's release.
+See [Room Framework](docs/ROOM_FRAMEWORK.md) and the
+[v0.0.4 release](https://github.com/ItsFoxxin/Dead_Circuit/releases/tag/v0.0.4)
+for the downloadable build once publication completes.
+
+**v0.0.5 — First Boss** is the next dev milestone, with a telegraphed boss,
+boss reward, floor completion and the requested item pacing / exit-sign fixes.
+Its manual acceptance remains pending; see [First Boss](docs/FIRST_BOSS.md).
+v0.0.6 has not started.
 
 For setup, validation, tests, and exports, see [Development](docs/DEVELOPMENT.md).
 

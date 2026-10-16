@@ -1,0 +1,15 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://content/rooms/greybox_room.tscn" id="1"]
+
+[node name="FirstBossRoom" instance=ExtResource("1")]
+
+[node name="BossSpawn" type="Marker3D" parent="."]
+position = Vector3(0, 0.05, -8)
+
+[node name="RoomRole" type="Label3D" parent="."]
+position = Vector3(0, 4, -18)
+billboard = 1
+text = "BOSS ROOM\nMove out of the red slam area"
+font_size = 72
+outline_size = 12
