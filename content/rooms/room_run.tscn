@@ -1,0 +1,36 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/run/room_run_session.gd" id="1"]
+[ext_resource type="Resource" path="res://content/rooms/prototype_run.tres" id="2"]
+[ext_resource type="PackedScene" path="res://content/rooms/combat_sandbox.tscn" id="3"]
+
+[node name="RoomRun" type="Node3D"]
+script = ExtResource("1")
+definition = ExtResource("2")
+combat_scene = ExtResource("3")
+completion_text = "ROOM FRAMEWORK COMPLETE"
+boss_staging_hint = "Boss staging only; encounter deferred to v0.0.5."
+
+[node name="HUD" type="CanvasLayer" parent="."]
+layer = 2
+
+[node name="RoomStatus" type="Label" parent="HUD"]
+unique_name_in_owner = true
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -245.0
+offset_top = 20.0
+offset_right = 245.0
+offset_bottom = 60.0
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 20
+
+[node name="ExitHint" type="Label" parent="HUD"]
+unique_name_in_owner = true
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = -100.0
+offset_right = 1200.0
+offset_bottom = -62.0
+theme_override_font_sizes/font_size = 16

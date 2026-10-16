@@ -5,6 +5,7 @@ extends Node3D
 @onready var player_spawn: Marker3D = $PlayerSpawn
 @onready var enemy_spawns: Node3D = $EnemySpawns
 @onready var navigation: NavigationRegion3D = $NavigationRegion
+@onready var exit_marker: Marker3D = get_node_or_null("Exit") as Marker3D
 
 
 func enemy_spawn(index: int) -> Vector3:

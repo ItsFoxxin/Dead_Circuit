@@ -4,6 +4,10 @@ extends Node3D
 
 signal session_started
 signal state_changed
+signal restart_requested
+signal room_ready
+signal encounter_completed
+signal room_reward_completed
 
 enum State { PREPARING, ACTIVE, DEAD, COMPLETED, SELECTING_ITEM }
 
@@ -15,6 +19,9 @@ enum State { PREPARING, ACTIVE, DEAD, COMPLETED, SELECTING_ITEM }
 @export var local_player_id: int = 1
 @export var interactive: bool = true
 @export_range(0, 2147483647, 1) var run_seed: int = 12345
+var managed_rooms: bool = false
+var encounter_enabled: bool = true
+var completion_text: String = "COMBAT SANDBOX COMPLETE"
 
 var state: State = State.PREPARING
 var paused: bool = false
@@ -38,7 +45,13 @@ func _ready() -> void:
 	waves.changed.connect(_refresh_hud)
 	waves.completed.connect(_on_completed)
 	waves.wave_cleared.connect(_on_wave_cleared)
-	hud.restart_requested.connect(restart_session)
+	hud.restart_requested.connect(
+		func() -> void:
+			if managed_rooms:
+				restart_requested.emit()
+			else:
+				restart_session()
+	)
 	hud.item_selected.connect(select_item)
 	hud.seed_requested.connect(restart_with_seed)
 	restart_session()
@@ -78,18 +91,13 @@ func restart_session() -> void:
 	local_player.weapon.changed.connect(_refresh_hud)
 	local_player.items.changed.connect(_refresh_hud)
 	_refresh_hud()
-	for iteration: int in range(60):
-		await get_tree().physics_frame
-		if token != waves.session_token:
-			return
-		if NavigationServer3D.map_get_iteration_id(arena.navigation.get_navigation_map()) > 0:
-			break
-	if NavigationServer3D.map_get_iteration_id(arena.navigation.get_navigation_map()) == 0:
-		push_error("Combat arena navigation did not initialize")
+	if not await _synchronize_arena(token):
 		return
 	state = State.ACTIVE
 	local_player.combat_enabled = true
-	waves.start()
+	local_player.weapon.enabled = true
+	if encounter_enabled:
+		waves.start()
 	_set_mouse_capture(true)
 	_refresh_hud()
 	state_changed.emit()
@@ -100,7 +108,7 @@ func restart_with_seed(value: int) -> bool:
 	if value < 0 or value > RunRandom.MAX_SEED:
 		return false
 	run_seed = value
-	restart_session()
+	hud.restart_requested.emit()
 	return true
 
 
@@ -112,7 +120,7 @@ func _input(event: InputEvent) -> void:
 		and (state in [State.DEAD, State.COMPLETED] or paused)
 		and not (hud.seed_input.has_focus() or hud.seed_button.has_focus())
 	):
-		restart_session()
+		hud.restart_requested.emit()
 		get_viewport().set_input_as_handled()
 	elif event.is_action_pressed("release_mouse") and state == State.ACTIVE:
 		set_paused(not paused)
@@ -183,11 +191,16 @@ func _on_health_changed(_current: float, _maximum: float) -> void:
 
 
 func _on_player_died(_context: DamageContext) -> void:
-	_finish(State.DEAD)
+	finish_session(State.DEAD)
 
 
 func _on_completed() -> void:
-	_finish(State.COMPLETED)
+	if managed_rooms:
+		encounter_enabled = false
+		_refresh_hud()
+		encounter_completed.emit()
+	else:
+		finish_session(State.COMPLETED)
 
 
 func _on_wave_cleared(number: int) -> void:
@@ -236,13 +249,16 @@ func _resume_after_items() -> void:
 		if not player.health.is_dead:
 			player.combat_enabled = true
 			player.weapon.enabled = true
-	waves.continue_after_reward(waves.session_token, waves.wave_number)
+	if waves.state == WaveManager.State.WAITING_FOR_REWARD:
+		waves.continue_after_reward(waves.session_token, waves.wave_number)
+	else:
+		room_reward_completed.emit()
 	_set_mouse_capture(true)
 	_refresh_hud()
 	state_changed.emit()
 
 
-func _finish(result: State) -> void:
+func finish_session(result: State) -> void:
 	state = result
 	paused = false
 	if result == State.DEAD:
@@ -263,7 +279,7 @@ func _refresh_hud() -> void:
 	if state == State.DEAD:
 		message = "YOU DIED"
 	elif state == State.COMPLETED:
-		message = "COMBAT SANDBOX COMPLETE"
+		message = completion_text
 	elif paused:
 		message = "PAUSED — Click to resume"
 	elif state == State.SELECTING_ITEM:
@@ -276,3 +292,65 @@ func _refresh_hud() -> void:
 func _set_mouse_capture(captured: bool) -> void:
 	if interactive and DisplayServer.get_name() != "headless":
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED if captured else Input.MOUSE_MODE_VISIBLE
+
+
+func change_room(scene: PackedScene, definition: WaveDefinition) -> void:
+	state = State.PREPARING
+	paused = false
+	item_offers.clear()
+	waves.reset()
+	var token: int = waves.session_token
+	for player: CombatPlayer in players:
+		player.disable_combat()
+		for effect: Node in player.item_effects.get_children():
+			effect.queue_free()
+	for enemy: MeleeEnemy in enemies.values():
+		enemy.disable_combat()
+		enemy.queue_free()
+	enemies.clear()
+	damage_targets = []
+	enemy_spawn_order.clear()
+	remove_child(arena)
+	arena.queue_free()
+	arena = scene.instantiate() as CombatArena
+	arena.name = "Arena"
+	add_child(arena)
+	encounter_enabled = definition != null
+	if definition != null:
+		waves.definition = definition
+	for index: int in range(players.size()):
+		var player: CombatPlayer = players[index]
+		player.global_transform = arena.player_spawn.global_transform
+		player.global_position.x += index * 1.5
+		player.camera.rotation = Vector3.ZERO
+		player.item_effects.targets = damage_targets
+		player.suppress_fire_until_release = true
+	_refresh_hud()
+	if not await _synchronize_arena(token):
+		return
+	state = State.ACTIVE
+	for player: CombatPlayer in players:
+		player.combat_enabled = not player.health.is_dead
+		player.weapon.enabled = not player.health.is_dead
+	if encounter_enabled:
+		waves.start()
+	_set_mouse_capture(true)
+	_refresh_hud()
+	state_changed.emit()
+	room_ready.emit()
+
+
+func begin_room_reward() -> void:
+	if state == State.ACTIVE and not encounter_enabled and waves.wave_number == 0:
+		_on_wave_cleared(0)
+
+
+func _synchronize_arena(token: int) -> bool:
+	for iteration: int in range(60):
+		await get_tree().physics_frame
+		if token != waves.session_token:
+			return false
+		if NavigationServer3D.region_get_iteration_id(arena.navigation.get_rid()) > 0:
+			return true
+	push_error("Combat arena navigation did not initialize")
+	return false

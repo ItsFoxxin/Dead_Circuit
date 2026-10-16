@@ -1,0 +1,8 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://game/core/room_bootstrap.gd" id="1"]
+[ext_resource type="PackedScene" path="res://content/rooms/room_run.tscn" id="2"]
+
+[node name="RoomBootstrap" type="Node"]
+script = ExtResource("1")
+startup_scene = ExtResource("2")

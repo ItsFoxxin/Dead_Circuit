@@ -34,8 +34,10 @@ exit cleanly before its artifact is uploaded. Logs, JUnit XML, JSON summaries,
 build metadata and checksum files are preserved in Actions artifacts.
 
 The main launch smoke still requires build provenance and its success marker;
-it now waits for navigation synchronization, an initialized player and wave one
-with the configured enemy count. No gate or engine warning severity is reduced.
+it waits for navigation synchronization, an initialized player and run authority
+in the safe Start Room with wave zero and no RNG draws. The standalone sandbox
+startup regression still requires wave one with its configured enemy count.
+No gate or engine warning severity is reduced.
 Async scene fixtures use queued teardown so they are not freed inside startup
 signal emission. Time-based physics tests use broad tolerances, not exact frames.
 
@@ -60,6 +62,16 @@ choices, and consume the expected bounded choices.
 Harness regression tests reject divergent, empty or malformed records; reports
 include the actual authoritative rolls in determinism.json. Content validation
 also rejects out-of-range authored sandbox seeds. No CI gate is reduced.
+
+v0.0.4 adds room schema/order and exit-generation tests, persistent player state,
+reload timers, explicit participant authority, locked combat and treasure exits,
+multiple player choices, exhausted treasure, staging/completion and full death/
+completion/transition restart. Two extra independent processes exercise the
+production four-room route and whole-run reset, preserving the original fixture
+and sandbox probes. Python tests reject incomplete/divergent routes and leaked
+build/ammo/RNG state. Content validation requires authored room references, exit
+markers, route order and the room HUD. See ROOM_FRAMEWORK.md for the pending
+manual acceptance checklist; local automation does not approve this milestone.
 
 The gameplay-oriented requirements below remain mandatory when their systems
 are introduced. Reproduction applies to authoritative choices with the same seed,

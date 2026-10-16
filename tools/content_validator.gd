@@ -60,6 +60,29 @@ func _validate_definition(path: String, errors: PackedStringArray) -> void:
 		var item: ItemDefinition = resource
 		id = item.id
 		errors.append_array(item.validation_errors())
+	elif resource is RoomDefinition and "/rooms/" in path:
+		var room: RoomDefinition = resource
+		id = room.id
+		errors.append_array(room.validation_errors())
+		if room.scene != null:
+			var scene: Node = room.scene.instantiate()
+			if not scene is CombatArena:
+				errors.append("Room scene requires a CombatArena root: " + path)
+			elif not scene.get_node_or_null("Exit") is Marker3D:
+				errors.append("Room scene requires an exit marker: " + path)
+			scene.free()
+	elif resource is RunDefinition and "/rooms/" in path:
+		var run: RunDefinition = resource
+		id = run.id
+		errors.append_array(run.validation_errors())
+		var kinds: Array[int] = []
+		for room: RoomDefinition in run.rooms:
+			if room != null:
+				kinds.append(room.kind)
+				if not room.resource_path.begins_with("res://content/rooms/"):
+					errors.append("Run must reference authored room definitions: " + path)
+		if kinds != [0, 1, 2, 3]:
+			errors.append("Prototype route requires start, combat, treasure, boss order: " + path)
 	elif resource is WaveDefinition and "/rooms/" in path:
 		var waves: WaveDefinition = resource
 		id = waves.id
@@ -92,6 +115,16 @@ func _validate_scene(path: String, errors: PackedStringArray) -> void:
 			errors.append("Enemy scene requires navigation: " + path)
 	elif root is CombatArena and "/rooms/" in path:
 		_validate_arena(root, path, errors)
+	elif root is RoomRunSession and "/rooms/" in path:
+		var run: RoomRunSession = root
+		if run.definition == null or run.combat_scene == null:
+			errors.append("Room run requires route and combat scene references: " + path)
+		if run.run_seed < 0 or run.run_seed > RunRandom.MAX_SEED:
+			errors.append("Room run seed must be from 0 to 2147483647: " + path)
+		if not run.get_node_or_null("HUD/RoomStatus") is Label:
+			errors.append("Room run requires status HUD: " + path)
+		if not run.get_node_or_null("HUD/ExitHint") is Label:
+			errors.append("Room run requires exit hint HUD: " + path)
 	elif root is CombatSession and "/rooms/" in path:
 		var session: CombatSession = root
 		if session.player_scene == null or session.enemy_scene == null:

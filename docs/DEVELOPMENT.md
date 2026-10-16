@@ -15,8 +15,10 @@ v0.0.3 is complete and accepted by the owner on 2026-10-16, with main promotion
 and release authorized. Its version remains 0.0.3.
 See [SEEDED_RUNS.md](SEEDED_RUNS.md) for
 seed controls, exact reproducibility limits and the acceptance record.
-v0.0.4 is a separate local candidate authorized to follow onto dev; it is not part
-of this accepted v0.0.3 implementation or release.
+The owner accepted v0.0.4 and approved main promotion/release on 2026-10-16.
+This release retains version 0.0.4; see [ROOM_FRAMEWORK.md](ROOM_FRAMEWORK.md).
+v0.0.5 is authorized to move from local work to dev for testing. It is not
+approved for main or release. v0.0.6 has not started.
 
 ## Requirements and setup
 
@@ -50,7 +52,7 @@ python3.12 -m venv .venv
 Omit `--templates` when only editing/testing. The bootstrap verifies SHA-256
 checksums of both new and cached downloads before extracting. Dependencies stay
 local and ignored; GUT's upstream MIT license is retained in addons/gut/.
-Press Run Project in Godot to open the combat sandbox. No editor plugin
+Press Run Project in Godot to open the authored room route. No editor plugin
 needs to be enabled to run command-line tests. The GUT plugin may optionally be
 enabled locally for interactive test discovery.
 
@@ -106,8 +108,10 @@ mechanics remain in game/. Prototype weapon/enemy/wave definitions and the arena
 remain in content/. Tools and test fixtures stay outside game/.
 Reusable item/modifier/event/effect mechanics live in game/items/; concrete items
 live in content/items/. Full roguelike run generation is not implemented.
-CombatSession owns the RunRandom in game/core/rng/. Offers and spawn rolls use
-that explicit authority; no global player/RNG singleton is introduced. See ADR 0006.
+RoomRunSession owns the RunRandom in game/core/rng/ for the authored route and
+injects it into the persistent CombatSession. Standalone CombatSession still owns
+its own attempt RNG. Offers and spawn rolls use that explicit authority; no global
+player/RNG singleton is introduced. See ADRs 0006 and 0008.
 Tests are organized into unit/, integration/, determinism/, gameplay/, fixtures/,
 and Python harness/.
 
@@ -152,7 +156,7 @@ does not modify main, merge PRs, deploy, or publish releases.
 
 The dedicated release.yml publishes only version-tag pushes. Ordinary branch
 pushes retain the existing CI behavior. VERSION and project.godot describe the
-current dev candidate (0.0.3); the existing manual v0.0.1
+checked-out milestone (0.0.4 here); the existing manual v0.0.1
 pre-release is untouched.
 
 For each future milestone:

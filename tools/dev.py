@@ -162,10 +162,37 @@ def determinism() -> None:
         run_samples.append(json.loads(next(line.split("=", 1)[1] for line in output.splitlines()
                                            if line.startswith("RUN_CHOICES_PROBE="))))
     verify_run_samples(run_samples)
+    room_samples = []
+    for index in range(2):
+        args = ["--script", "tests/fixtures/room_run_probe.gd"]
+        if index == 1:
+            args.extend(["--", "--reverse-item-load"])
+        output = engine_run(f"room-run-process-{index}", args, marker="ROOM_RUN_PROBE=")
+        room_samples.append(json.loads(next(line.split("=", 1)[1] for line in output.splitlines()
+                                           if line.startswith("ROOM_RUN_PROBE="))))
+    verify_room_samples(room_samples)
     (REPORTS / "determinism.json").write_text(json.dumps({"seed": 12345, "draws": samples[0],
                                                          "processes_match": True,
                                                          "run_choices": run_samples[0],
-                                                         "run_processes_match": True}, indent=2) + "\n")
+                                                         "run_processes_match": True,
+                                                         "room_run": room_samples[0],
+                                                         "room_processes_match": True}, indent=2) + "\n")
+
+
+def verify_room_samples(samples: list) -> None:
+    """Require matching complete production routes and a clean whole-run restart."""
+    if len(samples) != 2 or samples[0] != samples[1] or not isinstance(samples[0], dict):
+        raise RuntimeError("Independent room run processes diverged")
+    record = samples[0]
+    if (record.get("rooms") != ["prototype_start", "prototype_combat", "prototype_treasure", "prototype_boss"]
+            or record.get("completed") is not True or record.get("draw_count") != 64
+            or record.get("restart") != {"room": "prototype_start", "draw_count": 0, "items": 0,
+                                         "health": 100, "magazine": 12, "reserve": 240}):
+        raise RuntimeError("Incomplete room route or stale restart state")
+    build = record.get("build")
+    if not isinstance(build, list) or len(build) != 5 or len(set(build)) != 5 or build != sorted(build):
+        raise RuntimeError("Incomplete room run build")
+    verify_run_samples([record.get("waves"), record.get("waves")])
 
 
 def verify_run_samples(samples: list) -> None:

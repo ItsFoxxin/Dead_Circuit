@@ -90,7 +90,7 @@ func test_item_schema_rejects_invalid_nested_effects_and_stacking() -> void:
 func test_authored_item_schema_and_catalog_are_valid() -> void:
 	var validator: ContentValidator = Validator.new()
 	assert_eq(validator.validate().size(), 0)
-	assert_eq(validator.definition_count, 8)
+	assert_eq(validator.definition_count, 13)
 
 
 func test_authored_sandbox_seed_must_fit_supported_input_range() -> void:
@@ -104,3 +104,26 @@ func test_authored_sandbox_seed_must_fit_supported_input_range() -> void:
 	var errors: PackedStringArray = Validator.new().validate(ROOT)
 	assert_eq(errors.size(), 1)
 	assert_string_contains(errors[0], "Sandbox seed")
+
+
+func test_room_definition_requires_a_real_exit_marker() -> void:
+	var room: RoomDefinition = RoomDefinition.new()
+	room.id = &"missing_exit"
+	room.display_name = "Missing exit"
+	room.scene = load("res://content/rooms/greybox_arena.tscn") as PackedScene
+	assert_eq(ResourceSaver.save(room, ROOT.path_join("rooms/invalid_room.tres")), OK)
+	var errors: PackedStringArray = Validator.new().validate(ROOT)
+	assert_eq(errors.size(), 1)
+	assert_string_contains(errors[0], "exit marker")
+
+
+func test_route_order_is_validated_without_changing_reusable_definition() -> void:
+	var authored: RunDefinition = load("res://content/rooms/prototype_run.tres") as RunDefinition
+	var invalid: RunDefinition = RunDefinition.new()
+	invalid.id = &"wrong_order"
+	invalid.rooms = [authored.rooms[1], authored.rooms[0], authored.rooms[2], authored.rooms[3]]
+	assert_true(invalid.validation_errors().is_empty(), "Order is content policy")
+	assert_eq(ResourceSaver.save(invalid, ROOT.path_join("rooms/invalid_route.tres")), OK)
+	var errors: PackedStringArray = Validator.new().validate(ROOT)
+	assert_eq(errors.size(), 1)
+	assert_string_contains(errors[0], "start, combat, treasure, boss order")
