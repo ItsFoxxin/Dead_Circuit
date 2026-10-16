@@ -19,19 +19,24 @@ clean restart. Windows development artifact manual acceptance **PASSED** on
 feel, balance, visuals, AI and polish are not finalized.
 See [Combat Sandbox](docs/COMBAT_SANDBOX.md) for controls and the acceptance record.
 
-**The `main` branch contains the complete and accepted v0.0.2 — Item / Synergy Proof**:
+**v0.0.2 — Item / Synergy Proof is complete and accepted**:
 five unique items, per-player builds, composable modifiers and kill effects,
 between-wave choices and build visibility. The project owner confirmed manual
 Windows acceptance on 2026-10-16 and approved promotion to main. See
 [Item System](docs/ITEM_SYSTEM.md) for rules and the acceptance record.
-**[Download v0.0.2 for Windows or Linux](https://github.com/ItsFoxxin/Dead_Circuit/releases/tag/v0.0.2).**
-The release includes game ZIPs, update notes, checksums and build provenance.
-Choose the Windows/Linux ZIP under Assets; GitHub's Source code archives are for
-development. The release pipeline passed native tests, exports and startup smoke
-on both OSes. v0.0.1's historical pre-release is preserved.
+The [v0.0.2 release](https://github.com/ItsFoxxin/Dead_Circuit/releases/tag/v0.0.2)
+provides Windows/Linux game ZIPs, update notes, checksums and build provenance.
+The historical v0.0.1 release is preserved.
 
-The next milestone is v0.0.3 — Seeded
-Runs; its separate candidate is not included in this accepted v0.0.2 milestone.
+**v0.0.3 — Seeded Runs is complete and accepted**: an
+authoritative session RNG, reproducible spawn rolls and item offers, a visible
+seed and explicit replay/change-seed controls. The owner accepted it on 2026-10-16
+and authorized main promotion and release. See [Seeded Runs](docs/SEEDED_RUNS.md).
+
+**[Download accepted game releases for Windows/Linux](https://github.com/ItsFoxxin/Dead_Circuit/releases).**
+Choose a game ZIP under Assets; Source code archives are for development.
+v0.0.4 — Room Framework is the next active milestone; its separate candidate will
+follow onto dev for testing. It is not included in v0.0.3.
 
 For setup, validation, tests, and exports, see [Development](docs/DEVELOPMENT.md).
 

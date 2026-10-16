@@ -6,11 +6,17 @@ see [COMBAT_SANDBOX.md](COMBAT_SANDBOX.md) for controls, implementation boundari
 and the passed Windows artifact acceptance record. Its GitHub pre-release was
 published manually and is preserved. v0.0.2 — Item / Synergy Proof is complete and
 manually accepted on 2026-10-16; see ITEM_SYSTEM.md for its acceptance record.
-The accepted gameplay is on main at `cae926d`; the
-[v0.0.2 pre-release](https://github.com/ItsFoxxin/Dead_Circuit/releases/tag/v0.0.2)
-contains Windows/Linux game ZIPs, notes, checksums and verified build metadata.
+The [v0.0.2 pre-release](https://github.com/ItsFoxxin/Dead_Circuit/releases/tag/v0.0.2)
+provides native-validated Windows/Linux game ZIPs, notes, checksums and provenance.
 Multiplayer remains unimplemented. The pinned foundation toolchain and CI gates
 are preserved.
+
+v0.0.3 is complete and accepted by the owner on 2026-10-16, with main promotion
+and release authorized. Its version remains 0.0.3.
+See [SEEDED_RUNS.md](SEEDED_RUNS.md) for
+seed controls, exact reproducibility limits and the acceptance record.
+v0.0.4 is a separate local candidate authorized to follow onto dev; it is not part
+of this accepted v0.0.3 implementation or release.
 
 ## Requirements and setup
 
@@ -57,7 +63,7 @@ Use the venv Python executable in place of `python` below.
 | `python tools/dev.py validate` | All checks and all GUT suites |
 | `python tools/dev.py checks` | Import, format, lint, harness tests, content, headless launch |
 | `python tools/dev.py tests` | Import, unit/integration/gameplay launch and determinism tests |
-| `python tools/dev.py determinism` | Seeded fixture suite and two independent process probes |
+| `python tools/dev.py determinism` | RNG/ordering suite, two engine and two actual run process probes |
 | `python tools/dev.py content` | Import and content boundary validation |
 | `python tools/dev.py smoke` | Import and main-scene startup/clean exit |
 | `python tools/dev.py import` | Engine version check and headless editor import |
@@ -100,6 +106,8 @@ mechanics remain in game/. Prototype weapon/enemy/wave definitions and the arena
 remain in content/. Tools and test fixtures stay outside game/.
 Reusable item/modifier/event/effect mechanics live in game/items/; concrete items
 live in content/items/. Full roguelike run generation is not implemented.
+CombatSession owns the RunRandom in game/core/rng/. Offers and spawn rolls use
+that explicit authority; no global player/RNG singleton is introduced. See ADR 0006.
 Tests are organized into unit/, integration/, determinism/, gameplay/, fixtures/,
 and Python harness/.
 
@@ -144,7 +152,8 @@ does not modify main, merge PRs, deploy, or publish releases.
 
 The dedicated release.yml publishes only version-tag pushes. Ordinary branch
 pushes retain the existing CI behavior. VERSION and project.godot describe the
-current candidate (0.0.2); the existing manual v0.0.1 pre-release is untouched.
+current dev candidate (0.0.3); the existing manual v0.0.1
+pre-release is untouched.
 
 For each future milestone:
 
@@ -186,6 +195,10 @@ All v0.x.y releases are GitHub pre-releases, permanently, and are never marked a
 the latest stable release. v1.0.0 and higher default to stable releases with normal
 GitHub latest selection. Titles are `Dead Circuit <tag>`. GitHub-generated release
 notes are preserved with verified tag, commit, engine, platform and status details.
+When docs/release-notes/<tag>.md exists at the approved source commit, its authored
+notes lead the release body and generated notes/provenance follow. For v0.0.3 the
+owner requested v0.0.1's layout: title/intro, Included, Known Limitations and Next
+Milestone, omitting Validation. Tests and reports remain required CI gates.
 
 release-gates.yml reuses the unchanged foundation validation/test gates and fresh
 native exports. Release builds use matching pinned release templates and Godot's

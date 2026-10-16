@@ -50,8 +50,32 @@ anchor_bottom = 0.55
 offset_left = -130.0
 offset_right = 130.0
 offset_bottom = 45.0
-text = "Restart  [Enter]"
+text = "Replay seed  [Enter]"
 visible = false
+
+[node name="SeedControls" type="HBoxContainer" parent="."]
+unique_name_in_owner = true
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_top = 0.65
+anchor_bottom = 0.65
+offset_left = -200.0
+offset_right = 200.0
+offset_bottom = 42.0
+visible = false
+
+[node name="SeedInput" type="LineEdit" parent="SeedControls"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+max_length = 10
+placeholder_text = "Run seed"
+tooltip_text = "Seed: integer from 0 to 2147483647. Start resets the entire attempt."
+
+[node name="StartSeed" type="Button" parent="SeedControls"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Start seed"
 
 [node name="Build" type="Label" parent="."]
 unique_name_in_owner = true

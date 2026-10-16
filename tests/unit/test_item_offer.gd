@@ -17,7 +17,7 @@ func before_each() -> void:
 func test_three_distinct_choices_exclude_owned_and_duplicate_catalog_entries() -> void:
 	build.acquire(catalog[0])
 	catalog.insert(1, catalog[1])
-	var offer: ItemOffer = ItemOffer.new(catalog, build, 10, 1)
+	var offer: ItemOffer = ItemOffer.new(catalog, build, 10, 1, RunRandom.new(12345))
 	assert_eq(offer.choices.size(), 3)
 	assert_false(offer.choices.has(catalog[0]))
 	assert_ne(offer.choices[0].id, offer.choices[1].id)
@@ -26,7 +26,7 @@ func test_three_distinct_choices_exclude_owned_and_duplicate_catalog_entries() -
 
 
 func test_selection_requires_matching_player_session_wave_and_offered_id() -> void:
-	var offer: ItemOffer = ItemOffer.new(catalog, build, 10, 2)
+	var offer: ItemOffer = ItemOffer.new(catalog, build, 10, 2, RunRandom.new(12345))
 	var other: PlayerItemBuild = PlayerItemBuild.new()
 	other.player_id = 8
 	var id: StringName = offer.choices[0].id
@@ -45,7 +45,9 @@ func test_selection_requires_matching_player_session_wave_and_offered_id() -> vo
 func test_short_and_exhausted_pools_offer_only_eligible_items() -> void:
 	for index: int in range(3):
 		build.acquire(catalog[index])
-	assert_eq(ItemOffer.new(catalog, build, 1, 4).choices.size(), 2)
+	assert_eq(ItemOffer.new(catalog, build, 1, 4, RunRandom.new(12345)).choices.size(), 2)
 	for item: ItemDefinition in catalog:
 		build.acquire(item)
-	assert_true(ItemOffer.new(catalog, build, 1, 4).choices.is_empty())
+	var random: RunRandom = RunRandom.new(12345)
+	assert_true(ItemOffer.new(catalog, build, 1, 4, random).choices.is_empty())
+	assert_eq(random.draw_count, 0)

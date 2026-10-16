@@ -27,7 +27,9 @@ func owns(id: StringName) -> bool:
 func definitions() -> Array[ItemDefinition]:
 	var result: Array[ItemDefinition] = []
 	var ids: Array[StringName] = _owned.keys()
-	ids.sort()
+	ids.sort_custom(
+		func(first: StringName, second: StringName) -> bool: return str(first) < str(second)
+	)
 	for id: StringName in ids:
 		result.append(_owned[id])
 	return result

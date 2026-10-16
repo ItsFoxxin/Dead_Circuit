@@ -76,11 +76,10 @@ Per-player item builds, ordered modifiers, source-aware triggers/effects, five
 prototype items, post-wave choices and build visibility are implemented. Automated
 tests cover composition, attribution, non-recursive explosions, healing, selection
 and reset. See [ITEM_SYSTEM.md](ITEM_SYSTEM.md) for exact rules and the manual gate.
-Merged to main at `cae926d`. The [v0.0.2 pre-release](https://github.com/ItsFoxxin/Dead_Circuit/releases/tag/v0.0.2)
-provides native-validated Windows/Linux game ZIPs, update notes and provenance.
-Movement, combat feel, item balance and visuals remain prototype quality.
-v0.0.3 is the next milestone and has a separate dev candidate; none of its
-gameplay is included in v0.0.2.
+The [v0.0.2 pre-release](https://github.com/ItsFoxxin/Dead_Circuit/releases/tag/v0.0.2)
+contains verified Windows/Linux game ZIPs and update notes. Movement, combat feel,
+item balance and visuals remain prototype quality. Later milestone gameplay is
+not included in that release.
 
 Goal:
 
@@ -100,6 +99,13 @@ Split Chamber and Volatile Rounds must interact without combination-specific cod
 
 ## v0.0.3 — Seeded Runs
 
+Status: Complete and accepted (`0.0.3`). Owner acceptance **PASSED** on 2026-10-16;
+main promotion and release are explicitly approved.
+Session-owned seeded RNG drives distinct item offers and enemy spawn-marker rolls.
+Seed display, validated input and replay reset are implemented. See
+[SEEDED_RUNS.md](SEEDED_RUNS.md) and ADR 0006 for contracts and the acceptance
+record. v0.0.4 Room Framework is the next active milestone.
+
 Goal:
 
 Introduce authoritative deterministic run RNG.
@@ -113,6 +119,10 @@ Initial seed usage:
 Same seed should reproduce authoritative random choices where expected.
 
 ## v0.0.4 — Room Framework
+
+Status: Next active milestone. Its separate local implementation candidate is
+authorized to follow onto dev after v0.0.3 promotion. It is not included in the
+accepted v0.0.3 source or release. Manual verification remains pending for v0.0.4.
 
 Goal:
 

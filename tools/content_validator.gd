@@ -98,6 +98,8 @@ func _validate_scene(path: String, errors: PackedStringArray) -> void:
 			errors.append("Sandbox requires actor scene references: " + path)
 		if session.weapon_definition == null or session.wave_definition == null:
 			errors.append("Sandbox requires weapon and wave definitions: " + path)
+		if session.run_seed < 0 or session.run_seed > RunRandom.MAX_SEED:
+			errors.append("Sandbox seed must be from 0 to 2147483647: " + path)
 		if not session.get_node_or_null("Arena") is CombatArena:
 			errors.append("Sandbox requires an authored combat arena: " + path)
 		_validate_item_catalog(session.item_catalog, path, errors)
