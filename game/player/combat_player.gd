@@ -8,6 +8,8 @@ extends DamageableBody
 var local_input_enabled: bool = false
 var combat_enabled: bool = true
 var suppress_fire_until_release: bool = false
+var items: PlayerItemBuild = PlayerItemBuild.new()
+var item_effects: ItemEffectRunner
 
 @onready var camera: Camera3D = $Camera
 @onready var weapon: WeaponController = $Weapon
@@ -15,6 +17,14 @@ var suppress_fire_until_release: bool = false
 
 func _ready() -> void:
 	health.died.connect(_on_died)
+	items.player_id = player_id
+	item_effects = ItemEffectRunner.new()
+	item_effects.player_id = player_id
+	item_effects.health = health
+	add_child(item_effects)
+	items.effect_requested.connect(item_effects.apply)
+	weapon.fired.connect(_on_weapon_fired)
+	weapon.shot_created.connect(_on_shot_created)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -76,3 +86,13 @@ func disable_combat() -> void:
 
 func _on_died(_context: DamageContext) -> void:
 	disable_combat()
+
+
+func _on_weapon_fired(context: DamageContext) -> void:
+	items.handle_event(
+		CombatEvent.new(CombatEvent.Kind.WEAPON_FIRED, context, camera.global_position)
+	)
+
+
+func _on_shot_created(context: DamageContext, origin: Vector3) -> void:
+	items.handle_event(CombatEvent.new(CombatEvent.Kind.SHOT_CREATED, context, origin))

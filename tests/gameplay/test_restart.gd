@@ -70,6 +70,14 @@ func test_five_waves_complete_and_can_restart() -> void:
 		for enemy: MeleeEnemy in current_enemies:
 			enemy.receive_damage(DamageContext.new(1000.0, 1, &"prototype_pistol"))
 		await get_tree().process_frame
+		if number < 5:
+			assert_eq(session.state, CombatSession.State.SELECTING_ITEM)
+			var offer: ItemOffer = session.item_offers[session.local_player_id]
+			assert_true(
+				session.select_item(
+					offer.player_id, offer.choices[0].id, offer.session_token, number
+				)
+			)
 	assert_eq(session.state, CombatSession.State.COMPLETED)
 	assert_eq(session.waves.remaining(), 0)
 	assert_eq(session.enemies.size(), 0)
@@ -79,6 +87,8 @@ func test_five_waves_complete_and_can_restart() -> void:
 	await session.session_started
 	assert_eq(session.waves.wave_number, 1)
 	assert_eq(session.enemies.size(), 3)
+	assert_true(session.local_player.items.definitions().is_empty())
+	assert_eq(session.local_player.weapon.combat_stats().shot_count, 1)
 
 
 func test_restart_cancels_pending_wave_advance() -> void:

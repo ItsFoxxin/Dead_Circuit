@@ -66,3 +66,28 @@ func test_prototype_wave_schema_rejects_wrong_count() -> void:
 	definition.counts = [1, 2]
 	ResourceSaver.save(definition, ROOT.path_join("rooms/invalid.tres"))
 	assert_gt(Validator.new().validate(ROOT).size(), 0)
+
+
+func test_item_schema_rejects_invalid_nested_effects_and_stacking() -> void:
+	var item: ItemDefinition = ItemDefinition.new()
+	item.id = &"invalid_item"
+	item.display_name = "Invalid"
+	item.description = "Bad trigger"
+	item.stacking = &"accidental_stacking"
+	var trigger: ItemTrigger = ItemTrigger.new()
+	trigger.condition = ItemCondition.new()
+	trigger.condition.required_tags = ["weapon"]
+	trigger.condition.excluded_tags = ["weapon"]
+	var effect: ItemEffect = ItemEffect.new()
+	effect.amount = NAN
+	effect.radius = -1.0
+	trigger.effects = [effect]
+	item.triggers = [trigger]
+	ResourceSaver.save(item, ROOT.path_join("items/invalid.tres"))
+	assert_gt(Validator.new().validate(ROOT).size(), 3)
+
+
+func test_authored_item_schema_and_catalog_are_valid() -> void:
+	var validator: ContentValidator = Validator.new()
+	assert_eq(validator.validate().size(), 0)
+	assert_eq(validator.definition_count, 8)

@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="ItemDefinition" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://game/items/item_definition.gd" id="item"]
+[ext_resource type="Script" path="res://game/items/stat_modifier.gd" id="stat"]
+
+[sub_resource type="Resource" id="Count"]
+script = ExtResource("stat")
+stat = &"shot_count"
+operation = 0
+value = 1.0
+
+[sub_resource type="Resource" id="Scale"]
+script = ExtResource("stat")
+stat = &"shot_damage_scale"
+value = 0.85
+
+[resource]
+script = ExtResource("item")
+id = &"split_chamber"
+display_name = "Split Chamber"
+description = "+1 hitscan shot; damage per shot x0.85. One round per pull."
+tags = PackedStringArray("offense", "multishot")
+modifiers = Array[ExtResource("stat")]([SubResource("Count"), SubResource("Scale")])

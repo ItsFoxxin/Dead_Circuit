@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="ItemDefinition" load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://game/items/item_definition.gd" id="item"]
+[ext_resource type="Script" path="res://game/items/item_trigger.gd" id="trigger"]
+[ext_resource type="Script" path="res://game/items/item_condition.gd" id="condition"]
+[ext_resource type="Script" path="res://game/items/item_effect.gd" id="effect"]
+
+[sub_resource type="Resource" id="Eligible"]
+script = ExtResource("condition")
+required_tags = PackedStringArray("hitscan", "weapon")
+excluded_tags = PackedStringArray("secondary")
+
+[sub_resource type="Resource" id="Explosion"]
+script = ExtResource("effect")
+kind = 1
+amount = 45.0
+radius = 3.5
+
+[sub_resource type="Resource" id="Kill"]
+script = ExtResource("trigger")
+condition = SubResource("Eligible")
+effects = Array[ExtResource("effect")]([SubResource("Explosion")])
+
+[resource]
+script = ExtResource("item")
+id = &"volatile_rounds"
+display_name = "Volatile Rounds"
+description = "Primary hitscan kills explode: 45 damage in 3.5 m. No blast chains."
+tags = PackedStringArray("offense", "explosion")
+triggers = Array[ExtResource("trigger")]([SubResource("Kill")])

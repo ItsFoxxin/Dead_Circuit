@@ -20,6 +20,15 @@ func reset() -> void:
 	changed.emit(current, maximum)
 
 
+func heal(amount: float) -> float:
+	if is_dead or not is_finite(amount) or amount <= 0.0:
+		return 0.0
+	var restored: float = minf(amount, maximum - current)
+	current += restored
+	changed.emit(current, maximum)
+	return restored
+
+
 func take_damage(context: DamageContext) -> float:
 	if is_dead or context == null or not is_finite(context.amount) or context.amount <= 0.0:
 		return 0.0

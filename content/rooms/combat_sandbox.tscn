@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=15 format=3]
 
 [ext_resource type="Script" path="res://game/run/combat_session.gd" id="1"]
 [ext_resource type="PackedScene" path="res://content/rooms/greybox_arena.tscn" id="2"]
@@ -8,6 +8,12 @@
 [ext_resource type="Resource" path="res://content/rooms/prototype_waves.tres" id="6"]
 [ext_resource type="Script" path="res://game/run/wave_manager.gd" id="7"]
 [ext_resource type="PackedScene" path="res://game/ui/combat_hud.tscn" id="8"]
+[ext_resource type="Resource" path="res://content/items/split_chamber.tres" id="9"]
+[ext_resource type="Resource" path="res://content/items/volatile_rounds.tres" id="10"]
+[ext_resource type="Resource" path="res://content/items/heavy_lead.tres" id="11"]
+[ext_resource type="Resource" path="res://content/items/rapid_mechanism.tres" id="12"]
+[ext_resource type="Resource" path="res://content/items/vampiric_ammo.tres" id="13"]
+[ext_resource type="Script" path="res://game/items/item_definition.gd" id="14"]
 
 [node name="CombatSandbox" type="Node3D"]
 script = ExtResource("1")
@@ -15,6 +21,7 @@ player_scene = ExtResource("3")
 enemy_scene = ExtResource("4")
 weapon_definition = ExtResource("5")
 wave_definition = ExtResource("6")
+item_catalog = Array[ExtResource("14")]([ExtResource("9"), ExtResource("10"), ExtResource("11"), ExtResource("12"), ExtResource("13")])
 
 [node name="Arena" parent="." instance=ExtResource("2")]
 

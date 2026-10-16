@@ -8,6 +8,7 @@ var source_entity_id: int
 var source_weapon_id: StringName
 var damage_type: StringName
 var tags: PackedStringArray
+var effect_depth: int = 0
 
 
 func _init(
@@ -24,3 +25,13 @@ func _init(
 	source_weapon_id = weapon_id
 	damage_type = type
 	tags = damage_tags.duplicate()
+
+
+func secondary(value: float, type: StringName, extra_tags: PackedStringArray) -> DamageContext:
+	var result: DamageContext = DamageContext.new(
+		value, source_player_id, source_weapon_id, type, tags, source_entity_id
+	)
+	result.effect_depth = effect_depth + 1
+	result.tags.append("secondary")
+	result.tags.append_array(extra_tags)
+	return result

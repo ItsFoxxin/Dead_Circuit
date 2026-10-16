@@ -20,6 +20,9 @@ func _ready() -> void:
 			or session.local_player == null
 			or session.waves.wave_number != 1
 			or session.waves.remaining() != session.wave_definition.counts[0]
+			or session.item_catalog.size() != 5
+			or session.local_player.items.player_id != session.local_player.player_id
+			or not session.local_player.items.definitions().is_empty()
 		):
 			printerr("ERROR: Combat sandbox smoke initialization failed")
 			get_tree().quit(1)

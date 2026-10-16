@@ -56,6 +56,10 @@ func _validate_definition(path: String, errors: PackedStringArray) -> void:
 		var enemy: EnemyDefinition = resource
 		id = enemy.id
 		errors.append_array(enemy.validation_errors())
+	elif resource is ItemDefinition and "/items/" in path:
+		var item: ItemDefinition = resource
+		id = item.id
+		errors.append_array(item.validation_errors())
 	elif resource is WaveDefinition and "/rooms/" in path:
 		var waves: WaveDefinition = resource
 		id = waves.id
@@ -96,9 +100,28 @@ func _validate_scene(path: String, errors: PackedStringArray) -> void:
 			errors.append("Sandbox requires weapon and wave definitions: " + path)
 		if not session.get_node_or_null("Arena") is CombatArena:
 			errors.append("Sandbox requires an authored combat arena: " + path)
+		_validate_item_catalog(session.item_catalog, path, errors)
 	else:
 		errors.append("No registered content schema for: " + path)
 	root.free()
+
+
+func _validate_item_catalog(
+	catalog: Array[ItemDefinition], path: String, errors: PackedStringArray
+) -> void:
+	var seen: Dictionary[StringName, bool] = {}
+	if catalog.size() != 5:
+		errors.append("Prototype sandbox requires five items: " + path)
+	for item: ItemDefinition in catalog:
+		if item == null:
+			errors.append("Null catalog item: " + path)
+		elif seen.has(item.id):
+			errors.append("Duplicate catalog item: " + str(item.id))
+		else:
+			seen[item.id] = true
+			errors.append_array(item.validation_errors())
+			if not item.resource_path.begins_with("res://content/items/"):
+				errors.append("Catalog must reference authored item definitions: " + path)
 
 
 func _validate_arena(root: Node, path: String, errors: PackedStringArray) -> void:
