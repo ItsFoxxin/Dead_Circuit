@@ -6,7 +6,9 @@ see [COMBAT_SANDBOX.md](COMBAT_SANDBOX.md) for controls, implementation boundari
 and the passed Windows artifact acceptance record. Its GitHub pre-release was
 published manually and is preserved. v0.0.2 — Item / Synergy Proof is complete and
 manually accepted on 2026-10-16; see ITEM_SYSTEM.md for its acceptance record.
-Promotion to main is approved; no tag/release is created by the closeout.
+The accepted gameplay is on main at `cae926d`; the
+[v0.0.2 pre-release](https://github.com/ItsFoxxin/Dead_Circuit/releases/tag/v0.0.2)
+contains Windows/Linux game ZIPs, notes, checksums and verified build metadata.
 Multiplayer remains unimplemented. The pinned foundation toolchain and CI gates
 are preserved.
 

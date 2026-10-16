@@ -12,20 +12,25 @@ The design takes inspiration from the escalating survival pressure of wave-based
 
 Phase 0 (`v0.0.0 — Development Foundation`) is complete: a minimal Godot
 launch surface, typed GDScript, automated validation, and development exports.
-The `main` branch contains the completed and accepted **v0.0.1 — Combat Sandbox**: first-person
+The completed and accepted **v0.0.1 — Combat Sandbox** introduced first-person
 movement, one hitscan pistol, pursuing melee zombies, five waves, HUD, death and
 clean restart. Windows development artifact manual acceptance **PASSED** on
 2026-10-16. Movement and combat are accepted as an early prototype foundation;
 feel, balance, visuals, AI and polish are not finalized.
 See [Combat Sandbox](docs/COMBAT_SANDBOX.md) for controls and the acceptance record.
 
-**v0.0.2 — Item / Synergy Proof is complete and accepted**:
+**The `main` branch contains the complete and accepted v0.0.2 — Item / Synergy Proof**:
 five unique items, per-player builds, composable modifiers and kill effects,
 between-wave choices and build visibility. The project owner confirmed manual
 Windows acceptance on 2026-10-16 and approved promotion to main. See
 [Item System](docs/ITEM_SYSTEM.md) for rules and the acceptance record.
-v0.0.1's manual pre-release is preserved. Approved-tag release automation remains
-in place; no v0.0.2 tag/release is created. The next milestone is v0.0.3 — Seeded
+**[Download v0.0.2 for Windows or Linux](https://github.com/ItsFoxxin/Dead_Circuit/releases/tag/v0.0.2).**
+The release includes game ZIPs, update notes, checksums and build provenance.
+Choose the Windows/Linux ZIP under Assets; GitHub's Source code archives are for
+development. The release pipeline passed native tests, exports and startup smoke
+on both OSes. v0.0.1's historical pre-release is preserved.
+
+The next milestone is v0.0.3 — Seeded
 Runs; its separate candidate is not included in this accepted v0.0.2 milestone.
 
 For setup, validation, tests, and exports, see [Development](docs/DEVELOPMENT.md).
