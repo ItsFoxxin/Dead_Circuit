@@ -19,8 +19,8 @@ tests exercise actual physics hitscan, wall occlusion, melee, multiple target
 candidates, and navigation pursuit. Gameplay tests exercise synthetic local input,
 gravity/grounding/wall collision, sprint, mouse-look limits, five-wave completion,
 death, pause, restart and discarded actor/timer state. Independent headless
-processes also compare fixture RNG sequences. These fixtures do not implement
-the authoritative gameplay RNG scheduled for v0.0.3.
+processes also compare fixture RNG sequences, retained alongside the v0.0.3
+authoritative gameplay RNG tests.
 
 Python harness regression tests verify failure detection for zero-exit engine
 errors, missing smoke markers, nonzero exits, and absent/empty/failed/pending
@@ -49,11 +49,26 @@ Content validation covers nested modifier/condition/trigger/effect schemas and
 the authored five-item catalog. Determinism tests verify acquisition-order-independent
 stats and fixed offers alongside the unchanged seeded fixtures.
 
+v0.0.3 adds production RunRandom bounds, reset, instance isolation, seed parsing,
+different-seed variation and pinned-engine compatibility. Real-session tests
+exercise five-wave replay, spawn placement, changed-seed combat reset, rejected
+command/pause/HUD RNG isolation, stable player-ID offer order, and keyboard seed
+controls. The determinism command keeps both original fixture probes and adds two
+independent full sandbox processes with different item preload orders. Their
+five-wave spawn/offer/build records must match, contain valid distinct/unowned
+choices, and consume the expected bounded choices.
+Harness regression tests reject divergent, empty or malformed records; reports
+include the actual authoritative rolls in determinism.json. Content validation
+also rejects out-of-range authored sandbox seeds. No CI gate is reduced.
+
 The gameplay-oriented requirements below remain mandatory when their systems
-are introduced. Authoritative seeded gameplay remains deferred to v0.0.3.
+are introduced. Reproduction applies to authoritative choices with the same seed,
+content/engine version, player roster and item selections, not physics or aim.
 Synthetic input and automated completion do not replace a real keyboard/mouse
 playthrough. v0.0.1's passed record is in COMBAT_SANDBOX.md; v0.0.2's Windows
 manual acceptance passed on 2026-10-16, recorded in ITEM_SYSTEM.md.
+The v0.0.3 dev candidate has its own pending checklist in SEEDED_RUNS.md;
+automated passes do not claim manual acceptance.
 
 ## Validation Layers (contracts)
 

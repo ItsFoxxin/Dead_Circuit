@@ -14,6 +14,7 @@ enum State { PREPARING, ACTIVE, DEAD, COMPLETED, SELECTING_ITEM }
 @export var item_catalog: Array[ItemDefinition] = []
 @export var local_player_id: int = 1
 @export var interactive: bool = true
+@export_range(0, 2147483647, 1) var run_seed: int = 12345
 
 var state: State = State.PREPARING
 var paused: bool = false
@@ -23,6 +24,8 @@ var local_player: CombatPlayer
 var actors: Node3D
 var damage_targets: Array[DamageableBody] = []
 var item_offers: Dictionary[int, ItemOffer] = {}
+var run_random: RunRandom = RunRandom.new()
+var enemy_spawn_order: Array[int] = []
 
 @onready var arena: CombatArena = $Arena
 @onready var waves: WaveManager = $Waves
@@ -37,12 +40,15 @@ func _ready() -> void:
 	waves.wave_cleared.connect(_on_wave_cleared)
 	hud.restart_requested.connect(restart_session)
 	hud.item_selected.connect(select_item)
+	hud.seed_requested.connect(restart_with_seed)
 	restart_session()
 
 
 func restart_session() -> void:
 	state = State.PREPARING
 	paused = false
+	run_random.reset(run_seed)
+	enemy_spawn_order.clear()
 	item_offers.clear()
 	damage_targets = []
 	waves.wait_for_reward = not item_catalog.is_empty()
@@ -90,10 +96,22 @@ func restart_session() -> void:
 	session_started.emit()
 
 
+func restart_with_seed(value: int) -> bool:
+	if value < 0 or value > RunRandom.MAX_SEED:
+		return false
+	run_seed = value
+	restart_session()
+	return true
+
+
 func _input(event: InputEvent) -> void:
 	if not interactive:
 		return
-	if event.is_action_pressed("restart") and (state in [State.DEAD, State.COMPLETED] or paused):
+	if (
+		event.is_action_pressed("restart")
+		and (state in [State.DEAD, State.COMPLETED] or paused)
+		and not (hud.seed_input.has_focus() or hud.seed_button.has_focus())
+	):
 		restart_session()
 		get_viewport().set_input_as_handled()
 	elif event.is_action_pressed("release_mouse") and state == State.ACTIVE:
@@ -125,11 +143,13 @@ func set_paused(value: bool) -> void:
 
 func _spawn_wave(_number: int, count: int) -> void:
 	var token: int = waves.session_token
+	var spawn_count: int = arena.enemy_spawns.get_child_count()
+	enemy_spawn_order = run_random.sample_indices(spawn_count, spawn_count)
 	for index: int in range(count):
 		var enemy: MeleeEnemy = enemy_scene.instantiate() as MeleeEnemy
 		enemy.players = players.duplicate()
 		actors.add_child(enemy)
-		enemy.global_position = arena.enemy_spawn(index)
+		enemy.global_position = arena.enemy_spawn(enemy_spawn_order[index % spawn_count])
 		var entity_id: int = enemy.get_instance_id()
 		enemies[entity_id] = enemy
 		damage_targets.append(enemy)
@@ -174,11 +194,16 @@ func _on_wave_cleared(number: int) -> void:
 	if state != State.ACTIVE:
 		return
 	state = State.SELECTING_ITEM
-	for player: CombatPlayer in players:
+	var ordered_players: Array[CombatPlayer] = players.duplicate()
+	ordered_players.sort_custom(
+		func(first: CombatPlayer, second: CombatPlayer) -> bool:
+			return first.player_id < second.player_id
+	)
+	for player: CombatPlayer in ordered_players:
 		player.disable_combat()
 		if not player.health.is_dead:
 			var offer: ItemOffer = ItemOffer.new(
-				item_catalog, player.items, waves.session_token, number
+				item_catalog, player.items, waves.session_token, number, run_random
 			)
 			if not offer.choices.is_empty():
 				item_offers[player.player_id] = offer
@@ -243,7 +268,7 @@ func _refresh_hud() -> void:
 		message = "PAUSED — Click to resume"
 	elif state == State.SELECTING_ITEM:
 		message = "CHOOSE ONE"
-	hud.refresh(local_player, waves, message)
+	hud.refresh(local_player, waves, message, run_random.seed)
 	var offer: ItemOffer = item_offers.get(local_player_id)
 	hud.show_offer(offer if state == State.SELECTING_ITEM else null)
 

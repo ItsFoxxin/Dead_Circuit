@@ -10,6 +10,11 @@ Promotion to main is approved; no tag/release is created by the closeout.
 Multiplayer remains unimplemented. The pinned foundation toolchain and CI gates
 are preserved.
 
+The v0.0.3 dev candidate is version 0.0.3, with manual acceptance pending.
+See [SEEDED_RUNS.md](SEEDED_RUNS.md) for
+seed controls, exact reproducibility limits and its own pending manual checklist.
+No v0.0.4 systems are implemented.
+
 ## Requirements and setup
 
 - Windows or Linux x86_64, Git, Python 3.12, and network access for first setup.
@@ -55,7 +60,7 @@ Use the venv Python executable in place of `python` below.
 | `python tools/dev.py validate` | All checks and all GUT suites |
 | `python tools/dev.py checks` | Import, format, lint, harness tests, content, headless launch |
 | `python tools/dev.py tests` | Import, unit/integration/gameplay launch and determinism tests |
-| `python tools/dev.py determinism` | Seeded fixture suite and two independent process probes |
+| `python tools/dev.py determinism` | RNG/ordering suite, two engine and two actual run process probes |
 | `python tools/dev.py content` | Import and content boundary validation |
 | `python tools/dev.py smoke` | Import and main-scene startup/clean exit |
 | `python tools/dev.py import` | Engine version check and headless editor import |
@@ -98,6 +103,8 @@ mechanics remain in game/. Prototype weapon/enemy/wave definitions and the arena
 remain in content/. Tools and test fixtures stay outside game/.
 Reusable item/modifier/event/effect mechanics live in game/items/; concrete items
 live in content/items/. Full roguelike run generation is not implemented.
+CombatSession owns the RunRandom in game/core/rng/. Offers and spawn rolls use
+that explicit authority; no global player/RNG singleton is introduced. See ADR 0006.
 Tests are organized into unit/, integration/, determinism/, gameplay/, fixtures/,
 and Python harness/.
 
@@ -142,7 +149,8 @@ does not modify main, merge PRs, deploy, or publish releases.
 
 The dedicated release.yml publishes only version-tag pushes. Ordinary branch
 pushes retain the existing CI behavior. VERSION and project.godot describe the
-current candidate (0.0.2); the existing manual v0.0.1 pre-release is untouched.
+current dev candidate (0.0.3); the existing manual v0.0.1
+pre-release is untouched.
 
 For each future milestone:
 

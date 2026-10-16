@@ -91,3 +91,16 @@ func test_authored_item_schema_and_catalog_are_valid() -> void:
 	var validator: ContentValidator = Validator.new()
 	assert_eq(validator.validate().size(), 0)
 	assert_eq(validator.definition_count, 8)
+
+
+func test_authored_sandbox_seed_must_fit_supported_input_range() -> void:
+	var packed: PackedScene = load("res://content/rooms/combat_sandbox.tscn") as PackedScene
+	var session: CombatSession = packed.instantiate() as CombatSession
+	session.run_seed = -1
+	var invalid: PackedScene = PackedScene.new()
+	assert_eq(invalid.pack(session), OK)
+	assert_eq(ResourceSaver.save(invalid, ROOT.path_join("rooms/invalid_seed.tscn")), OK)
+	session.free()
+	var errors: PackedStringArray = Validator.new().validate(ROOT)
+	assert_eq(errors.size(), 1)
+	assert_string_contains(errors[0], "Sandbox seed")

@@ -25,8 +25,13 @@ between-wave choices and build visibility. The project owner confirmed manual
 Windows acceptance on 2026-10-16 and approved promotion to main. See
 [Item System](docs/ITEM_SYSTEM.md) for rules and the acceptance record.
 v0.0.1's manual pre-release is preserved. Approved-tag release automation remains
-in place; no v0.0.2 tag/release is created. The next milestone is v0.0.3 — Seeded
-Runs; its separate candidate is not included in this accepted v0.0.2 milestone.
+in place; no v0.0.2 tag/release is created.
+
+The `dev` branch implements the **v0.0.3 — Seeded Runs candidate**: an
+authoritative session RNG, reproducible spawn rolls and item offers, a visible
+seed and explicit replay/change-seed controls. Its manual acceptance remains
+pending; the v0.0.2 approval does not approve this separate milestone. See
+[Seeded Runs](docs/SEEDED_RUNS.md). No v0.0.4 gameplay has begun.
 
 For setup, validation, tests, and exports, see [Development](docs/DEVELOPMENT.md).
 

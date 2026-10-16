@@ -77,7 +77,7 @@ prototype items, post-wave choices and build visibility are implemented. Automat
 tests cover composition, attribution, non-recursive explosions, healing, selection
 and reset. See [ITEM_SYSTEM.md](ITEM_SYSTEM.md) for exact rules and the manual gate.
 No v0.0.2 tag/release is created. Movement, combat feel, item balance and visuals
-remain prototype quality. v0.0.3 is the next milestone and has a separate local
+remain prototype quality. v0.0.3 is the next milestone and has a separate dev
 candidate; none of its gameplay is included in this v0.0.2 closeout.
 
 Goal:
@@ -98,6 +98,13 @@ Split Chamber and Volatile Rounds must interact without combination-specific cod
 
 ## v0.0.3 — Seeded Runs
 
+Status: Implemented candidate (`0.0.3`) for dev, pending manual verification.
+No main promotion, tag or release is approved for v0.0.3.
+Session-owned seeded RNG drives distinct item offers and enemy spawn-marker rolls.
+Seed display, validated input and replay reset are implemented. See
+[SEEDED_RUNS.md](SEEDED_RUNS.md) and ADR 0006 for contracts and the pending manual
+checklist. v0.0.2's acceptance and main promotion are separate from this candidate.
+
 Goal:
 
 Introduce authoritative deterministic run RNG.
@@ -111,6 +118,9 @@ Initial seed usage:
 Same seed should reproduce authoritative random choices where expected.
 
 ## v0.0.4 — Room Framework
+
+Status: Planned; not started. Revisit after v0.0.2 acceptance/main promotion and
+review/integration of the local v0.0.3 candidate.
 
 Goal:
 

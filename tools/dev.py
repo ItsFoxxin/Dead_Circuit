@@ -152,8 +152,46 @@ def determinism() -> None:
                                        if line.startswith("DETERMINISM_PROBE="))))
     if samples[0] != samples[1] or len(samples[0]) != 16:
         raise RuntimeError("Independent seeded fixture processes diverged")
+    run_samples = []
+    for index in range(2):
+        args = ["--script", "tests/fixtures/run_probe.gd"]
+        if index == 1:
+            args.extend(["--", "--reverse-item-load"])
+        output = engine_run(f"run-process-{index}", args,
+                            marker="RUN_CHOICES_PROBE=")
+        run_samples.append(json.loads(next(line.split("=", 1)[1] for line in output.splitlines()
+                                           if line.startswith("RUN_CHOICES_PROBE="))))
+    verify_run_samples(run_samples)
     (REPORTS / "determinism.json").write_text(json.dumps({"seed": 12345, "draws": samples[0],
-                                                         "processes_match": True}, indent=2) + "\n")
+                                                         "processes_match": True,
+                                                         "run_choices": run_samples[0],
+                                                         "run_processes_match": True}, indent=2) + "\n")
+
+
+def verify_run_samples(samples: list) -> None:
+    """Require complete, matching five-wave production rolls, not an empty probe."""
+    if len(samples) != 2 or samples[0] != samples[1]:
+        raise RuntimeError("Independent authoritative run processes diverged")
+    records = samples[0]
+    if not isinstance(records, list) or len(records) != 5:
+        raise RuntimeError("Incomplete authoritative run probe")
+    acquired = set()
+    for index, record in enumerate(records):
+        if not isinstance(record, dict):
+            raise RuntimeError("Invalid authoritative run record")
+        spawns = record.get("spawn_order", [])
+        choices = record.get("choices", [])
+        if (record.get("wave") != index + 1 or not isinstance(spawns, list)
+                or sorted(spawns) != list(range(12))
+                or not isinstance(choices, list) or not all(isinstance(item, str) for item in choices)
+                or len(choices) != (3, 3, 3, 2, 0)[index] or len(set(choices)) != len(choices)
+                or acquired.intersection(choices)
+                or record.get("draw_count") != (25, 39, 52, 64, 64)[index]):
+            raise RuntimeError("Invalid authoritative encounter/reward rolls")
+        if choices:
+            acquired.add(choices[0])
+        if record.get("build_order") != sorted(acquired):
+            raise RuntimeError("Invalid authoritative build ordering")
 
 
 def content() -> None:

@@ -1,5 +1,5 @@
 extends GutTest
-## Exercises seeded test fixtures only; gameplay RNG remains a later milestone.
+## Preserve the engine-level fixture alongside production RunRandom coverage.
 
 
 func test_equal_seeds_reproduce_choices() -> void:
