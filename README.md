@@ -10,7 +10,7 @@ The design takes inspiration from the escalating survival pressure of wave-based
 
 ## Current Status
 
-Dead Circuit has a Phase 0 (`v0.0.0`) development foundation: a minimal Godot
+Phase 0 (`v0.0.0 — Development Foundation`) is complete: a minimal Godot
 launch surface, typed GDScript, automated validation, and development exports.
 The Combat Sandbox has not been implemented.
 
