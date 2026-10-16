@@ -204,6 +204,29 @@ When a reproducible bug is fixed, add a test reproducing the failure when practi
 
 The test should fail before the fix and pass afterward.
 
+## Release verification
+
+release.yml adds approval and packaging around the existing foundation.yml gates;
+it does not replace or reduce any test, engine warning level, or smoke requirement.
+Tag format, both version files and origin/main ancestry are checked before the full
+validation → native tests → fresh native release exports sequence. Failed native
+Windows or Linux startup, missing packages/checksums, inconsistent provenance and
+corrupted archives prevent publication. Only the final job can write a release.
+
+Python harness coverage additionally tests semantic-tag/pre-release policy, annotated
+tags and main-history rejection in temporary local Git repositories, version
+mismatches, checksum corruption, missing native smoke/platforms, cross-run packages,
+ZIP member safety and Linux execute bits. Mocked GitHub tests cover existing-release
+refusal, remote-tag movement, preserving generated notes, upload failure, draft-only
+cleanup, incomplete assets, and pre-release/stable publication policy. Workflow
+structure tests preserve permissions, dependencies and ordinary dev/PR triggers.
+
+Use the documented release-dry-run Actions input to exercise native builds and
+packaging without a tag or release. Only this unpublished rehearsal bypasses tag/
+main ancestry; a tag push must satisfy those checks. Passing mocks/dry runs is not
+a claim that a live release was published. The first real publication remains a
+deliberate accepted-milestone tag. Never modify the manual v0.0.1 release as a test.
+
 ## Manual Playtesting
 
 Automated testing does not replace playtesting.

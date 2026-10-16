@@ -1,0 +1,46 @@
+name: Publish approved version
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch: # Always a dry run; never creates a tag or GitHub Release.
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  gates:
+    uses: ./.github/workflows/release-gates.yml
+    with:
+      tag: ${{ github.event_name == 'push' && github.ref_name || '' }}
+      dry-run: ${{ github.event_name != 'push' }}
+
+  publish:
+    name: Publish verified assets
+    needs: gates
+    if: github.event_name == 'push' && github.ref_type == 'tag'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.12'
+      - name: Refresh main history before publication
+        run: git fetch --no-tags origin +refs/heads/main:refs/remotes/origin/main
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: release-assets-${{ github.sha }}
+          path: build/release-assets
+      - name: Stage draft, verify uploaded assets, then publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ needs.gates.outputs.tag }}
+        run: python tools/publish_release.py --tag "$RELEASE_TAG"

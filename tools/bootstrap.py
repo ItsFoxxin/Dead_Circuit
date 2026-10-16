@@ -51,6 +51,7 @@ def extract(archive: Path, destination: Path, prefix: str = "") -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--templates", action="store_true")
+    parser.add_argument("--release-templates", action="store_true")
     args = parser.parse_args()
     system = platform.system()
     if platform.machine().lower() not in ("amd64", "x86_64") or system not in LOCK["godot"]:
@@ -63,11 +64,14 @@ def main() -> None:
     gut = LOCK["gut"]
     archive = download(f"https://codeload.github.com/bitwes/Gut/zip/{gut['commit']}", "gut.zip", gut["sha256"])
     extract(archive, ROOT / "addons/gut", f"Gut-{gut['commit']}/addons/gut/")
-    if args.templates:
+    if args.templates or args.release_templates:
         templates = LOCK["templates"]
         archive = download(f"{base}/{templates['asset']}", templates["asset"], templates["sha256"])
         with zipfile.ZipFile(archive) as source:
-            for name in ("windows_debug_x86_64.exe", "linux_debug.x86_64"):
+            names = ["windows_debug_x86_64.exe", "linux_debug.x86_64"] if args.templates else []
+            if args.release_templates:
+                names.extend(["windows_release_x86_64.exe", "linux_release.x86_64"])
+            for name in names:
                 target = TOOLS / "export_templates" / name
                 target.parent.mkdir(parents=True, exist_ok=True)
                 target.write_bytes(source.read("templates/" + name))

@@ -77,11 +77,16 @@ def git(*args: str) -> str:
     return subprocess.check_output(["git", *args], cwd=ROOT, text=True).strip()
 
 
-def metadata() -> dict:
+def metadata(build_type: str = "development", tag: str = "") -> dict:
     version = (ROOT / "VERSION").read_text().strip()
     project = (ROOT / "project.godot").read_text()
     if f'config/version="{version}"' not in project:
         raise RuntimeError("project.godot config/version must match VERSION")
+    if build_type not in ("development", "release"):
+        raise RuntimeError("Unknown build type")
+    if build_type == "release" and (tag != "v" + version or
+                                    not re.fullmatch(r"v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)", tag)):
+        raise RuntimeError("Release export requires a matching semantic version tag")
     engine_version = run("engine-version", [godot(), "--version"]).strip()
     if not engine_version.startswith(LOCK["godot_version"] + ".stable."):
         raise RuntimeError(f"Incorrect engine version: {engine_version}")
@@ -93,9 +98,14 @@ def metadata() -> dict:
         "engine_version": engine_version,
         "build_id": ".".join([os.environ.get("GITHUB_RUN_NUMBER", "local"),
                               os.environ.get("GITHUB_RUN_ATTEMPT", "1")]),
-        "build_type": "development",
+        "build_type": build_type,
+        "ci_run_id": os.environ.get("GITHUB_RUN_ID", "local"),
         "dirty": bool(git("status", "--porcelain")),
     }
+    if build_type == "release":
+        if data["dirty"]:
+            raise RuntimeError("Release export requires a clean working tree")
+        data["tag"] = tag
     target = ROOT / "game/core/utilities/build_metadata.json"
     target.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
     REPORTS.mkdir(exist_ok=True)
@@ -168,22 +178,25 @@ def verify_export_manifest(output: str) -> None:
         raise RuntimeError("Build provenance was not included in the export")
 
 
-def export_builds(target: str) -> None:
-    data = metadata()
+def export_builds(target: str, build_type: str = "development", tag: str = "") -> None:
+    data = metadata(build_type, tag)
     import_project()
     for name in ("windows", "linux") if target == "all" else (target,):
-        directory = ROOT / "build" / name
+        directory = ROOT / "build" / ("release-export" if build_type == "release" else "") / name
         directory.mkdir(parents=True, exist_ok=True)
         binary = directory / ("DeadCircuit.exe" if name == "windows" else "DeadCircuit.x86_64")
-        preset = "Windows Development" if name == "windows" else "Linux Development"
-        output = engine_run(f"export-{name}", ["--editor", "--export-debug", preset, str(binary)], timeout=600)
+        preset = ("Windows" if name == "windows" else "Linux") + (" Release" if build_type == "release" else " Development")
+        mode = "--export-release" if build_type == "release" else "--export-debug"
+        output = engine_run(f"export-{name}", ["--editor", mode, preset, str(binary)], timeout=600)
         verify_export_manifest(output)
         if not binary.exists() or binary.stat().st_size == 0:
             raise RuntimeError(f"Export missing: {binary}")
-        (directory / "build-metadata.json").write_text(json.dumps(data, indent=2) + "\n")
-        if name == ("windows" if platform.system() == "Windows" else "linux"):
+        native = name == ("windows" if platform.system() == "Windows" else "linux")
+        if native:
             run(f"export-smoke-{name}", [str(binary), "--headless", "--", "--smoke"],
                 engine=True, marker="DEAD_CIRCUIT_READY")
+        provenance = {**data, "platform": name, "native_smoke_passed": native}
+        (directory / "build-metadata.json").write_text(json.dumps(provenance, indent=2) + "\n")
         checksums = [f"{hashlib.sha256(path.read_bytes()).hexdigest()}  {path.name}"
                      for path in sorted(directory.iterdir()) if path.name != "SHA256SUMS.txt"]
         (directory / "SHA256SUMS.txt").write_text("\n".join(checksums) + "\n")
@@ -194,12 +207,14 @@ def main() -> int:
     parser.add_argument("command", choices=("validate", "checks", "tests", "determinism", "content",
                                             "smoke", "import", "style", "metadata", "export"))
     parser.add_argument("--platform", choices=("windows", "linux", "all"), default="all")
+    parser.add_argument("--build-type", choices=("development", "release"), default="development")
+    parser.add_argument("--tag", default="")
     args = parser.parse_args()
     successful = False
     failure = None
     try:
         if args.command == "export":
-            export_builds(args.platform)
+            export_builds(args.platform, args.build_type, args.tag)
         elif args.command == "style":
             check_style()
         else:
