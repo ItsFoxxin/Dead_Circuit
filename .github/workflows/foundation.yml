@@ -1,0 +1,107 @@
+name: Reusable foundation gates
+on:
+  workflow_call:
+    inputs:
+      development-builds:
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  validation:
+    name: Validation
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup
+      - name: Import, formatting, lint, harness, content and headless smoke
+        run: python tools/dev.py checks
+      - name: Upload validation reports
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: validation-reports
+          path: reports/
+          if-no-files-found: error
+          retention-days: 14
+
+  tests:
+    name: Tests (${{ matrix.os }})
+    needs: validation
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-2025]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup
+      - name: Unit, integration, gameplay launch and deterministic suites
+        run: python tools/dev.py tests
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: tests-${{ matrix.os }}
+          path: reports/
+          if-no-files-found: error
+          retention-days: 14
+
+  foundation-gate:
+    name: Foundation gate
+    needs: [validation, tests]
+    if: always()
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Require every validation and test job
+        env:
+          VALIDATION_RESULT: ${{ needs.validation.result }}
+          TEST_RESULT: ${{ needs.tests.result }}
+        run: test "$VALIDATION_RESULT" = success && test "$TEST_RESULT" = success
+
+  development-builds:
+    name: Development build (${{ matrix.platform }})
+    needs: foundation-gate
+    if: inputs.development-builds
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-2025
+            platform: windows
+          - os: ubuntu-24.04
+            platform: linux
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup
+        with:
+          templates: 'true'
+      - name: Export development build and smoke its native executable
+        run: python tools/dev.py export --platform ${{ matrix.platform }}
+      - name: Upload development build
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: DeadCircuit-${{ matrix.platform }}-${{ github.sha }}
+          path: build/${{ matrix.platform }}/
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload build reports
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: build-reports-${{ matrix.platform }}
+          path: reports/
+          if-no-files-found: error
+          retention-days: 14

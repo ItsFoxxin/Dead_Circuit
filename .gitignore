@@ -1,0 +1,11 @@
+.godot/
+.tools/
+.venv/
+addons/gut/
+build/
+reports/
+game/core/utilities/build_metadata.json
+*.tmp
+__pycache__/
+.pytest_cache/
+export_credentials.cfg

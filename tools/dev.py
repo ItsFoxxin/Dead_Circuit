@@ -1,0 +1,245 @@
+"""Shared local/CI harness: validate, test, and export the Phase 0 project."""
+
+import argparse
+import hashlib
+import json
+import os
+import platform
+import re
+import subprocess
+import sys
+import time
+import xml.etree.ElementTree as ET
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+REPORTS = ROOT / "reports"
+LOCK = json.loads((ROOT / "tools/toolchain.json").read_text())
+ENGINE_ERRORS = re.compile(r"^(?:SCRIPT ERROR|ERROR|USER ERROR):", re.MULTILINE)
+ANSI = re.compile(r"\x1b\[[0-?]*[ -/]*[@-~]")
+RESULTS: list[dict] = []
+
+
+def run(name: str, command: list[str], *, timeout: int = 180,
+        engine: bool = False, marker: str | None = None) -> str:
+    """Fail on engine errors even when Godot returns zero; preserve every log."""
+    REPORTS.mkdir(exist_ok=True)
+    print(f"[{name}] {' '.join(map(str, command))}", flush=True)
+    started = time.monotonic()
+    output = ""
+    success = False
+    try:
+        environment = os.environ.copy()
+        if engine:
+            # Keep editor/runtime user data local to this checkout, including in CI.
+            for variable in ("APPDATA", "XDG_DATA_HOME", "XDG_CONFIG_HOME", "XDG_CACHE_HOME"):
+                local = ROOT / ".tools/user-data" / variable.lower()
+                local.mkdir(parents=True, exist_ok=True)
+                environment[variable] = str(local)
+        result = subprocess.run(command, cwd=ROOT, stdout=subprocess.PIPE,
+                                stderr=subprocess.STDOUT, text=True, encoding="utf-8",
+                                errors="replace", timeout=timeout, check=False, env=environment)
+        output = ANSI.sub("", result.stdout)
+        print(output, end="", flush=True)
+        if result.returncode or (engine and ENGINE_ERRORS.search(output)):
+            raise RuntimeError(f"{name} failed (exit {result.returncode}); see reports/{name}.log")
+        if marker and marker not in output:
+            raise RuntimeError(f"{name} did not reach required marker: {marker}")
+        success = True
+        return output
+    except subprocess.TimeoutExpired as error:
+        output = (error.stdout or b"")
+        if isinstance(output, bytes):
+            output = output.decode("utf-8", errors="replace")
+        raise RuntimeError(f"{name} timed out after {timeout}s") from error
+    finally:
+        (REPORTS / f"{name}.log").write_text(output, encoding="utf-8")
+        RESULTS.append({"name": name, "passed": success,
+                        "duration_seconds": round(time.monotonic() - started, 3)})
+
+
+def godot() -> str:
+    asset = LOCK["godot"][platform.system()]["asset"]
+    name = asset.removesuffix(".zip")
+    if platform.system() == "Windows":
+        name = name.removesuffix(".exe") + "_console.exe"
+    path = ROOT / ".tools/godot" / name
+    if not path.exists():
+        raise RuntimeError("Toolchain missing; run python tools/bootstrap.py --templates")
+    return str(path)
+
+
+def engine_run(name: str, args: list[str], **kwargs: object) -> str:
+    return run(name, [godot(), "--headless", "--path", str(ROOT), *args], engine=True, **kwargs)
+
+
+def git(*args: str) -> str:
+    return subprocess.check_output(["git", *args], cwd=ROOT, text=True).strip()
+
+
+def metadata() -> dict:
+    version = (ROOT / "VERSION").read_text().strip()
+    project = (ROOT / "project.godot").read_text()
+    if f'config/version="{version}"' not in project:
+        raise RuntimeError("project.godot config/version must match VERSION")
+    engine_version = run("engine-version", [godot(), "--version"]).strip()
+    if not engine_version.startswith(LOCK["godot_version"] + ".stable."):
+        raise RuntimeError(f"Incorrect engine version: {engine_version}")
+    data = {
+        "version": version,
+        "commit_sha": git("rev-parse", "HEAD"),
+        "branch": os.environ.get("GITHUB_HEAD_REF") or os.environ.get("GITHUB_REF_NAME")
+                  or git("branch", "--show-current"),
+        "engine_version": engine_version,
+        "build_id": ".".join([os.environ.get("GITHUB_RUN_NUMBER", "local"),
+                              os.environ.get("GITHUB_RUN_ATTEMPT", "1")]),
+        "build_type": "development",
+        "dirty": bool(git("status", "--porcelain")),
+    }
+    target = ROOT / "game/core/utilities/build_metadata.json"
+    target.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+    REPORTS.mkdir(exist_ok=True)
+    (REPORTS / "build-metadata.json").write_text(target.read_text(), encoding="utf-8")
+    return data
+
+
+def check_style() -> None:
+    files = sorted(str(path.relative_to(ROOT)) for directory in ("game", "tests", "tools")
+                   for path in (ROOT / directory).rglob("*.gd"))
+    run("format", [sys.executable, "-m", "gdtoolkit.formatter", "--check", *files])
+    run("lint", [sys.executable, "-m", "gdtoolkit.linter", *files])
+
+
+def import_project() -> None:
+    engine_run("import", ["--editor", "--import"], timeout=300)
+
+
+def test_suite(suite: str) -> None:
+    report = REPORTS / f"{suite}.xml"
+    report.unlink(missing_ok=True)
+    engine_run(suite, ["--script", "addons/gut/gut_cmdln.gd", "-gconfig=",
+                      f"-gdir=res://tests/{suite}", "-ginclude_subdirs", "-gexit",
+                      "-gdisable_colors", f"-gjunit_xml_file={report}"], timeout=300)
+    verify_junit(report)
+
+
+def verify_junit(path: Path) -> None:
+    if not path.exists():
+        raise RuntimeError(f"Test runner did not produce {path}")
+    root = ET.parse(path).getroot()
+    cases = list(root.iter("testcase"))
+    if not cases or any(list(root.iter(tag)) for tag in ("failure", "error", "skipped")):
+        raise RuntimeError(f"Empty, failed, or pending test suite: {path}")
+
+
+def determinism() -> None:
+    test_suite("determinism")
+    samples = []
+    for index in range(2):
+        output = engine_run(f"seed-process-{index}", ["--script", "tests/fixtures/seed_probe.gd"],
+                            marker="DETERMINISM_PROBE=")
+        samples.append(json.loads(next(line.split("=", 1)[1] for line in output.splitlines()
+                                       if line.startswith("DETERMINISM_PROBE="))))
+    if samples[0] != samples[1] or len(samples[0]) != 16:
+        raise RuntimeError("Independent seeded fixture processes diverged")
+    (REPORTS / "determinism.json").write_text(json.dumps({"seed": 12345, "draws": samples[0],
+                                                         "processes_match": True}, indent=2) + "\n")
+
+
+def content() -> None:
+    engine_run("content", ["--script", "tools/validate_content.gd"], marker="CONTENT_VALIDATION_OK")
+
+
+def smoke() -> None:
+    engine_run("smoke", ["--", "--smoke"], marker="DEAD_CIRCUIT_READY")
+
+
+def harness_tests() -> None:
+    run("harness", [sys.executable, "-m", "pytest", "tests/harness", "-q",
+                    "--basetemp=reports/pytest-tmp", "--junitxml=reports/harness.xml"])
+
+
+def verify_export_manifest(output: str) -> None:
+    paths = re.findall(r"Storing File: (res://\S+)", output)
+    forbidden = ("tests/", "tools/", "addons/", "docs/", ".github/", "reports/", "build/", ".gutconfig.json")
+    if any(path.removeprefix("res://").startswith(forbidden) for path in paths):
+        raise RuntimeError("Development-only files leaked into the export")
+    if "res://game/core/utilities/build_metadata.json" not in paths:
+        raise RuntimeError("Build provenance was not included in the export")
+
+
+def export_builds(target: str) -> None:
+    data = metadata()
+    import_project()
+    for name in ("windows", "linux") if target == "all" else (target,):
+        directory = ROOT / "build" / name
+        directory.mkdir(parents=True, exist_ok=True)
+        binary = directory / ("DeadCircuit.exe" if name == "windows" else "DeadCircuit.x86_64")
+        preset = "Windows Development" if name == "windows" else "Linux Development"
+        output = engine_run(f"export-{name}", ["--editor", "--export-debug", preset, str(binary)], timeout=600)
+        verify_export_manifest(output)
+        if not binary.exists() or binary.stat().st_size == 0:
+            raise RuntimeError(f"Export missing: {binary}")
+        (directory / "build-metadata.json").write_text(json.dumps(data, indent=2) + "\n")
+        if name == ("windows" if platform.system() == "Windows" else "linux"):
+            run(f"export-smoke-{name}", [str(binary), "--headless", "--", "--smoke"],
+                engine=True, marker="DEAD_CIRCUIT_READY")
+        checksums = [f"{hashlib.sha256(path.read_bytes()).hexdigest()}  {path.name}"
+                     for path in sorted(directory.iterdir()) if path.name != "SHA256SUMS.txt"]
+        (directory / "SHA256SUMS.txt").write_text("\n".join(checksums) + "\n")
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("command", choices=("validate", "checks", "tests", "determinism", "content",
+                                            "smoke", "import", "style", "metadata", "export"))
+    parser.add_argument("--platform", choices=("windows", "linux", "all"), default="all")
+    args = parser.parse_args()
+    successful = False
+    failure = None
+    try:
+        if args.command == "export":
+            export_builds(args.platform)
+        elif args.command == "style":
+            check_style()
+        else:
+            metadata()
+            if args.command in ("validate", "checks", "import", "tests", "determinism", "content", "smoke"):
+                import_project()
+            if args.command in ("validate", "checks"):
+                check_style()
+                harness_tests()
+                content()
+                smoke()
+            if args.command in ("validate", "tests"):
+                for suite in ("unit", "integration", "gameplay"):
+                    test_suite(suite)
+                determinism()
+            elif args.command == "determinism":
+                determinism()
+            elif args.command == "content":
+                content()
+            elif args.command == "smoke":
+                smoke()
+        successful = True
+        return 0
+    except (RuntimeError, OSError, ET.ParseError, subprocess.CalledProcessError) as error:
+        failure = str(error)
+        print(str(error), file=sys.stderr)
+        return 1
+    finally:
+        REPORTS.mkdir(exist_ok=True)
+        summary = {"command": args.command, "passed": successful, "failure": failure, "steps": RESULTS}
+        (REPORTS / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")
+        if destination := os.environ.get("GITHUB_STEP_SUMMARY"):
+            with Path(destination).open("a", encoding="utf-8") as output:
+                output.write(f"### Dead Circuit {args.command}: {'passed' if successful else 'failed'}\n\n")
+                output.write("| Step | Result | Seconds |\n| --- | --- | --- |\n")
+                for result in RESULTS:
+                    output.write(f"| {result['name']} | {'pass' if result['passed'] else 'fail'} | {result['duration_seconds']} |\n")
+                if failure:
+                    output.write(f"\nFailure: {failure}\n")
+
+
+if __name__ == "__main__":
+    sys.exit(main())
