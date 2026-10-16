@@ -1,0 +1,7 @@
+{
+    "dirs": ["res://tests/unit", "res://tests/integration", "res://tests/determinism", "res://tests/gameplay"],
+    "include_subdirs": true,
+    "should_exit": true,
+    "junit_xml_file": "res://reports/gut.xml",
+    "junit_xml_timestamp": false
+}

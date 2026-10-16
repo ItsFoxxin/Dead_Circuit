@@ -6,7 +6,11 @@ Every early version should introduce a permanent system while leaving the game i
 
 Prototype work should become the foundation of the real game wherever practical.
 
-## v0.0.0 — Repository Foundation
+## v0.0.0 — Development Foundation
+
+Status: Complete. The foundation at `13c00c2` passed local and native Windows/Linux
+CI validation and exports. Its Windows CI artifact was manually launched successfully.
+Phase 0 is closed; the next implementation milestone is the v0.0.1 candidate.
 
 Goal:
 

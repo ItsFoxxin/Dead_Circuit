@@ -8,7 +8,30 @@ Dead Circuit should build automated verification alongside gameplay systems.
 
 The goal is to detect regressions before they become difficult to isolate.
 
-## Validation Layers
+## Executable Phase 0 Harness
+
+Run `python tools/dev.py validate` using the development venv after bootstrap.
+See [DEVELOPMENT.md](DEVELOPMENT.md) for installation and individual commands.
+GUT suites cover build metadata and content validation (unit), scene lifecycle
+and instance isolation (integration), a main-scene launch path (future gameplay
+test location), and seeded test fixtures (determinism). Independent headless
+processes also compare fixture RNG sequences. These fixtures do not implement
+the authoritative gameplay RNG scheduled for v0.0.3.
+
+Python harness regression tests verify failure detection for zero-exit engine
+errors, missing smoke markers, nonzero exits, and absent/empty/failed/pending
+JUnit reports. Content validation reports zero schemas/definitions in Phase 0
+and rejects unregistered content. It does not yet validate gameplay semantics.
+
+CI runs validation before native Windows/Linux test suites, then permits dev
+build exports. Each native exported executable must reach the launch marker and
+exit cleanly before its artifact is uploaded. Logs, JUnit XML, JSON summaries,
+build metadata and checksum files are preserved in Actions artifacts.
+
+The gameplay-oriented required tests below remain mandatory when their systems
+are introduced. Phase 0 does not add combat or run behavior to satisfy examples.
+
+## Validation Layers (contracts)
 
 ### Formatting
 
