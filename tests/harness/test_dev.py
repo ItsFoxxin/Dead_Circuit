@@ -107,3 +107,43 @@ def test_incomplete_or_invalid_production_run_probe_fails(failure):
         del records[0]["choices"]
     with pytest.raises(RuntimeError, match="Incomplete|Invalid"):
         dev.verify_run_samples([records, copy.deepcopy(records)])
+
+
+def room_probe_fixture():
+    return {"rooms": ["prototype_start", "prototype_combat", "prototype_treasure", "prototype_boss"],
+            "waves": run_probe_fixture(), "completed": True, "draw_count": 64,
+            "build": list("abcde"), "restart": {"room": "prototype_start", "draw_count": 0,
+                "items": 0, "health": 100, "magazine": 12, "reserve": 240}}
+
+
+def test_complete_matching_room_routes_and_clean_restart_pass():
+    record = room_probe_fixture()
+    dev.verify_room_samples([record, copy.deepcopy(record)])
+
+
+@pytest.mark.parametrize("failure", ["diverged", "missing-room", "incomplete", "stale-build",
+                                     "stale-ammo", "rng-reset", "missing-wave", "missing-item"])
+def test_incomplete_room_routes_or_leaked_restart_state_fail(failure):
+    record = room_probe_fixture()
+    if failure == "diverged":
+        changed = copy.deepcopy(record)
+        changed["waves"][0]["spawn_order"].reverse()
+        with pytest.raises(RuntimeError, match="diverged"):
+            dev.verify_room_samples([record, changed])
+        return
+    if failure == "missing-room":
+        record["rooms"].pop()
+    elif failure == "incomplete":
+        record["completed"] = False
+    elif failure == "stale-build":
+        record["restart"]["items"] = 1
+    elif failure == "stale-ammo":
+        record["restart"]["magazine"] = 11
+    elif failure == "rng-reset":
+        record["draw_count"] = 0
+    elif failure == "missing-wave":
+        record["waves"].pop()
+    else:
+        record["build"].pop()
+    with pytest.raises(RuntimeError, match="Incomplete"):
+        dev.verify_room_samples([record, copy.deepcopy(record)])

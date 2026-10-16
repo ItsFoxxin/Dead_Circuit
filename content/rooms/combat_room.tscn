@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://content/rooms/greybox_room.tscn" id="1"]
+
+[node name="CombatRoom" instance=ExtResource("1")]
+
+[node name="RoomRole" type="Label3D" parent="."]
+position = Vector3(0, 5, -18)
+text = "Combat Room"
+font_size = 80
+outline_size = 14

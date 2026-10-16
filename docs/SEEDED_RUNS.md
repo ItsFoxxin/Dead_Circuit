@@ -1,9 +1,9 @@
 # Dead Circuit — v0.0.3 Seeded Runs
 
-Status: Implemented candidate (`0.0.3`) for dev, pending manual acceptance.
-The project owner accepted v0.0.2 on 2026-10-16 and authorized its promotion to main
-before integrating this separate candidate into dev. v0.0.2 approval does not
-approve v0.0.3. No tag or release is created by this integration.
+Status: Complete and accepted (`0.0.3`). The project owner confirmed acceptance
+on 2026-10-16 and explicitly authorized promotion to main and a release.
+This acceptance is separate from v0.0.2. Seeded runs retain prototype movement,
+combat, item balance and presentation; those aspects are not finalized.
 
 ## Implemented boundary
 
@@ -74,10 +74,10 @@ Rapid Mechanism after wave one, Volatile Rounds after wave two, then Split Chamb
 after wave three for the synergy check. These are pinned development fixtures,
 not balance or final-content promises.
 
-## Manual acceptance — pending
+## Manual acceptance — PASSED
 
-The separate v0.0.2 Windows artifact passed owner acceptance on 2026-10-16.
-Test the v0.0.3 development artifact before approving its promotion to main:
+The project owner accepted v0.0.3 on 2026-10-16 and approved main promotion and
+release. The manual acceptance target is retained below for repeat testing:
 
 1. Launch and confirm seed 12345, combat/HUD and the first reward pause work.
 2. Note offers and choose a repeatable item path through all five waves.
@@ -94,4 +94,5 @@ Test the v0.0.3 development artifact before approving its promotion to main:
 Local exports and automated tests do not replace this keyboard/mouse playthrough
 or native Linux execution. Dev CI continues to require native builds and startup.
 Movement/combat remain prototype quality; no polish or v0.0.4 Room Framework is
-implemented by this milestone. Main promotion and tags require the owner's later review.
+included in this milestone. Native Linux smoke is automated, not a manual Linux
+gameplay acceptance claim. The owner authorized v0.0.4 to follow onto dev for testing.

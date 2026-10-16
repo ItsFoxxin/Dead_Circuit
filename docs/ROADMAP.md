@@ -76,9 +76,10 @@ Per-player item builds, ordered modifiers, source-aware triggers/effects, five
 prototype items, post-wave choices and build visibility are implemented. Automated
 tests cover composition, attribution, non-recursive explosions, healing, selection
 and reset. See [ITEM_SYSTEM.md](ITEM_SYSTEM.md) for exact rules and the manual gate.
-No v0.0.2 tag/release is created. Movement, combat feel, item balance and visuals
-remain prototype quality. v0.0.3 is the next milestone and has a separate dev
-candidate; none of its gameplay is included in this v0.0.2 closeout.
+The [v0.0.2 pre-release](https://github.com/ItsFoxxin/Dead_Circuit/releases/tag/v0.0.2)
+contains verified Windows/Linux game ZIPs and update notes. Movement, combat feel,
+item balance and visuals remain prototype quality. Later milestone gameplay is
+not included in that release.
 
 Goal:
 
@@ -98,12 +99,12 @@ Split Chamber and Volatile Rounds must interact without combination-specific cod
 
 ## v0.0.3 — Seeded Runs
 
-Status: Implemented candidate (`0.0.3`) for dev, pending manual verification.
-No main promotion, tag or release is approved for v0.0.3.
+Status: Complete and accepted (`0.0.3`). Owner acceptance **PASSED** on 2026-10-16;
+main promotion and release are explicitly approved.
 Session-owned seeded RNG drives distinct item offers and enemy spawn-marker rolls.
 Seed display, validated input and replay reset are implemented. See
-[SEEDED_RUNS.md](SEEDED_RUNS.md) and ADR 0006 for contracts and the pending manual
-checklist. v0.0.2's acceptance and main promotion are separate from this candidate.
+[SEEDED_RUNS.md](SEEDED_RUNS.md) and ADR 0006 for contracts and the acceptance
+record. v0.0.4 Room Framework is the next active milestone.
 
 Goal:
 
@@ -119,8 +120,12 @@ Same seed should reproduce authoritative random choices where expected.
 
 ## v0.0.4 — Room Framework
 
-Status: Planned; not started. Revisit after v0.0.2 acceptance/main promotion and
-review/integration of the local v0.0.3 candidate.
+Status: Implemented dev candidate (`0.0.4`), pending manual verification.
+Authorized for dev after v0.0.3's acceptance/main promotion. An authored
+start → five-wave combat → treasure → boss-staging route preserves player state
+and seeded authority between rooms and resets the entire run on Replay. Boss
+combat remains v0.0.5 work. See [ROOM_FRAMEWORK.md](ROOM_FRAMEWORK.md) and ADR 0008.
+v0.0.4 is not approved for main or a release until its own manual acceptance.
 
 Goal:
 

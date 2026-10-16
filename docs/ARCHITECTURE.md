@@ -289,3 +289,18 @@ uses the same reset path. This supersedes the fixed spawn/offer policies above.
 Content still supplies the arena, item catalog and five-wave definition. There is
 no room-transition framework, procedural graph, saved run or networking. See
 [ADR 0006](adr/0006-authoritative-seeded-run-choices.md).
+
+## v0.0.4 room lifetime boundary
+
+RoomRunSession owns the authoritative RNG and RoomProgress for an authored route,
+injecting the same sequence into its persistent CombatSession. Room changes replace
+arena/encounter state while retaining explicit player actors, health, weapons and
+builds. Full restart recreates actors and resets the route/RNG. The standalone
+CombatSession retains its original independent lifetime for focused tests.
+RoomDefinition/RunDefinition Resources compose concrete content without core room
+IDs. Exit authority validates player identity, proximity, locks and generation
+tokens. Treasure reuses the existing per-player offer path; boss is a staging role
+only. This supersedes the single-arena boundary above without changing item,
+ownership or determinism contracts. See [ADR 0008](adr/0008-authored-rooms-and-persistent-run-actors.md)
+and [ROOM_FRAMEWORK.md](ROOM_FRAMEWORK.md). Procedural graphs, boss encounters and
+networking remain unimplemented.

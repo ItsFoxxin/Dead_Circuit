@@ -12,7 +12,7 @@ The design takes inspiration from the escalating survival pressure of wave-based
 
 Phase 0 (`v0.0.0 — Development Foundation`) is complete: a minimal Godot
 launch surface, typed GDScript, automated validation, and development exports.
-The `main` branch contains the completed and accepted **v0.0.1 — Combat Sandbox**: first-person
+The completed and accepted **v0.0.1 — Combat Sandbox** introduced first-person
 movement, one hitscan pistol, pursuing melee zombies, five waves, HUD, death and
 clean restart. Windows development artifact manual acceptance **PASSED** on
 2026-10-16. Movement and combat are accepted as an early prototype foundation;
@@ -24,14 +24,22 @@ five unique items, per-player builds, composable modifiers and kill effects,
 between-wave choices and build visibility. The project owner confirmed manual
 Windows acceptance on 2026-10-16 and approved promotion to main. See
 [Item System](docs/ITEM_SYSTEM.md) for rules and the acceptance record.
-v0.0.1's manual pre-release is preserved. Approved-tag release automation remains
-in place; no v0.0.2 tag/release is created.
+The [v0.0.2 release](https://github.com/ItsFoxxin/Dead_Circuit/releases/tag/v0.0.2)
+provides Windows/Linux game ZIPs, update notes, checksums and build provenance.
+The historical v0.0.1 release is preserved.
 
-The `dev` branch implements the **v0.0.3 — Seeded Runs candidate**: an
+**v0.0.3 — Seeded Runs is complete and accepted**: an
 authoritative session RNG, reproducible spawn rolls and item offers, a visible
-seed and explicit replay/change-seed controls. Its manual acceptance remains
-pending; the v0.0.2 approval does not approve this separate milestone. See
-[Seeded Runs](docs/SEEDED_RUNS.md). No v0.0.4 gameplay has begun.
+seed and explicit replay/change-seed controls. The owner accepted it on 2026-10-16
+and authorized main promotion and release. See [Seeded Runs](docs/SEEDED_RUNS.md).
+
+**[Download accepted game releases for Windows/Linux](https://github.com/ItsFoxxin/Dead_Circuit/releases).**
+Choose a game ZIP under Assets; Source code archives are for development.
+
+The **v0.0.4 — Room Framework dev candidate** adds an authored start/combat/
+treasure/boss-staging route, persistent player state and whole-run restart.
+Manual verification is pending. Actual boss combat remains v0.0.5 work. See
+[Room Framework](docs/ROOM_FRAMEWORK.md). v0.0.4 is not included in v0.0.3's release.
 
 For setup, validation, tests, and exports, see [Development](docs/DEVELOPMENT.md).
 

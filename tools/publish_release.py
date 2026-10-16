@@ -36,10 +36,12 @@ def verify_remote_tag(repo: str, tag: str, sha: str) -> None:
         raise RuntimeError("Remote tag moved or does not refer to the validated commit")
 
 
-def publish(repo: str, tag: str, directory: Path) -> None:
+def publish(repo: str, tag: str, directory: Path, *, expected_commit: str = "") -> None:
     if re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", repo) is None:
         raise RuntimeError("Expected owner/repository")
     plan = release.validate(tag)
+    if expected_commit and plan["commit_sha"] != expected_commit:
+        raise RuntimeError("Source checkout differs from the explicitly approved commit")
     data = release.verify_assets(tag, directory, plan["commit_sha"])
     if api(repo, f"releases/tags/{tag}", missing_ok=True) is not None:
         raise RuntimeError(f"Release {tag} already exists; refusing to change it or its assets")
@@ -52,6 +54,9 @@ def publish(repo: str, tag: str, directory: Path) -> None:
              f"- Status: {'Pre-release (pre-1.0 prototype milestone)' if plan['prerelease'] else 'Stable release'}\n"
              "- See build-metadata.json and SHA256SUMS.txt for provenance and verification.\n\n"
              + generated["body"])
+    authored_notes = release.ROOT / "docs/release-notes" / f"{tag}.md"
+    if authored_notes.is_file():
+        notes = authored_notes.read_text(encoding="utf-8").strip() + "\n\n---\n\n" + notes
     latest = "false" if plan["prerelease"] else "legacy"
     created = api(repo, "releases", method="POST", payload={
         "tag_name": tag, "target_commitish": plan["commit_sha"], "name": f"Dead Circuit {tag}",
@@ -93,11 +98,27 @@ def main() -> int:
     parser.add_argument("--tag", required=True)
     parser.add_argument("--input", type=Path, default=release.ROOT / "build/release-assets")
     parser.add_argument("--repo", default=os.environ.get("GITHUB_REPOSITORY", ""))
+    parser.add_argument("--approved-commit", default="")
+    parser.add_argument("--source-root", type=Path)
     args = parser.parse_args()
     try:
-        if os.environ.get("GITHUB_EVENT_NAME") != "push" or os.environ.get("GITHUB_REF") != f"refs/tags/{args.tag}":
+        if args.approved_commit:
+            expected_workflow = f"{args.repo}/.github/workflows/publish-main.yml@refs/heads/main"
+            if (os.environ.get("GITHUB_EVENT_NAME") != "workflow_dispatch"
+                    or os.environ.get("GITHUB_REF") != "refs/heads/main"
+                    or os.environ.get("GITHUB_WORKFLOW_REF") != expected_workflow):
+                raise RuntimeError("Explicit publication requires the accepted-main workflow on main")
+            event = json.loads(Path(os.environ["GITHUB_EVENT_PATH"]).read_text(encoding="utf-8"))
+            if event.get("inputs") != {"tag": args.tag, "commit": args.approved_commit}:
+                raise RuntimeError("Publication differs from the dispatched tag/commit approval")
+            if re.fullmatch(r"[0-9a-f]{40}", args.approved_commit) is None or args.source_root is None:
+                raise RuntimeError("Explicit publication requires a full commit SHA and source checkout")
+            # Run trusted workflow-revision tooling against the separately checked-out game revision.
+            release.ROOT = args.source_root.resolve(strict=True)
+        elif (args.source_root is not None or os.environ.get("GITHUB_EVENT_NAME") != "push"
+              or os.environ.get("GITHUB_REF") != f"refs/tags/{args.tag}"):
             raise RuntimeError("Publication is allowed only for the triggering version-tag push")
-        publish(args.repo, args.tag, args.input)
+        publish(args.repo, args.tag, args.input, expected_commit=args.approved_commit)
         return 0
     except (RuntimeError, OSError, ValueError, KeyError, subprocess.CalledProcessError) as error:
         print(f"Release publication failed: {error}", file=sys.stderr)

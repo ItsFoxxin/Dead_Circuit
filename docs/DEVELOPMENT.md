@@ -6,14 +6,18 @@ see [COMBAT_SANDBOX.md](COMBAT_SANDBOX.md) for controls, implementation boundari
 and the passed Windows artifact acceptance record. Its GitHub pre-release was
 published manually and is preserved. v0.0.2 — Item / Synergy Proof is complete and
 manually accepted on 2026-10-16; see ITEM_SYSTEM.md for its acceptance record.
-Promotion to main is approved; no tag/release is created by the closeout.
+The [v0.0.2 pre-release](https://github.com/ItsFoxxin/Dead_Circuit/releases/tag/v0.0.2)
+provides native-validated Windows/Linux game ZIPs, notes, checksums and provenance.
 Multiplayer remains unimplemented. The pinned foundation toolchain and CI gates
 are preserved.
 
-The v0.0.3 dev candidate is version 0.0.3, with manual acceptance pending.
+v0.0.3 is complete and accepted by the owner on 2026-10-16, with main promotion
+and release authorized. Its version remains 0.0.3.
 See [SEEDED_RUNS.md](SEEDED_RUNS.md) for
-seed controls, exact reproducibility limits and its own pending manual checklist.
-No v0.0.4 systems are implemented.
+seed controls, exact reproducibility limits and the acceptance record.
+The owner authorized the separate v0.0.4 candidate for dev after v0.0.3 promotion.
+Current dev metadata is 0.0.4, with manual acceptance pending. See
+[ROOM_FRAMEWORK.md](ROOM_FRAMEWORK.md). It is not part of the accepted v0.0.3 release.
 
 ## Requirements and setup
 
@@ -47,7 +51,7 @@ python3.12 -m venv .venv
 Omit `--templates` when only editing/testing. The bootstrap verifies SHA-256
 checksums of both new and cached downloads before extracting. Dependencies stay
 local and ignored; GUT's upstream MIT license is retained in addons/gut/.
-Press Run Project in Godot to open the combat sandbox. No editor plugin
+Press Run Project in Godot to open the authored room route. No editor plugin
 needs to be enabled to run command-line tests. The GUT plugin may optionally be
 enabled locally for interactive test discovery.
 
@@ -103,8 +107,10 @@ mechanics remain in game/. Prototype weapon/enemy/wave definitions and the arena
 remain in content/. Tools and test fixtures stay outside game/.
 Reusable item/modifier/event/effect mechanics live in game/items/; concrete items
 live in content/items/. Full roguelike run generation is not implemented.
-CombatSession owns the RunRandom in game/core/rng/. Offers and spawn rolls use
-that explicit authority; no global player/RNG singleton is introduced. See ADR 0006.
+RoomRunSession owns the RunRandom in game/core/rng/ for the authored route and
+injects it into the persistent CombatSession. Standalone CombatSession still owns
+its own attempt RNG. Offers and spawn rolls use that explicit authority; no global
+player/RNG singleton is introduced. See ADRs 0006 and 0008.
 Tests are organized into unit/, integration/, determinism/, gameplay/, fixtures/,
 and Python harness/.
 
@@ -149,7 +155,7 @@ does not modify main, merge PRs, deploy, or publish releases.
 
 The dedicated release.yml publishes only version-tag pushes. Ordinary branch
 pushes retain the existing CI behavior. VERSION and project.godot describe the
-current dev candidate (0.0.3); the existing manual v0.0.1
+current dev candidate (0.0.4); the existing manual v0.0.1
 pre-release is untouched.
 
 For each future milestone:
@@ -160,6 +166,19 @@ For each future milestone:
 4. Confirm VERSION and project.godot application/config/version agree.
 5. Create an annotated tag on the accepted main commit and push it deliberately.
 6. Wait for release.yml to validate, test, build, package and publish successfully.
+
+The owner requests a release with update notes as part of each accepted main
+milestone promotion. In GitHub Actions, **Publish accepted main milestone → Run
+workflow** on **main** accepts the approved version tag and full accepted commit
+SHA. It creates the annotated tag and runs the same complete native release gates
+and publisher. No local Git authentication or additional secret is needed.
+Use the exact accepted main-history SHA, even when newer development exists.
+This action publishes; **Publish approved version → Run workflow** remains a dry
+run. Ordinary main/dev pushes remain validation-only. See ADR 0007. Existing
+releases are never overwritten; failed gates can resume using a matching tag.
+The manual publisher runs trusted tooling from the workflow revision against a
+separate checkout of the approved game commit. It verifies the original dispatch
+inputs as well as source/tag/main ancestry and same-run native asset provenance.
 
 Example for a future **accepted** v0.0.2, after its version files are updated:
 
@@ -179,6 +198,10 @@ All v0.x.y releases are GitHub pre-releases, permanently, and are never marked a
 the latest stable release. v1.0.0 and higher default to stable releases with normal
 GitHub latest selection. Titles are `Dead Circuit <tag>`. GitHub-generated release
 notes are preserved with verified tag, commit, engine, platform and status details.
+When docs/release-notes/<tag>.md exists at the approved source commit, its authored
+notes lead the release body and generated notes/provenance follow. For v0.0.3 the
+owner requested v0.0.1's layout: title/intro, Included, Known Limitations and Next
+Milestone, omitting Validation. Tests and reports remain required CI gates.
 
 release-gates.yml reuses the unchanged foundation validation/test gates and fresh
 native exports. Release builds use matching pinned release templates and Godot's

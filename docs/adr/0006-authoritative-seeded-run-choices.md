@@ -1,6 +1,6 @@
 # ADR 0006: Session-owned seeded choices and explicit replay
 
-- Status: Accepted for the v0.0.3 candidate; manual acceptance pending
+- Status: Accepted; v0.0.3 owner acceptance passed on 2026-10-16
 - Date: 2026-10-16
 - Supersedes: ADR 0003's ordered spawn selection and ADR 0005's fixed offer policy
 
@@ -58,8 +58,8 @@ detail; deliberate engine/content changes require fixture review.
 Keep the original engine fixture and add production RNG tests, real-session replay,
 separate-player ordering and independent-process five-wave probes with different
 item preload orders. Existing CI
-uses the extended harness without workflow or gate changes. v0.0.2's passed manual
-acceptance remains separate from this v0.0.3 candidate's pending manual gate.
+uses the extended harness without workflow or gate changes. v0.0.3's separate
+owner acceptance passed on 2026-10-16, authorizing main promotion and release.
 No networking, room transitions, procedural maps, new items or v0.0.4 systems are
 introduced. All manual acceptance remains explicit.
 
