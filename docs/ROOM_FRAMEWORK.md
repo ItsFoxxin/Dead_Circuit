@@ -1,8 +1,10 @@
 # v0.0.4 — Room Framework
 
-Status: Implemented dev candidate; manual acceptance pending. The owner accepted
-v0.0.3 on 2026-10-16 for main/release and authorized v0.0.4 to follow onto dev.
-v0.0.4 is not approved for main, a tag or release until its own acceptance.
+Status: Complete and accepted. On 2026-10-16 the owner instructed both
+milestones to move up one step: v0.0.4 to main/release and v0.0.5 to dev.
+This records owner milestone approval; the checklist below remains the reference
+for the accepted scope and further regression testing. It does not finalize
+movement/combat feel, balance, AI or presentation. v0.0.6 has not started.
 
 ## Playable route
 
@@ -55,7 +57,7 @@ processes run the complete room route with different item preload orders, compar
 all five combat waves and the final build/RNG consumption, then verify a clean
 whole-run restart. Reports remain in reports/ and the existing CI artifact paths.
 
-## Manual acceptance — pending
+## Owner acceptance — approved 2026-10-16
 
 Use the Windows dev artifact after CI validation (or a local development build):
 

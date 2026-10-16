@@ -1,6 +1,6 @@
 # ADR 0008: Authored rooms and persistent run actors
 
-- Status: Accepted for the v0.0.4 dev candidate; manual acceptance pending
+- Status: Accepted; owner approved v0.0.4 main promotion/release on 2026-10-16
 - Date: 2026-10-16
 - Scope: Room Framework, not procedural generation or boss combat
 

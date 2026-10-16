@@ -104,7 +104,7 @@ main promotion and release are explicitly approved.
 Session-owned seeded RNG drives distinct item offers and enemy spawn-marker rolls.
 Seed display, validated input and replay reset are implemented. See
 [SEEDED_RUNS.md](SEEDED_RUNS.md) and ADR 0006 for contracts and the acceptance
-record. v0.0.4 Room Framework is the next active milestone.
+record. v0.0.4 Room Framework was subsequently accepted.
 
 Goal:
 
@@ -120,12 +120,12 @@ Same seed should reproduce authoritative random choices where expected.
 
 ## v0.0.4 — Room Framework
 
-Status: Implemented dev candidate (`0.0.4`), pending manual verification.
-Authorized for dev after v0.0.3's acceptance/main promotion. An authored
-start → five-wave combat → treasure → boss-staging route preserves player state
-and seeded authority between rooms and resets the entire run on Replay. Boss
-combat remains v0.0.5 work. See [ROOM_FRAMEWORK.md](ROOM_FRAMEWORK.md) and ADR 0008.
-v0.0.4 is not approved for main or a release until its own manual acceptance.
+Status: Complete and accepted (`0.0.4`). The owner approved main promotion
+and release on 2026-10-16. The authored start → five-wave combat → treasure →
+boss-staging route preserves player state and seeded authority between rooms
+and resets the entire run on Replay. Movement/combat and presentation remain
+prototype quality. See [ROOM_FRAMEWORK.md](ROOM_FRAMEWORK.md) and ADR 0008.
+v0.0.5 First Boss is the next dev milestone; v0.0.6 has not started.
 
 Goal:
 
