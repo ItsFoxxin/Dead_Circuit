@@ -30,6 +30,16 @@ Requirements:
 
 ## v0.0.1 — Combat Sandbox
 
+Status: Implemented candidate (`0.0.1`) on dev. Automated coverage includes health,
+attributed hitscan damage, ammo/reload, wave progression, navigation/melee, input/
+collision, death, completion, and session reset. The Phase 0 harness and native
+development exports remain required. See [COMBAT_SANDBOX.md](COMBAT_SANDBOX.md).
+
+Remaining acceptance: manually play the Windows CI artifact through all five waves,
+restart, intentionally die, and restart again; assess movement/aiming/combat feel.
+This candidate is not an approved release. No version tag is created. Begin v0.0.2
+only after v0.0.1 is approved.
+
 Goal:
 
 Prove basic FPS combat works.

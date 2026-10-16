@@ -1,22 +1,33 @@
 class_name Bootstrap
-extends Control
-## Phase 0 launch surface. No run, player, gameplay authority, or networking state.
+extends Node
+## Composition boundary. The entry scene supplies concrete sandbox content.
 
 const BuildInfo = preload("res://game/core/utilities/build_info.gd")
 
-@onready var status_label: Label = %Status
+@export var startup_scene: PackedScene
+var session: CombatSession
 
 
 func _ready() -> void:
-	status_label.text = "Dead Circuit %s\nDevelopment foundation ready" % BuildInfo.version()
+	session = startup_scene.instantiate() as CombatSession
+	add_child(session)
 	if "--smoke" in OS.get_cmdline_user_args():
+		await session.session_started
 		var provenance: Dictionary = BuildInfo.metadata()
 		if (
 			not provenance.has("engine_version")
 			or str(provenance.get("commit_sha", "")).length() != 40
+			or session.local_player == null
+			or session.waves.wave_number != 1
+			or session.waves.remaining() != session.wave_definition.counts[0]
 		):
-			printerr("ERROR: Missing build provenance in launch smoke")
+			printerr("ERROR: Combat sandbox smoke initialization failed")
 			get_tree().quit(1)
 			return
-		print("DEAD_CIRCUIT_READY version=%s" % BuildInfo.version())
+		print(
+			(
+				"DEAD_CIRCUIT_READY version=%s player=%d wave=1 enemies=%d"
+				% [BuildInfo.version(), session.local_player.player_id, session.waves.remaining()]
+			)
+		)
 		get_tree().quit(0)

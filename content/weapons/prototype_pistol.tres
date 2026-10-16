@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="WeaponDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/weapons/weapon_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"prototype_pistol"
+display_name = "Service Pistol"
+damage = 30.0
+shots_per_second = 4.0
+magazine_capacity = 12
+starting_reserve = 240
+reload_seconds = 1.1
+range_metres = 60.0
+damage_tags = PackedStringArray("hitscan", "pistol")

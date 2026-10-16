@@ -1,23 +1,8 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://game/core/bootstrap.gd" id="1_bootstrap"]
+[ext_resource type="PackedScene" path="res://content/rooms/combat_sandbox.tscn" id="2"]
 
-[node name="Bootstrap" type="Control"]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="Bootstrap" type="Node"]
 script = ExtResource("1_bootstrap")
-
-[node name="Status" type="Label" parent="."]
-unique_name_in_owner = true
-layout_mode = 0
-anchor_right = 1.0
-anchor_bottom = 1.0
-theme_override_colors/font_color = Color(0.85, 0.91, 0.96, 1)
-theme_override_font_sizes/font_size = 26
-text = "Dead Circuit"
-horizontal_alignment = 1
-vertical_alignment = 1
+startup_scene = ExtResource("2")

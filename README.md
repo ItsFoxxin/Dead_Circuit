@@ -12,7 +12,10 @@ The design takes inspiration from the escalating survival pressure of wave-based
 
 Phase 0 (`v0.0.0 — Development Foundation`) is complete: a minimal Godot
 launch surface, typed GDScript, automated validation, and development exports.
-The Combat Sandbox has not been implemented.
+The `dev` branch now implements the **v0.0.1 Combat Sandbox candidate**: first-person
+movement, one hitscan pistol, pursuing melee zombies, five waves, HUD, death and
+clean restart. Windows artifact playtesting and milestone approval remain pending.
+See [Combat Sandbox](docs/COMBAT_SANDBOX.md) for controls and the acceptance checklist.
 
 For setup, validation, tests, and exports, see [Development](docs/DEVELOPMENT.md).
 

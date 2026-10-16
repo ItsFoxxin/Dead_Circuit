@@ -255,3 +255,14 @@ The following require deliberate review before changing:
 - seeded authoritative run RNG
 - future server-authoritative multiplayer target
 - composable item/effect system
+
+## v0.0.1 implementation boundary
+
+The entry scene is the composition root and injects the authored sandbox content.
+CombatSession owns the lifetime of explicit player/enemy instances and WaveManager.
+CombatPlayer and MeleeEnemy share DamageableBody/HealthComponent; WeaponController
+uses source-aware DamageContext and shared read-only configuration Resources.
+Enemies receive a list of valid player candidates, not a global player singleton.
+Concrete definitions, the five-wave configuration, enemy scene and greybox arena
+live in content/. No item, procedural run, or networking system is introduced.
+See [ADR 0003](adr/0003-combat-sandbox-authority-and-content.md).
