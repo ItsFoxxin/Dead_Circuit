@@ -1,8 +1,9 @@
 # v0.0.5 — First Boss
 
-Status: Implemented dev candidate, manual acceptance pending. On 2026-10-16
-the owner accepted v0.0.4 for main/release and authorized v0.0.5 to move to dev.
-v0.0.5 is not approved for main, a tag or release. v0.0.6 has not started.
+Status: Complete and accepted. On 2026-10-16 the owner accepted v0.0.4 for
+main/release and authorized v0.0.5 to move to dev. On 2026-10-17 the owner
+confirmed v0.0.5 is good for main, authorizing promotion and release.
+v0.0.6 — Weapon Variety is the next authorized dev milestone.
 
 ## Playable boundary
 
@@ -54,9 +55,10 @@ of floating inside the arena. EXIT and room-role Label3D text billboards toward
 the camera; the EXIT label sits in front of the panel. This addresses the owner's
 v0.0.4 screenshot feedback in the v0.0.5 dev candidate; the v0.0.4 release retains its original signs.
 Regression tests calculate panel/wall surface alignment and check every authored
-room's signage configuration. Actual readability still needs the manual camera check.
+room's signage configuration. Manual acceptance confirmed the corrected candidate
+is suitable for its prototype milestone.
 
-## Verification and pending manual acceptance
+## Verification and manual acceptance — PASSED
 
 The existing full validate command covers the new boss configuration, pursuit,
 windup, escape, occlusion, cooldown, pause, death and attributed kill effects.
@@ -66,7 +68,7 @@ run the production boss route with different preload orders, comparing offers,
 drop rolls, ownership, RNG consumption and clean restart. Previous probes remain.
 Content validation includes boss scenes/spawns, supply bounds and reward pacing.
 
-Before accepting the Windows candidate:
+The accepted Windows candidate was checked against this milestone target:
 
 1. View the panel and both signs from the front and oblique angles in several rooms.
 2. Complete five waves; confirm no upgrade prompt appears between them.
@@ -78,6 +80,10 @@ Before accepting the Windows candidate:
 8. Replay after completion and death; confirm fresh health/ammo, zero items, no
    boss/supply leftovers and repeatable authoritative rolls for the same choices.
 
-Local tests and exports are not manual acceptance or native Linux execution on
-this Windows host. Existing CI is preserved and runs on dev promotion. No additional floor, procedural map, advanced AI, production audio,
-final art/animation or networking is implemented.
+The project owner confirmed manual acceptance and authorized main promotion and
+release on 2026-10-17. Acceptance covers the intended early prototype behavior;
+it does not finalize movement, combat feel, boss balance, AI, presentation or
+content pacing. Native Linux gameplay remains unverified by a person on this
+Windows-host acceptance path. Existing CI remains required. No additional floor,
+procedural map, advanced AI, production audio, final art/animation or networking
+is implemented.

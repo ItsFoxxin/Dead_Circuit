@@ -250,6 +250,25 @@ When a reproducible bug is fixed, add a test reproducing the failure when practi
 
 The test should fail before the fix and pass afterward.
 
+## Planned milestone coverage through v0.1.0
+
+The roadmap milestones extend the existing harness rather than replace it:
+
+- **Weapon Variety:** switching, independent ammo/state, firing semantics and all
+  existing item modifiers/effects across pistol, automatic and multi-shot weapons.
+- **Enemy Variety:** shared health/damage, candidate targeting, state transitions,
+  attributed death and mixed encounter bookkeeping without enemy-pair logic.
+- **Shop / Economy:** spending, insufficient funds, nonnegative balances, purchase
+  ownership, seeded offers, run persistence and complete reset.
+- **Items:** modifier math, trigger conditions, source ownership, stacking, reset
+  and representative cross-item composition.
+- **Vertical Slice:** seeded full-run transitions, room progression, item/weapon/
+  economy persistence, boss completion and clean death/replay reset.
+
+Content-only work remains subject to useful targeted tests, fail-closed content
+validation and every existing regression gate. See
+[CONTENT_WORKFLOW.md](CONTENT_WORKFLOW.md) for the Codex/FoxForge boundary.
+
 ## Release verification
 
 release.yml adds approval and packaging around the existing foundation.yml gates;
