@@ -70,8 +70,16 @@ completion/transition restart. Two extra independent processes exercise the
 production four-room route and whole-run reset, preserving the original fixture
 and sandbox probes. Python tests reject incomplete/divergent routes and leaked
 build/ammo/RNG state. Content validation requires authored room references, exit
-markers, route order and the room HUD. See ROOM_FRAMEWORK.md for the pending
-manual acceptance checklist; local automation does not approve this milestone.
+markers, route order and the room HUD. See ROOM_FRAMEWORK.md for the owner acceptance record and
+regression checklist; local automation alone does not approve a milestone.
+
+The v0.0.5 suite additionally tests boss windup/escape/occlusion, pursuit,
+source attribution and kill effects, pause/cancellation, gated boss item choices,
+two-item floor pacing, seeded supply rolls, one-time nearby authorized collection,
+floor completion and stale/restarted state. Two further independent processes
+exercise the real boss route, both offers, room-clear drops and full reset without
+changing older fixture expectations. Signage regressions calculate wall/panel
+alignment and require camera-facing labels. See FIRST_BOSS.md for manual checks.
 
 The gameplay-oriented requirements below remain mandatory when their systems
 are introduced. Reproduction applies to authoritative choices with the same seed,

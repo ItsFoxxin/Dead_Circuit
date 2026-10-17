@@ -147,3 +147,45 @@ def test_incomplete_room_routes_or_leaked_restart_state_fail(failure):
         record["build"].pop()
     with pytest.raises(RuntimeError, match="Incomplete"):
         dev.verify_room_samples([record, copy.deepcopy(record)])
+
+
+def boss_probe_fixture():
+    return {"rooms": ["prototype_start", "prototype_combat", "prototype_treasure", "prototype_boss_encounter"],
+            "boss_spawned": True, "exit_locked": True, "awaited_boss_choice": True, "floor_complete": True,
+            "items_before_boss": 1, "draw_count": 64, "drop_rolls": [-1, 1], "build": ["a", "d"],
+            "offers": [{"room": "prototype_treasure", "choices": ["a", "b", "c"]},
+                       {"room": "prototype_boss_encounter", "choices": ["d", "b", "e"]}],
+            "rewards": [{"player": 1, "item": "d", "source_player": 1, "weapon": "pistol", "entity_matches": True}],
+            "restart": {"room": "prototype_start", "draw_count": 0, "items": 0, "health": 100,
+                        "magazine": 12, "reserve": 240, "boss_clear": True, "supply_clear": True}}
+
+
+def test_complete_matching_two_item_boss_runs_pass():
+    record = boss_probe_fixture()
+    dev.verify_boss_samples([record, copy.deepcopy(record)])
+
+
+@pytest.mark.parametrize("failure", ["missing-boss", "early-exit", "per-wave-items", "missing-offer",
+                                     "owned-choice", "wrong-owner", "extra-draw", "stale-boss", "bad-drop"])
+def test_incomplete_boss_runs_or_excessive_rewards_fail(failure):
+    record = boss_probe_fixture()
+    if failure == "missing-boss":
+        record["boss_spawned"] = False
+    elif failure == "early-exit":
+        record["awaited_boss_choice"] = False
+    elif failure == "per-wave-items":
+        record["items_before_boss"] = 5
+    elif failure == "missing-offer":
+        record["offers"].pop()
+    elif failure == "owned-choice":
+        record["offers"][1]["choices"][1] = "a"
+    elif failure == "wrong-owner":
+        record["rewards"][0]["source_player"] = 22
+    elif failure == "extra-draw":
+        record["draw_count"] += 1
+    elif failure == "stale-boss":
+        record["restart"]["boss_clear"] = False
+    else:
+        record["drop_rolls"][0] = True
+    with pytest.raises(RuntimeError):
+        dev.verify_boss_samples([record, copy.deepcopy(record)])

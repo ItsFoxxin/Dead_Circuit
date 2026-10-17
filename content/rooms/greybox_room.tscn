@@ -11,8 +11,11 @@ shading_mode = 0
 
 [node name="GreyboxRoom" instance=ExtResource("1")]
 
+[node name="SupplySpawn" type="Marker3D" parent="."]
+position = Vector3(0, 0.5, -3)
+
 [node name="Exit" type="Marker3D" parent="."]
-position = Vector3(0, 0, -17)
+position = Vector3(0, 0, -19.375)
 
 [node name="Frame" type="MeshInstance3D" parent="Exit"]
 position = Vector3(0, 1.5, 0)
@@ -20,7 +23,8 @@ mesh = SubResource("ExitMesh")
 material_override = SubResource("ExitMaterial")
 
 [node name="Label" type="Label3D" parent="Exit"]
-position = Vector3(0, 3.4, 0)
+position = Vector3(0, 3.4, 0.3)
+billboard = 1
 text = "EXIT [E]"
 font_size = 72
 outline_size = 12

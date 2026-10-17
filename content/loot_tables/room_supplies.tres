@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ClearDropDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/rooms/clear_drop_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"prototype_room_supplies"
+chance_percent = 25
+health_amount = 10.0
+ammunition = 12

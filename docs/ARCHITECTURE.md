@@ -304,3 +304,16 @@ only. This supersedes the single-arena boundary above without changing item,
 ownership or determinism contracts. See [ADR 0008](adr/0008-authored-rooms-and-persistent-run-actors.md)
 and [ROOM_FRAMEWORK.md](ROOM_FRAMEWORK.md). Procedural graphs, boss encounters and
 networking remain unimplemented.
+
+## v0.0.5 boss and room-clear reward boundary
+
+BossDefinition/BossEnemy reuse enemy health, navigation, target roster and attributed
+kill events with explicit chase/windup/recovery/death state. A boss scene and spawn
+belong to room content. CombatSession's encounter spawn path optionally omits wave
+bookkeeping; RoomRunSession validates boss defeat and keeps its exit locked through
+per-player item choices. The new route disables wave rewards and retains one
+Treasure choice plus one boss choice per floor. Optional ClearDropDefinition data
+rolls only on full combat/boss-room clears through the run RNG; RoomSupplyPickup
+validates authority, collector identity and proximity, and consumes once. Existing
+standalone/staging content and all previous determinism fixtures remain. See
+[ADR 0009](adr/0009-first-boss-and-floor-reward.md) and [FIRST_BOSS.md](FIRST_BOSS.md).

@@ -8,6 +8,7 @@ signal restart_requested
 signal room_ready
 signal encounter_completed
 signal room_reward_completed
+signal item_granted(player_id: int, id: StringName)
 
 enum State { PREPARING, ACTIVE, DEAD, COMPLETED, SELECTING_ITEM }
 
@@ -19,6 +20,7 @@ enum State { PREPARING, ACTIVE, DEAD, COMPLETED, SELECTING_ITEM }
 @export var local_player_id: int = 1
 @export var interactive: bool = true
 @export_range(0, 2147483647, 1) var run_seed: int = 12345
+@export var offer_wave_rewards: bool = true
 var managed_rooms: bool = false
 var encounter_enabled: bool = true
 var completion_text: String = "COMBAT SANDBOX COMPLETE"
@@ -64,7 +66,7 @@ func restart_session() -> void:
 	enemy_spawn_order.clear()
 	item_offers.clear()
 	damage_targets = []
-	waves.wait_for_reward = not item_catalog.is_empty()
+	waves.wait_for_reward = offer_wave_rewards and not item_catalog.is_empty()
 	waves.reset()
 	var token: int = waves.session_token
 	players.clear()
@@ -150,20 +152,30 @@ func set_paused(value: bool) -> void:
 
 
 func _spawn_wave(_number: int, count: int) -> void:
-	var token: int = waves.session_token
 	var spawn_count: int = arena.enemy_spawns.get_child_count()
 	enemy_spawn_order = run_random.sample_indices(spawn_count, spawn_count)
 	for index: int in range(count):
-		var enemy: MeleeEnemy = enemy_scene.instantiate() as MeleeEnemy
-		enemy.players = players.duplicate()
-		actors.add_child(enemy)
-		enemy.global_position = arena.enemy_spawn(enemy_spawn_order[index % spawn_count])
-		var entity_id: int = enemy.get_instance_id()
-		enemies[entity_id] = enemy
-		damage_targets.append(enemy)
-		enemy.removed_from_combat.connect(_on_enemy_removed.bind(token))
-		enemy.tree_exiting.connect(_on_enemy_exited.bind(entity_id, token))
+		spawn_enemy(enemy_scene, arena.enemy_spawn(enemy_spawn_order[index % spawn_count]), true)
+
+
+func spawn_enemy(scene: PackedScene, position: Vector3, tracked_wave: bool = false) -> MeleeEnemy:
+	if state != State.ACTIVE or scene == null:
+		return null
+	var token: int = waves.session_token
+	var enemy: MeleeEnemy = scene.instantiate() as MeleeEnemy
+	enemy.players = players.duplicate()
+	actors.add_child(enemy)
+	enemy.global_position = position
+	enemy.combat_enabled = not paused
+	var entity_id: int = enemy.get_instance_id()
+	enemies[entity_id] = enemy
+	damage_targets.append(enemy)
+	enemy.removed_from_combat.connect(_on_enemy_removed.bind(token))
+	enemy.tree_exiting.connect(_on_enemy_exited.bind(entity_id, token))
+	if tracked_wave:
 		waves.register_enemy(entity_id, token)
+	_refresh_hud()
+	return enemy
 
 
 func _on_enemy_removed(entity_id: int, context: DamageContext, token: int) -> void:
@@ -184,6 +196,7 @@ func _on_enemy_exited(entity_id: int, token: int) -> void:
 		damage_targets.erase(enemies.get(entity_id))
 		enemies.erase(entity_id)
 		waves.remove_enemy(entity_id, token)
+		_refresh_hud()
 
 
 func _on_health_changed(_current: float, _maximum: float) -> void:
@@ -214,7 +227,7 @@ func _on_wave_cleared(number: int) -> void:
 	)
 	for player: CombatPlayer in ordered_players:
 		player.disable_combat()
-		if not player.health.is_dead:
+		if not player.health.is_dead and not item_offers.has(player.player_id):
 			var offer: ItemOffer = ItemOffer.new(
 				item_catalog, player.items, waves.session_token, number, run_random
 			)
@@ -235,8 +248,13 @@ func select_item(player_id: int, id: StringName, token: int, number: int) -> boo
 		return false
 	for player: CombatPlayer in players:
 		if player.player_id == player_id and offer.select(id, player.items, token, number):
+			if token != waves.session_token:
+				return true
 			item_offers.erase(player_id)
 			player.suppress_fire_until_release = true
+			item_granted.emit(player_id, id)
+			if token != waves.session_token:
+				return true
 			if item_offers.is_empty():
 				_resume_after_items()
 			return true
@@ -244,6 +262,7 @@ func select_item(player_id: int, id: StringName, token: int, number: int) -> boo
 
 
 func _resume_after_items() -> void:
+	var token: int = waves.session_token
 	state = State.ACTIVE
 	for player: CombatPlayer in players:
 		if not player.health.is_dead:
@@ -253,6 +272,8 @@ func _resume_after_items() -> void:
 		waves.continue_after_reward(waves.session_token, waves.wave_number)
 	else:
 		room_reward_completed.emit()
+	if token != waves.session_token or state != State.ACTIVE:
+		return
 	_set_mouse_capture(true)
 	_refresh_hud()
 	state_changed.emit()
@@ -284,7 +305,9 @@ func _refresh_hud() -> void:
 		message = "PAUSED — Click to resume"
 	elif state == State.SELECTING_ITEM:
 		message = "CHOOSE ONE"
-	hud.refresh(local_player, waves, message, run_random.seed)
+	hud.refresh(
+		local_player, waves, message, run_random.seed, maxi(enemies.size(), waves.remaining())
+	)
 	var offer: ItemOffer = item_offers.get(local_player_id)
 	hud.show_offer(offer if state == State.SELECTING_ITEM else null)
 

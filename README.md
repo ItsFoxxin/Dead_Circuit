@@ -45,7 +45,8 @@ for the downloadable build once publication completes.
 
 **v0.0.5 — First Boss** is the next dev milestone, with a telegraphed boss,
 boss reward, floor completion and the requested item pacing / exit-sign fixes.
-Its manual acceptance remains pending. v0.0.6 has not started.
+Its manual acceptance remains pending; see [First Boss](docs/FIRST_BOSS.md).
+v0.0.6 has not started.
 
 For setup, validation, tests, and exports, see [Development](docs/DEVELOPMENT.md).
 

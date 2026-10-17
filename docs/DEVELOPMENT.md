@@ -20,6 +20,10 @@ This release retains version 0.0.4; see [ROOM_FRAMEWORK.md](ROOM_FRAMEWORK.md).
 v0.0.5 is authorized to move from local work to dev for testing. It is not
 approved for main or release. v0.0.6 has not started.
 
+The v0.0.5 dev candidate uses version 0.0.5; see [FIRST_BOSS.md](FIRST_BOSS.md).
+The owner authorized dev promotion on 2026-10-16. Manual acceptance and main/release
+approval remain pending. v0.0.6 is not started.
+
 ## Requirements and setup
 
 - Windows or Linux x86_64, Git, Python 3.12, and network access for first setup.
@@ -156,7 +160,7 @@ does not modify main, merge PRs, deploy, or publish releases.
 
 The dedicated release.yml publishes only version-tag pushes. Ordinary branch
 pushes retain the existing CI behavior. VERSION and project.godot describe the
-checked-out milestone (0.0.4 here); the existing manual v0.0.1
+current dev candidate (0.0.5); the existing manual v0.0.1
 pre-release is untouched.
 
 For each future milestone:

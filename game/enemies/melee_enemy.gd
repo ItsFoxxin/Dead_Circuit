@@ -79,11 +79,7 @@ func try_melee(player: CombatPlayer) -> bool:
 		or global_position.distance_to(player.global_position) > definition.attack_range
 	):
 		return false
-	var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(
-		global_position + Vector3.UP, player.global_position + Vector3.UP, 3, [get_rid()]
-	)
-	var hit: Dictionary = get_world_3d().direct_space_state.intersect_ray(query)
-	if hit.get("collider") != player:
+	if not has_line_of_sight_to(player):
 		return false
 	attack_remaining = definition.attack_cooldown
 	player.receive_damage(
@@ -92,6 +88,17 @@ func try_melee(player: CombatPlayer) -> bool:
 		)
 	)
 	return true
+
+
+func has_line_of_sight_to(player: CombatPlayer, world_only: bool = false) -> bool:
+	var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(
+		global_position + Vector3.UP,
+		player.global_position + Vector3.UP,
+		1 if world_only else 3,
+		[get_rid()]
+	)
+	var hit: Dictionary = get_world_3d().direct_space_state.intersect_ray(query)
+	return hit.is_empty() if world_only else hit.get("collider") == player
 
 
 func disable_combat() -> void:

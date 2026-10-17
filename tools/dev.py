@@ -171,12 +171,52 @@ def determinism() -> None:
         room_samples.append(json.loads(next(line.split("=", 1)[1] for line in output.splitlines()
                                            if line.startswith("ROOM_RUN_PROBE="))))
     verify_room_samples(room_samples)
+    boss_samples = []
+    for index in range(2):
+        args = ["--script", "tests/fixtures/boss_run_probe.gd"]
+        if index == 1:
+            args.extend(["--", "--reverse-item-load"])
+        output = engine_run(f"boss-run-process-{index}", args, marker="BOSS_RUN_PROBE=")
+        boss_samples.append(json.loads(next(line.split("=", 1)[1] for line in output.splitlines()
+                                           if line.startswith("BOSS_RUN_PROBE="))))
+    verify_boss_samples(boss_samples)
     (REPORTS / "determinism.json").write_text(json.dumps({"seed": 12345, "draws": samples[0],
                                                          "processes_match": True,
                                                          "run_choices": run_samples[0],
                                                          "run_processes_match": True,
                                                          "room_run": room_samples[0],
-                                                         "room_processes_match": True}, indent=2) + "\n")
+                                                         "room_processes_match": True,
+                                                         "boss_run": boss_samples[0],
+                                                         "boss_processes_match": True}, indent=2) + "\n")
+
+
+def verify_boss_samples(samples: list) -> None:
+    if len(samples) != 2 or samples[0] != samples[1] or not isinstance(samples[0], dict):
+        raise RuntimeError("Independent boss run processes diverged")
+    record = samples[0]
+    if (record.get("rooms") != ["prototype_start", "prototype_combat", "prototype_treasure", "prototype_boss_encounter"]
+            or any(record.get(key) is not True for key in ("boss_spawned", "exit_locked", "awaited_boss_choice", "floor_complete"))
+            or record.get("items_before_boss") != 1
+            or record.get("restart") != {"room": "prototype_start", "draw_count": 0, "items": 0,
+                 "health": 100, "magazine": 12, "reserve": 240, "boss_clear": True, "supply_clear": True}):
+        raise RuntimeError("Incomplete boss route, reward gate or restart")
+    rolls = record.get("drop_rolls")
+    if (not isinstance(rolls, list) or len(rolls) != 2 or any(type(kind) is not int or kind not in (-1, 0, 1) for kind in rolls)
+            or record.get("draw_count") != 63 + sum(kind != -1 for kind in rolls)):
+        raise RuntimeError("Invalid room-clear supply rolls or RNG consumption")
+    offers = record.get("offers", [])
+    if (not isinstance(offers, list) or len(offers) != 2 or not all(isinstance(offer, dict) for offer in offers)
+            or [offer.get("room") for offer in offers] != ["prototype_treasure", "prototype_boss_encounter"]):
+        raise RuntimeError("Items must come only from treasure and boss rooms")
+    for offer in offers:
+        choices = offer.get("choices", [])
+        if not isinstance(choices, list) or len(choices) != 3 or not all(isinstance(item, str) for item in choices) or len(set(choices)) != 3:
+            raise RuntimeError("Incomplete boss route item offer")
+    treasure, boss = offers[0]["choices"][0], offers[1]["choices"][0]
+    if (treasure in offers[1]["choices"] or record.get("build") != sorted([treasure, boss])
+            or record.get("rewards") != [{"player": 1, "item": boss, "source_player": 1,
+                                          "weapon": "pistol", "entity_matches": True}]):
+        raise RuntimeError("Invalid boss item ownership or duplicate acquisition")
 
 
 def verify_room_samples(samples: list) -> None:

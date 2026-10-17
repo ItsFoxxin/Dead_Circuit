@@ -25,7 +25,13 @@ func _ready() -> void:
 	seed_input.text_changed.connect(_validate_seed)
 
 
-func refresh(player: CombatPlayer, waves: WaveManager, state_text: String, seed: int) -> void:
+func refresh(
+	player: CombatPlayer,
+	waves: WaveManager,
+	state_text: String,
+	seed: int,
+	active_enemies: int = -1
+) -> void:
 	status.text = (
 		"HP %d / %d\nAmmo %d / %d   Reserve %d%s\nWave %d / %d   Enemies %d\nSeed %d"
 		% [
@@ -37,7 +43,7 @@ func refresh(player: CombatPlayer, waves: WaveManager, state_text: String, seed:
 			"   RELOADING" if player.weapon.reloading else "",
 			waves.wave_number,
 			waves.definition.counts.size(),
-			waves.remaining(),
+			waves.remaining() if active_enemies < 0 else active_enemies,
 			seed
 		]
 	)

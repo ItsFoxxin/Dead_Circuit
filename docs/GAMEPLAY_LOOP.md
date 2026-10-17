@@ -24,6 +24,19 @@ Next Floor
 
 ## Combat Loop
 
+### v0.0.5 prototype reward pacing
+
+For the First Boss dev candidate, the owner requested one item room per floor
+and one additional item after the boss. Individual waves grant no items. The
+single Treasure Room and boss reward reuse per-player unowned-item choices;
+progression waits for all pending choices. A cleared combat/boss room has one
+seeded chance for a small shared health/ammo pickup. Start/Treasure and individual
+wave clears do not roll supplies. More reward sources remain future design work.
+This supersedes older prototype wave rewards for v0.0.5 launch content; historical
+fixtures retain their accepted behavior. See FIRST_BOSS.md and ADR 0009.
+
+### Intended encounter loop
+
 ```text
 Enter combat encounter
         ↓
