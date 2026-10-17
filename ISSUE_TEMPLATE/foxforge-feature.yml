@@ -1,0 +1,128 @@
+name: FoxForge Feature
+description: Submit a scoped feature for autonomous FoxForge development.
+title: "[FoxForge] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## FoxForge Feature Request
+
+        Use this form for work that should be handled autonomously by FoxForge.
+
+        Keep the feature scoped and describe the expected behavior clearly.
+        An allowlisted owner must apply foxforge-ready explicitly after review.
+        Do not include passwords, API keys, tokens, private keys, or other secrets.
+
+  - type: input
+    id: feature_name
+    attributes:
+      label: Feature Name
+      description: Short name for the feature or item.
+      placeholder: Static Coil
+    validations:
+      required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Feature Summary
+      description: Describe what you want added and why.
+      placeholder: |
+        Add a passive item that releases chain lightning after a set number
+        of successful weapon hits.
+    validations:
+      required: true
+
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Required Behavior
+      description: List exactly how the feature should behave.
+      placeholder: |
+        - Every 8th successful direct weapon hit triggers chain lightning.
+        - Chain lightning targets up to 3 nearby enemies.
+        - Each chained hit deals 40% of the triggering hit's damage.
+        - Secondary chain damage does not increment the hit counter.
+        - The counter resets after triggering.
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance Criteria
+      description: What must be true for this feature to be considered correct?
+      placeholder: |
+        - Hits 1-7 do not trigger the effect.
+        - Hit 8 triggers the effect.
+        - No more than 3 enemies are chained.
+        - Damage is exactly 40% of the triggering hit.
+        - Counter resets after triggering.
+        - Existing automated validation passes.
+    validations:
+      required: true
+
+  - type: textarea
+    id: existing_systems
+    attributes:
+      label: Existing Systems to Use
+      description: List any existing systems or architecture FoxForge should build on.
+      placeholder: |
+        - Existing item system
+        - Existing combat/damage pipeline
+        - Existing hit event system
+        - Existing seeded RNG/determinism system
+    validations:
+      required: false
+
+  - type: textarea
+    id: restrictions
+    attributes:
+      label: Do Not Change
+      description: List systems, behavior, or scope that should remain untouched.
+      placeholder: |
+        - Do not redesign the item system.
+        - Do not modify unrelated weapons.
+        - Do not change player movement.
+        - Do not alter existing item behavior.
+    validations:
+      required: false
+
+  - type: textarea
+    id: testing
+    attributes:
+      label: Testing Expectations
+      description: Describe important cases FoxForge should validate.
+      placeholder: |
+        Test:
+        - normal trigger behavior
+        - zero valid targets
+        - fewer than 3 valid targets
+        - more than 3 valid targets
+        - counter reset
+        - prevention of recursive procs
+        - deterministic behavior
+    validations:
+      required: false
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional Notes
+      description: Anything else FoxForge should know.
+      placeholder: Balance values may be adjusted after playtesting.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: approval
+    attributes:
+      label: FoxForge Approval
+      description: Confirm this issue is ready for autonomous development.
+      options:
+        - label: I have described the required behavior and acceptance criteria clearly.
+          required: true
+        - label: This work is scoped enough for FoxForge to attempt autonomously.
+          required: true
+        - label: This issue contains no secrets or credentials.
+          required: true
