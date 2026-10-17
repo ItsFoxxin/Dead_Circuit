@@ -175,12 +175,14 @@ over:
 ## Branch Workflow
 
 Permanent branches:
+
 - `main` — accepted/released milestones only
 - `dev` — active integration branch for the next milestone
 
 Task branches must be created from the latest `origin/dev`.
 
 Allowed task namespaces:
+
 - `codex/<short-task-name>` — major systems, architecture, large refactors
 - `foxforge/<short-task-name>` — small scoped local-agent tasks
 - `dependabot/*` — automated dependency updates
@@ -188,6 +190,7 @@ Allowed task namespaces:
 All Codex and FoxForge task branches must target `dev` through a pull request.
 
 Never:
+
 - develop directly on `main`
 - develop directly on `dev`
 - merge a task branch directly to `main`
@@ -197,4 +200,6 @@ After a task PR is merged into `dev`, its branch should be deleted.
 
 Promotion flow:
 
-task branch -> dev -> manual acceptance/playtest -> main -> release
+```text
+task branch → dev → manual acceptance/playtest → main → release
+```

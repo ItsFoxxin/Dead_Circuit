@@ -143,14 +143,15 @@ Procedural graph generation is not required yet.
 
 ## v0.0.5 — First Boss
 
-Status: Implemented dev candidate (`0.0.5`), manual acceptance pending.
-The owner approved dev promotion on 2026-10-16 after accepting v0.0.4 for main.
-v0.0.5 is not approved for main or release.
+Status: Complete and accepted (`0.0.5`). The owner approved dev promotion on
+2026-10-16, then confirmed manual acceptance and authorized main promotion/release
+on 2026-10-17.
 Adds one pursuing telegraphed-slam boss, attributed damage/death, boss item choice
 and one-floor completion/restart. The owner requested one Treasure item plus one
 boss item, no wave items, and occasional small room-clear supplies. Exit panels
 are flush to the wall and room/EXIT text faces the camera. See
-[FIRST_BOSS.md](FIRST_BOSS.md) and ADR 0009. v0.0.6 has not started.
+[FIRST_BOSS.md](FIRST_BOSS.md) and ADR 0009. v0.0.6 is the authorized next dev
+milestone; no v0.0.6 gameplay is included in this planning update.
 
 Goal:
 
