@@ -43,7 +43,7 @@ See [Room Framework](docs/ROOM_FRAMEWORK.md) and the
 [v0.0.4 release](https://github.com/ItsFoxxin/Dead_Circuit/releases/tag/v0.0.4)
 for the downloadable build once publication completes.
 
-**v0.0.5 — First Boss** is the next dev milestone, with a telegraphed boss,
+**v0.0.5 — First Boss** is complete and accepted, with a telegraphed boss,
 boss reward, floor completion and the requested item pacing / exit-sign fixes.
 Its manual acceptance remains pending; see [First Boss](docs/FIRST_BOSS.md).
 v0.0.6 has not started.
@@ -116,8 +116,16 @@ main
 dev
   integrated active development
 
-feature/*
-fix/*
-chore/*
-  temporary working branches
+codex/*
+  reusable systems, architecture and major integration tasks
+
+foxforge/*
+  bounded content tasks using established mechanics
+
+dependabot/*
+  automated dependency updates
 ```
+
+All task branches start from current `dev` and return to `dev` through a focused
+pull request. Accepted milestones promote from `dev` to `main`, then receive an
+approved version tag and release.
