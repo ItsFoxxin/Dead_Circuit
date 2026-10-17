@@ -125,7 +125,8 @@ and release on 2026-10-16. The authored start → five-wave combat → treasure 
 boss-staging route preserves player state and seeded authority between rooms
 and resets the entire run on Replay. Movement/combat and presentation remain
 prototype quality. See [ROOM_FRAMEWORK.md](ROOM_FRAMEWORK.md) and ADR 0008.
-v0.0.5 First Boss is the next dev milestone; v0.0.6 has not started.
+v0.0.5 First Boss was subsequently accepted; v0.0.6 Weapon Variety is the next
+authorized dev milestone.
 
 Goal:
 
@@ -142,14 +143,15 @@ Procedural graph generation is not required yet.
 
 ## v0.0.5 — First Boss
 
-Status: Implemented dev candidate (`0.0.5`), manual acceptance pending.
-The owner approved dev promotion on 2026-10-16 after accepting v0.0.4 for main.
-v0.0.5 is not approved for main or release.
+Status: Complete and accepted (`0.0.5`). The owner approved dev promotion on
+2026-10-16, then confirmed manual acceptance and authorized main promotion/release
+on 2026-10-17.
 Adds one pursuing telegraphed-slam boss, attributed damage/death, boss item choice
 and one-floor completion/restart. The owner requested one Treasure item plus one
 boss item, no wave items, and occasional small room-clear supplies. Exit panels
 are flush to the wall and room/EXIT text faces the camera. See
-[FIRST_BOSS.md](FIRST_BOSS.md) and ADR 0009. v0.0.6 has not started.
+[FIRST_BOSS.md](FIRST_BOSS.md) and ADR 0009. v0.0.6 is the authorized next dev
+milestone; no v0.0.6 gameplay is included in this planning update.
 
 Goal:
 
@@ -165,7 +167,161 @@ First boss should test:
 
 Complex cinematic behavior is out of scope.
 
+## v0.0.6 — Weapon Variety
+
+Status: Authorized as the next dev milestone after accepted v0.0.5. This roadmap
+change defines its scope but does not implement its gameplay.
+
+Goal:
+
+Prove that substantially different weapons use one reusable weapon/item
+architecture without weapon-specific hacks in player, item, enemy or run systems.
+
+Target content:
+
+- retain the Service Pistol
+- add approximately two original weapons, targeting three total
+- use an automatic/SMG-style archetype and a shotgun/multi-pellet archetype unless
+  implementation evidence supports a comparably scoped alternative
+- add weapon switching and preserve independent weapon/ammo state
+- define fire rate, magazine/reserve behavior and shot behavior in data
+- keep Heavy Lead, Rapid Mechanism, Split Chamber, Volatile Rounds and Vampiric
+  Ammo compatible through shared mechanics
+
+Required automated proof includes switching, independent ammo and reload state,
+firing semantics, ownership attribution and representative combinations of all
+five existing items across the three archetypes. Items may use legitimate weapon
+tags/categories, but must not depend on specific weapon IDs merely to work.
+
+Acceptance question:
+
+> Can Dead Circuit support substantially different weapons through one reusable weapon/item architecture?
+
+Production animation, audio, recoil polish and a large weapon library are out of
+scope.
+
+## v0.0.7 — Enemy Variety
+
+Status: Planned after accepted v0.0.6.
+
+Goal:
+
+Create different combat pressure through enemy composition instead of only larger
+enemy counts.
+
+Target content and system proof:
+
+- retain the Basic Zombie
+- add at least one second normal enemy archetype, initially a faster lower-health
+  runner unless a similarly bounded alternative better proves the architecture
+- configure mixed encounter groups through data
+- reuse health, damage, navigation, attributed death and encounter bookkeeping
+- choose targets from explicit valid-player candidates
+- add no hard-coded enemy-pair behavior
+
+Required tests cover health/damage, target selection, behavior/state transitions,
+source-aware death and mixed encounter tracking/reset.
+
+Acceptance question:
+
+> Do different enemy combinations force the player to move and fight differently?
+
+Advanced AI, production animation, complex special-enemy systems and a large
+roster are out of scope.
+
+## v0.0.8 — Shop / Economy Prototype
+
+Status: Planned after accepted v0.0.7.
+
+Goal:
+
+Introduce the minimum limited-resource economy needed for meaningful spending
+decisions during a run.
+
+Target content and system proof:
+
+- keep currency/resource state with the appropriate player or run owner
+- keep future players' balances conceptually independent
+- generate applicable shop inventory from the authoritative seeded run RNG
+- validate offer, buyer, ownership, price, room/session generation and purchase
+- prevent negative currency and duplicate/stale purchases
+- apply rewards through existing item, health, ammunition and weapon systems
+- persist valid shop/economy state for the run and clear it on full restart
+- offer a small useful mix such as an item, healing, ammunition or weapon-related
+  choice; add rerolls only when the scoped design needs them
+
+Required tests cover spending, insufficient funds, nonnegative balances, purchase
+ownership, seeded offers, persistence and reset.
+
+Acceptance question:
+
+> Does limited spending create meaningful decisions during the run?
+
+The complete future horde-shooter points/progression economy and finalized balance
+are out of scope.
+
+## v0.0.9 — Vertical Slice Assembly
+
+Status: Planned after accepted v0.0.8.
+
+Goal:
+
+Combine the permanent systems from v0.0.0–v0.0.8 into one coherent short floor.
+Focus on integration, pacing, content expansion and regression hardening rather
+than another large architecture system.
+
+Target floor flow:
+
+```text
+Start
+  → Combat
+  → Treasure / reward decision
+  → Combat
+  → Shop
+  → additional encounter / challenge
+  → Boss
+  → Floor Complete
+```
+
+Exact routing may use the established room framework. By milestone completion the
+candidate should contain three usable weapons, at least two normal enemy types,
+one boss, approximately five meaningful room types, the shop, seeded variation,
+a significantly expanded item pool, coherent 10–20 minute pacing and a clean
+death/completion/replay lifecycle. Multiple runs should differ noticeably without
+state leaking between attempts.
+
+Required tests cover the complete seeded route, room transitions, item/weapon/
+economy persistence, boss completion and full replay reset.
+
+Acceptance question:
+
+> Can all current systems coexist for a full 10–20 minute run without architectural or state-management failures?
+
+Production art/audio and broad polish are out of scope.
+
+## Item content growth through v0.1.0
+
+The accepted v0.0.2–v0.0.5 milestones retain their actual five-item catalog. From
+v0.0.6 onward, use small reviewed content pull requests to grow toward these
+cumulative planning targets:
+
+| Milestone | Approximate cumulative target |
+| --- | ---: |
+| v0.0.6 | 10–12 items |
+| v0.0.7 | 12–15 items |
+| v0.0.8 | 15–18 items |
+| v0.0.9 | 18–25 items when safe and useful |
+| v0.1.0 | a curated 15–20+ practical minimum |
+
+These are not numerical release gates. Quality, distinct decisions, composability,
+ownership and test coverage take priority, and weaker items may be deferred or
+removed before v0.1.0. See [CONTENT_WORKFLOW.md](CONTENT_WORKFLOW.md) for the
+Codex/FoxForge boundary, item design mix, escalation rule and pull-request policy.
+
 ## v0.1.0 — First Complete Vertical Slice
+
+Status: Planned design-validation milestone after accepted v0.0.9. It should
+consolidate and tune proven systems instead of introducing a giant new architecture.
 
 Goal:
 
@@ -175,12 +331,14 @@ Target content:
 
 - 1 floor
 - 3 weapons
-- 2 normal enemy types
+- at least 2 normal enemy types
 - 1 boss
-- 10–15 items
+- approximately 15–20+ curated items when practical; 10–15 remains a floor if
+  development capacity or quality requires a smaller pool
 - approximately 5 room types
 - shop
 - seeded variation
+- complete death, completion, restart and replay lifecycle
 
 Target run length:
 
@@ -191,6 +349,19 @@ Primary question:
 > Does finishing or losing a run make the player want to immediately start another?
 
 This is the first major go/no-go design gate.
+
+Secondary questions:
+
+- Do builds diverge meaningfully?
+- Do weapon choices matter?
+- Do enemy combinations alter positioning?
+- Are item choices exciting?
+- Does the shop create opportunity cost?
+- Does the boss provide a satisfying run endpoint?
+- Does seeded variation create replay value?
+- Do powerful combinations begin the intended break-the-run fantasy?
+
+Production art, audio and polish are not required for this design gate.
 
 ## v0.1.5 — Multiplayer Architecture Test
 

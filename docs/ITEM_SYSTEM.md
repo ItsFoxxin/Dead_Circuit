@@ -207,6 +207,20 @@ The architecture should eventually support hundreds of items without requiring h
 
 Content volume should scale primarily through definitions rather than code complexity.
 
+## Content production boundary
+
+Concrete items may be produced independently only when existing modifiers,
+triggers, conditions, effects, tags and ownership rules fully express them. A
+content task must stop and report `NEW PRIMITIVE REQUIRED` when it needs a new
+reusable capability; it must not hide that capability in one item's script or add
+pair-specific logic. Codex owns the shared primitive and schema work. FoxForge may
+resume the concrete definition after that work lands.
+
+The cumulative item-growth targets, content-authoring responsibility, escalation
+template and focused Git workflow are defined in
+[CONTENT_WORKFLOW.md](CONTENT_WORKFLOW.md). The targets are planning guidance, not
+release gates. The accepted v0.0.2–v0.0.5 five-item history remains unchanged.
+
 ## v0.0.2 implemented contracts
 
 The candidate implements ItemDefinition, StatModifier, ItemTrigger, ItemCondition
@@ -297,4 +311,5 @@ choice per floor, with no per-wave upgrades in the new First Boss launch route.
 Reuse the existing unique-item definitions, seeded offers, ownership and selection
 guards. Small seeded room-clear supplies restore health/ammo and are not build
 items. Older sandbox/staging fixtures preserve their historical behavior. See
-FIRST_BOSS.md and ADR 0009; v0.0.4 is accepted for main/release and v0.0.5 awaits manual acceptance on dev.
+FIRST_BOSS.md and ADR 0009. The owner accepted v0.0.5 for main/release on
+2026-10-17; v0.0.6 Weapon Variety is the next authorized dev milestone.

@@ -17,12 +17,18 @@ See [SEEDED_RUNS.md](SEEDED_RUNS.md) for
 seed controls, exact reproducibility limits and the acceptance record.
 The owner accepted v0.0.4 and approved main promotion/release on 2026-10-16.
 This release retains version 0.0.4; see [ROOM_FRAMEWORK.md](ROOM_FRAMEWORK.md).
-v0.0.5 is authorized to move from local work to dev for testing. It is not
-approved for main or release. v0.0.6 has not started.
+v0.0.5 was accepted by the owner for main and release on 2026-10-17.
+v0.0.6 — Weapon Variety is the authorized next dev milestone.
 
 The v0.0.5 dev candidate uses version 0.0.5; see [FIRST_BOSS.md](FIRST_BOSS.md).
-The owner authorized dev promotion on 2026-10-16. Manual acceptance and main/release
-approval remain pending. v0.0.6 is not started.
+The owner authorized dev promotion on 2026-10-16 and confirmed manual acceptance
+on 2026-10-17. See [FIRST_BOSS.md](FIRST_BOSS.md) for the acceptance record.
+
+The sequential v0.0.6–v0.1.0 plan is documented in
+[ROADMAP.md](ROADMAP.md). Codex/FoxForge responsibility, new-primitive escalation,
+item-growth targets and small content pull-request policy are defined in
+[CONTENT_WORKFLOW.md](CONTENT_WORKFLOW.md). This planning work adds no future
+milestone gameplay.
 
 ## Requirements and setup
 
@@ -118,6 +124,13 @@ its own attempt RNG. Offers and spawn rolls use that explicit authority; no glob
 player/RNG singleton is introduced. See ADRs 0006 and 0008.
 Tests are organized into unit/, integration/, determinism/, gameplay/, fixtures/,
 and Python harness/.
+
+Task work starts from current `origin/dev` on `codex/<short-task-name>` or
+`foxforge/<short-task-name>` and returns through a pull request targeting `dev`.
+Codex owns reusable systems and architecture. FoxForge may add bounded concrete
+content only when existing primitives fully express it; otherwise it reports
+`NEW PRIMITIVE REQUIRED` using CONTENT_WORKFLOW.md. Do not develop directly on
+`dev` or `main`, and do not reuse task branches for unrelated work.
 
 The content validator verifies directory availability, explicit weapon/enemy/wave
 and item schemas, unique IDs, nested trigger/effect bounds, catalog references,
