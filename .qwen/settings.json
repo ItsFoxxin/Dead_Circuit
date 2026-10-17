@@ -1,6 +1,15 @@
 {
   "permissions": {
-    "allow": ["Agent"]
+    "allow": [
+      "Agent",
+      "Bash(python tools/dev.py *)"
+    ],
+    "deny": [
+      "Bash(git push *)",
+      "Bash(git commit *)",
+      "Bash(git merge *)",
+      "Bash(git reset --hard *)"
+    ]
   },
   "$version": 4
 }
