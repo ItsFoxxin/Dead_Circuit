@@ -9,3 +9,6 @@ game/core/utilities/build_metadata.json
 __pycache__/
 .pytest_cache/
 export_credentials.cfg
+
+# FoxForge runtime
+.foxforge/
