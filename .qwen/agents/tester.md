@@ -2,7 +2,7 @@
 name: tester
 description: MUST BE USED after implementation to find missing coverage and add regression or edge-case tests
 model: qwen3.5:9b-q4_K_M
-approvalMode: auto-edit
+approvalMode: yolo
 tools:
   - read_file
   - edit

@@ -2,7 +2,7 @@
 name: implementer
 description: Implements an approved architecture plan, runs tests, and repairs failures caused by its changes
 model: qwen3.5:9b-q4_K_M
-approvalMode: auto-edit
+approvalMode: yolo
 tools:
   - read_file
   - edit
