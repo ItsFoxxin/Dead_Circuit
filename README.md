@@ -45,8 +45,13 @@ for the downloadable build once publication completes.
 
 **v0.0.5 — First Boss** is complete and accepted, with a telegraphed boss,
 boss reward, floor completion and the requested item pacing / exit-sign fixes.
-Its manual acceptance remains pending; see [First Boss](docs/FIRST_BOSS.md).
-v0.0.6 has not started.
+The project owner approved it for main and release on 2026-10-17; see
+[First Boss](docs/FIRST_BOSS.md). **v0.0.6 — Weapon Variety** is the authorized
+next dev milestone. The documented path through the first complete vertical slice
+is in the [Roadmap](docs/ROADMAP.md), with bounded Codex and FoxForge
+responsibilities in the
+[Content Production Workflow](docs/CONTENT_WORKFLOW.md). This planning update adds
+no v0.0.6+ gameplay.
 
 For setup, validation, tests, and exports, see [Development](docs/DEVELOPMENT.md).
 

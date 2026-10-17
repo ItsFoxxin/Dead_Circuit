@@ -1,6 +1,6 @@
 # ADR 0009: First boss encounter and per-player floor reward
 
-- Status: Accepted for the v0.0.5 dev candidate; manual acceptance pending
+- Status: Accepted; v0.0.5 owner acceptance passed on 2026-10-17
 - Date: 2026-10-16
 - Scope: First Boss, extending ADR 0008 without procedural floors or networking
 
@@ -54,4 +54,5 @@ ownership, pause/cancellation, kill effects, reward bounds/idempotence, locked e
 completion/restart and whole-route process determinism without weakening old probes.
 
 On 2026-10-16 the owner approved v0.0.4 for main/release and v0.0.5 for dev.
-v0.0.5 manual acceptance and main/release approval remain pending. v0.0.6 has not started.
+On 2026-10-17 the owner accepted v0.0.5 and authorized main promotion/release.
+The v0.0.6 planning work does not alter this decision.

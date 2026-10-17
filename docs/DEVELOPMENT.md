@@ -30,10 +30,6 @@ item-growth targets and small content pull-request policy are defined in
 [CONTENT_WORKFLOW.md](CONTENT_WORKFLOW.md). This planning work adds no future
 milestone gameplay.
 
-The v0.0.5 dev candidate uses version 0.0.5; see [FIRST_BOSS.md](FIRST_BOSS.md).
-The owner authorized dev promotion on 2026-10-16. Manual acceptance and main/release
-approval remain pending. v0.0.6 is not started.
-
 ## Requirements and setup
 
 - Windows or Linux x86_64, Git, Python 3.12, and network access for first setup.

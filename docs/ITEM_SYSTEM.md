@@ -311,4 +311,5 @@ choice per floor, with no per-wave upgrades in the new First Boss launch route.
 Reuse the existing unique-item definitions, seeded offers, ownership and selection
 guards. Small seeded room-clear supplies restore health/ammo and are not build
 items. Older sandbox/staging fixtures preserve their historical behavior. See
-FIRST_BOSS.md and ADR 0009; v0.0.4 is accepted for main/release and v0.0.5 awaits manual acceptance on dev.
+FIRST_BOSS.md and ADR 0009. The owner accepted v0.0.5 for main/release on
+2026-10-17; v0.0.6 Weapon Variety is the next authorized dev milestone.
