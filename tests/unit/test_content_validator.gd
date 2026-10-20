@@ -2,6 +2,7 @@ extends GutTest
 
 const Validator = preload("res://tools/content_validator.gd")
 const ROOT: String = "user://content_validator_test"
+const TestFaction: ItemFaction = preload("res://content/factions/iron_doctrine.tres")
 
 
 func before_each() -> void:
@@ -73,6 +74,8 @@ func test_item_schema_rejects_invalid_nested_effects_and_stacking() -> void:
 	item.id = &"invalid_item"
 	item.display_name = "Invalid"
 	item.description = "Bad trigger"
+	item.flavor_text = "Invalid on purpose."
+	item.faction = TestFaction
 	item.stacking = &"accidental_stacking"
 	var trigger: ItemTrigger = ItemTrigger.new()
 	trigger.condition = ItemCondition.new()
@@ -90,7 +93,45 @@ func test_item_schema_rejects_invalid_nested_effects_and_stacking() -> void:
 func test_authored_item_schema_and_catalog_are_valid() -> void:
 	var validator: ContentValidator = Validator.new()
 	assert_eq(validator.validate().size(), 0)
-	assert_eq(validator.definition_count, 19)
+	assert_eq(validator.definition_count, 24)
+
+
+func test_all_authored_items_have_valid_faction_metadata() -> void:
+	var seen: Dictionary[StringName, bool] = {}
+	for path: String in [
+		"res://content/items/heavy_lead.tres",
+		"res://content/items/rapid_mechanism.tres",
+		"res://content/items/split_chamber.tres",
+		"res://content/items/vampiric_ammo.tres",
+		"res://content/items/volatile_rounds.tres",
+	]:
+		var item: ItemDefinition = load(path) as ItemDefinition
+		assert_not_null(item.faction)
+		assert_true(item.faction.validation_errors().is_empty())
+		seen[item.faction.id] = true
+	assert_true(seen.has(&"helix_directorate"))
+	assert_true(seen.has(&"iron_doctrine"))
+	assert_true(seen.has(&"scrapborn"))
+
+
+func test_existing_item_identity_migration_preserves_stable_ids() -> void:
+	var expected: Dictionary[StringName, PackedStringArray] = {
+		&"heavy_lead": PackedStringArray(["Titan-Core Rounds", "iron_doctrine"]),
+		&"rapid_mechanism": PackedStringArray(["Overclocked Actuator", "scrapborn"]),
+		&"split_chamber": PackedStringArray(["Bifurcation Array", "scrapborn"]),
+		&"vampiric_ammo": PackedStringArray(["Hemophage Protocol", "helix_directorate"]),
+		&"volatile_rounds": PackedStringArray(["Volatile Payload", "iron_doctrine"]),
+	}
+	for path: String in DirAccess.get_files_at("res://content/items"):
+		if path.get_extension() != "tres":
+			continue
+		var item: ItemDefinition = load("res://content/items/" + path) as ItemDefinition
+		if not expected.has(item.id):
+			continue
+		var identity: PackedStringArray = expected[item.id]
+		assert_eq(item.display_name, identity[0])
+		assert_eq(str(item.faction.id), identity[1])
+		assert_false(item.flavor_text.is_empty())
 
 
 func test_authored_sandbox_seed_must_fit_supported_input_range() -> void:

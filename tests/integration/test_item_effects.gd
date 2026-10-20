@@ -4,6 +4,7 @@ const Sandbox: PackedScene = preload("res://content/rooms/combat_sandbox.tscn")
 const Split: ItemDefinition = preload("res://content/items/split_chamber.tres")
 const Volatile: ItemDefinition = preload("res://content/items/volatile_rounds.tres")
 const Vampiric: ItemDefinition = preload("res://content/items/vampiric_ammo.tres")
+const TestFaction: ItemFaction = preload("res://content/factions/helix_directorate.tres")
 
 var session: CombatSession
 var player: CombatPlayer
@@ -81,6 +82,8 @@ func test_generic_weapon_and_shot_triggers_are_distinct_and_owned() -> void:
 	item.id = &"test_event_healing"
 	item.display_name = "Event fixture"
 	item.description = "Heal on weapon and shot events"
+	item.flavor_text = "Integration fixture."
+	item.faction = TestFaction
 	for kind: CombatEvent.Kind in [CombatEvent.Kind.WEAPON_FIRED, CombatEvent.Kind.SHOT_CREATED]:
 		var trigger: ItemTrigger = ItemTrigger.new()
 		trigger.event = kind

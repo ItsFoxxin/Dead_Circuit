@@ -5,6 +5,8 @@ extends Resource
 @export var id: StringName
 @export var display_name: String
 @export var description: String
+@export_multiline var flavor_text: String
+@export var faction: ItemFaction
 @export var classification: StringName = &"prototype"
 @export var tags: PackedStringArray = []
 @export var stacking: StringName = &"unique"
@@ -18,9 +20,13 @@ func validation_errors() -> PackedStringArray:
 		id.is_empty()
 		or display_name.is_empty()
 		or description.is_empty()
+		or flavor_text.strip_edges().is_empty()
+		or faction == null
 		or classification.is_empty()
 	):
-		errors.append("Item requires id, name, description and classification")
+		errors.append("Item requires id, name, description, flavor, faction and classification")
+	if faction != null:
+		errors.append_array(faction.validation_errors())
 	if stacking != &"unique":
 		errors.append("Only explicit unique item stacking is supported")
 	if modifiers.is_empty() and triggers.is_empty():

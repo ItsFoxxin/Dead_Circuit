@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ItemFaction" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/items/item_faction.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"scrapborn"
+display_name = "Scrapborn"
+philosophy = "Nothing stays dead if it can be rebuilt."
+specialty = "Repurposed machinery, electrical systems, drones and improvised weapons."
+mechanical_identity = "Chain lightning, autonomous systems, scavenged components and modifications."

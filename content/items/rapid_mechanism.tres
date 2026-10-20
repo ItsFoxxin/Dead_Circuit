@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://game/items/item_definition.gd" id="item"]
 [ext_resource type="Script" path="res://game/items/stat_modifier.gd" id="stat"]
+[ext_resource type="Resource" path="res://content/factions/scrapborn.tres" id="faction"]
 
 [sub_resource type="Resource" id="Rate"]
 script = ExtResource("stat")
@@ -11,7 +12,9 @@ value = 1.25
 [resource]
 script = ExtResource("item")
 id = &"rapid_mechanism"
-display_name = "Rapid Mechanism"
-description = "Fire rate x1.25."
+display_name = "Overclocked Actuator"
+description = "A modified weapon assembly that increases fire rate x1.25."
+flavor_text = "Operational limits removed. Component survival not guaranteed."
+faction = ExtResource("faction")
 tags = PackedStringArray("offense")
 modifiers = Array[ExtResource("stat")]([SubResource("Rate")])

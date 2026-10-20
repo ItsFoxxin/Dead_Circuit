@@ -1,5 +1,7 @@
 extends GutTest
 
+const TestFaction: ItemFaction = preload("res://content/factions/iron_doctrine.tres")
+
 
 func test_add_then_multiply_is_independent_of_acquisition_order() -> void:
 	var add: ItemDefinition = _item(&"z_add", StatModifier.Operation.ADD, 10.0)
@@ -47,6 +49,8 @@ func _item(id: StringName, operation: StatModifier.Operation, value: float) -> I
 	item.id = id
 	item.display_name = str(id)
 	item.description = "Test definition"
+	item.flavor_text = "Deterministic fixture."
+	item.faction = TestFaction
 	var modifier: StatModifier = StatModifier.new()
 	modifier.operation = operation
 	modifier.value = value

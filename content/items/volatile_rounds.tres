@@ -4,6 +4,7 @@
 [ext_resource type="Script" path="res://game/items/item_trigger.gd" id="trigger"]
 [ext_resource type="Script" path="res://game/items/item_condition.gd" id="condition"]
 [ext_resource type="Script" path="res://game/items/item_effect.gd" id="effect"]
+[ext_resource type="Resource" path="res://content/factions/iron_doctrine.tres" id="faction"]
 
 [sub_resource type="Resource" id="Eligible"]
 script = ExtResource("condition")
@@ -24,7 +25,9 @@ effects = Array[ExtResource("effect")]([SubResource("Explosion")])
 [resource]
 script = ExtResource("item")
 id = &"volatile_rounds"
-display_name = "Volatile Rounds"
-description = "Primary hitscan kills explode: 45 damage in 3.5 m. No blast chains."
+display_name = "Volatile Payload"
+description = "Eligible primary hitscan kills explode for 45 damage in 3.5 m."
+flavor_text = "Target neutralization is only the beginning."
+faction = ExtResource("faction")
 tags = PackedStringArray("offense", "explosion")
 triggers = Array[ExtResource("trigger")]([SubResource("Kill")])
