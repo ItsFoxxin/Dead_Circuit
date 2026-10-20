@@ -262,6 +262,13 @@ Vampiric Ammo requires the weapon tag, so eligible secondary kills also heal the
 source player. Healing clamps to maximum health and cannot resurrect. Repeated
 damage to an already dead entity produces no additional kill or heal.
 
+In v0.0.6, modifiers derive from each equipped controller's authored base stats.
+Split Chamber adds one shot to the Service Pistol, Relay SMG or Scatterline
+Shotgun base count; Heavy Lead and Rapid Mechanism use the same generic damage and
+fire-rate stats for all three. Volatile Rounds and Vampiric Ammo consume the same
+owned damage/kill events regardless of weapon ID. Weapon switching does not change
+the per-player item build.
+
 ## v0.0.2 prototype choices and build visibility
 
 After waves 1–4, combat progression waits for item selection. The authored catalog

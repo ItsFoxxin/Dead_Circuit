@@ -155,7 +155,7 @@ func _two_player_offers(reverse: bool) -> Dictionary[int, Array]:
 	other.player_id = 22
 	other.local_input_enabled = false
 	session.actors.add_child(other)
-	other.weapon.configure(session.weapon_definition, 22, other.items)
+	other.configure_weapons(session.weapon_definitions)
 	session.players.append(other)
 	if reverse:
 		session.players.reverse()

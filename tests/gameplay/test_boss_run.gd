@@ -157,7 +157,7 @@ func test_boss_choices_are_independent_per_living_player_and_wait_for_every_choi
 	second.player_id = 22
 	run.combat.actors.add_child(second)
 	second.set_physics_process(false)
-	second.weapon.configure(run.combat.weapon_definition, 22, second.items)
+	second.configure_weapons(run.combat.weapon_definitions)
 	second.receive_damage(DamageContext.new(10.0))
 	run.combat.players.append(second)
 	run.combat.players.append(second)

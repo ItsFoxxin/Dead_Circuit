@@ -73,7 +73,7 @@ func test_target_selection_handles_multiple_players_and_skips_dead() -> void:
 	second.player_id = 22
 	second.local_input_enabled = false
 	session.actors.add_child(second)
-	second.weapon.configure(session.weapon_definition, 22)
+	second.configure_weapons(session.weapon_definitions)
 	second.global_position = enemy.global_position + Vector3(1, 0, 0)
 	enemy.players.append(second)
 	assert_false(second.camera.current)

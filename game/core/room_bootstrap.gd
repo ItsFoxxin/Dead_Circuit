@@ -31,6 +31,9 @@ func _ready() -> void:
 			or run.run_random.seed != run.run_seed
 			or run.run_random.draw_count != 0
 			or run.combat.local_player.items.player_id != run.combat.local_player_id
+			or run.combat.weapon_definitions.size() != 3
+			or run.combat.local_player.weapons.controllers.size() != 3
+			or run.combat.local_player.weapons.equipped_index != 0
 			or run.combat.arena.exit_marker == null
 		):
 			printerr("ERROR: Room run smoke initialization failed")

@@ -16,7 +16,15 @@ func before_each() -> void:
 
 func after_each() -> void:
 	for action: StringName in [
-		&"move_forward", &"move_back", &"move_left", &"move_right", &"sprint", &"fire"
+		&"move_forward",
+		&"move_back",
+		&"move_left",
+		&"move_right",
+		&"sprint",
+		&"fire",
+		&"weapon_1",
+		&"weapon_2",
+		&"weapon_3"
 	]:
 		Input.action_release(action)
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
@@ -71,3 +79,19 @@ func test_boundary_wall_stops_player_collision() -> void:
 	await wait_seconds(0.7)
 	assert_gt(player.global_position.z, -19.3)
 	assert_lt(player.global_position.z, -18.5)
+
+
+func test_automatic_fire_repeats_while_held_and_semi_auto_requires_a_new_press() -> void:
+	var player: CombatPlayer = session.local_player
+	player.local_input_enabled = true
+	assert_true(player.switch_weapon(1))
+	var smg: WeaponController = player.weapon
+	Input.action_press("fire")
+	await wait_seconds(0.3)
+	Input.action_release("fire")
+	assert_lt(smg.magazine, smg.definition.magazine_capacity - 1)
+	assert_true(player.switch_weapon(0))
+	var pistol: WeaponController = player.weapon
+	Input.action_press("fire")
+	await wait_seconds(0.3)
+	assert_eq(pistol.magazine, pistol.definition.magazine_capacity - 1)

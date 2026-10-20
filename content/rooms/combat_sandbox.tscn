@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3]
+[gd_scene load_steps=17 format=3]
 
 [ext_resource type="Script" path="res://game/run/combat_session.gd" id="1"]
 [ext_resource type="PackedScene" path="res://content/rooms/greybox_arena.tscn" id="2"]
@@ -14,12 +14,14 @@
 [ext_resource type="Resource" path="res://content/items/rapid_mechanism.tres" id="12"]
 [ext_resource type="Resource" path="res://content/items/vampiric_ammo.tres" id="13"]
 [ext_resource type="Script" path="res://game/items/item_definition.gd" id="14"]
+[ext_resource type="Resource" path="res://content/weapons/relay_smg.tres" id="15"]
+[ext_resource type="Resource" path="res://content/weapons/scatterline_shotgun.tres" id="16"]
 
 [node name="CombatSandbox" type="Node3D"]
 script = ExtResource("1")
 player_scene = ExtResource("3")
 enemy_scene = ExtResource("4")
-weapon_definition = ExtResource("5")
+weapon_definitions = Array[ExtResource("5")]([ExtResource("5"), ExtResource("15"), ExtResource("16")])
 wave_definition = ExtResource("6")
 run_seed = 12345
 item_catalog = Array[ExtResource("14")]([ExtResource("9"), ExtResource("10"), ExtResource("11"), ExtResource("12"), ExtResource("13")])

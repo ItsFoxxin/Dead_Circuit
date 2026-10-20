@@ -95,7 +95,12 @@ func fire_hitscan(
 			entity_id
 		)
 		shot_created.emit(shot, origin)
-		var angle: float = (float(index) - float(count - 1) * 0.5) * deg_to_rad(1.2)
+		var angle: float = 0.0
+		if count > 1:
+			var fraction: float = float(index) / float(count - 1)
+			angle = deg_to_rad(
+				lerpf(-definition.spread_degrees, definition.spread_degrees, fraction)
+			)
 		var ray: Vector3 = direction.normalized().rotated(Vector3.UP, angle)
 		var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(
 			origin, origin + ray * definition.range_metres, 7, [excluded]
@@ -115,6 +120,10 @@ func combat_stats() -> WeaponStats:
 	if items != null:
 		stats.damage = maxf(0.001, items.derive(&"damage", stats.damage))
 		stats.fire_rate = maxf(0.001, items.derive(&"fire_rate", stats.fire_rate))
-		stats.shot_count = maxi(1, roundi(items.derive(&"shot_count", 1.0)))
+	stats.shot_count = definition.base_shot_count
+	if items != null:
+		stats.shot_count = maxi(
+			1, roundi(items.derive(&"shot_count", float(definition.base_shot_count)))
+		)
 		stats.shot_damage_scale = maxf(0.001, items.derive(&"shot_damage_scale", 1.0))
 	return stats

@@ -19,6 +19,10 @@ func test_restart_discards_damaged_player_ammo_enemies_and_timers() -> void:
 	previous.receive_damage(DamageContext.new(35.0))
 	previous.weapon.try_fire()
 	previous.weapon.begin_reload()
+	previous.switch_weapon(1)
+	previous.weapon.try_fire()
+	previous.switch_weapon(2)
+	previous.weapon.try_fire()
 	previous.global_position.x += 3.0
 	previous.camera.rotation.x = 0.5
 	var enemy: MeleeEnemy = session.enemies.values()[0]
@@ -33,6 +37,12 @@ func test_restart_discards_damaged_player_ammo_enemies_and_timers() -> void:
 	assert_false(session.local_player.weapon.reloading)
 	assert_eq(session.local_player.weapon.fire_remaining, 0.0)
 	assert_eq(session.local_player.weapon.reload_remaining, 0.0)
+	assert_eq(session.local_player.weapons.equipped_index, 0)
+	assert_eq(session.local_player.weapons.controllers.size(), 3)
+	for controller: WeaponController in session.local_player.weapons.controllers:
+		assert_eq(controller.magazine, controller.definition.magazine_capacity)
+		assert_eq(controller.reserve, controller.definition.starting_reserve)
+		assert_false(controller.reloading)
 	assert_eq(session.local_player.camera.rotation.x, 0.0)
 	assert_almost_eq(
 		session.local_player.global_position.x, session.arena.player_spawn.global_position.x, 0.01

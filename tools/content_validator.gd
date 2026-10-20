@@ -159,13 +159,14 @@ func _validate_scene(path: String, errors: PackedStringArray) -> void:
 		var session: CombatSession = root
 		if session.player_scene == null or session.enemy_scene == null:
 			errors.append("Sandbox requires actor scene references: " + path)
-		if session.weapon_definition == null or session.wave_definition == null:
+		if session.weapon_definitions.is_empty() or session.wave_definition == null:
 			errors.append("Sandbox requires weapon and wave definitions: " + path)
 		if session.run_seed < 0 or session.run_seed > RunRandom.MAX_SEED:
 			errors.append("Sandbox seed must be from 0 to 2147483647: " + path)
 		if not session.get_node_or_null("Arena") is CombatArena:
 			errors.append("Sandbox requires an authored combat arena: " + path)
 		_validate_item_catalog(session.item_catalog, path, errors)
+		_validate_weapon_catalog(session.weapon_definitions, path, errors)
 	else:
 		errors.append("No registered content schema for: " + path)
 	root.free()
@@ -212,6 +213,24 @@ func _validate_item_catalog(
 			errors.append_array(item.validation_errors())
 			if not item.resource_path.begins_with("res://content/items/"):
 				errors.append("Catalog must reference authored item definitions: " + path)
+
+
+func _validate_weapon_catalog(
+	catalog: Array[WeaponDefinition], path: String, errors: PackedStringArray
+) -> void:
+	var seen: Dictionary[StringName, bool] = {}
+	if catalog.size() != 3:
+		errors.append("Weapon Variety sandbox requires three weapons: " + path)
+	for weapon: WeaponDefinition in catalog:
+		if weapon == null:
+			errors.append("Null weapon catalog entry: " + path)
+		elif seen.has(weapon.id):
+			errors.append("Duplicate weapon catalog entry: " + str(weapon.id))
+		else:
+			seen[weapon.id] = true
+			errors.append_array(weapon.validation_errors())
+			if not weapon.resource_path.begins_with("res://content/weapons/"):
+				errors.append("Catalog must reference authored weapon definitions: " + path)
 
 
 func _validate_arena(root: Node, path: String, errors: PackedStringArray) -> void:

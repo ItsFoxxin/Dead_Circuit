@@ -90,7 +90,7 @@ func test_item_schema_rejects_invalid_nested_effects_and_stacking() -> void:
 func test_authored_item_schema_and_catalog_are_valid() -> void:
 	var validator: ContentValidator = Validator.new()
 	assert_eq(validator.validate().size(), 0)
-	assert_eq(validator.definition_count, 17)
+	assert_eq(validator.definition_count, 19)
 
 
 func test_authored_sandbox_seed_must_fit_supported_input_range() -> void:
