@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="WeaponDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/weapons/weapon_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"scatterline_shotgun"
+display_name = "Scatterline Shotgun"
+damage = 11.0
+shots_per_second = 1.8
+magazine_capacity = 6
+starting_reserve = 60
+reload_seconds = 1.8
+range_metres = 32.0
+base_shot_count = 7
+spread_degrees = 6.0
+damage_tags = PackedStringArray("hitscan", "shotgun", "multi_pellet")
+view_size = Vector3(0.18, 0.2, 0.72)
+view_color = Color(0.48, 0.22, 0.12, 1)

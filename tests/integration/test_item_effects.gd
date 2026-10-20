@@ -129,7 +129,7 @@ func test_source_ownership_heals_only_the_correct_player() -> void:
 	session.actors.add_child(other)
 	other.set_physics_process(false)
 	other.global_position = Vector3(10, 0, 10)
-	other.weapon.configure(session.weapon_definition, 22, other.items)
+	other.configure_weapons(session.weapon_definitions)
 	other.item_effects.targets = session.damage_targets
 	session.players.append(other)
 	player.items.acquire(Vampiric)

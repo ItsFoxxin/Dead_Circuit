@@ -17,18 +17,21 @@ See [SEEDED_RUNS.md](SEEDED_RUNS.md) for
 seed controls, exact reproducibility limits and the acceptance record.
 The owner accepted v0.0.4 and approved main promotion/release on 2026-10-16.
 This release retains version 0.0.4; see [ROOM_FRAMEWORK.md](ROOM_FRAMEWORK.md).
-v0.0.5 was accepted by the owner for main and release on 2026-10-17.
-v0.0.6 — Weapon Variety is the authorized next dev milestone.
+v0.0.5 was accepted by the owner and published from main on 2026-10-17. Its
+Windows/Linux game ZIPs, checksums and provenance are available in the
+[v0.0.5 pre-release](https://github.com/ItsFoxxin/Dead_Circuit/releases/tag/v0.0.5).
+v0.0.6 — Weapon Variety is the active development candidate. It uses version
+0.0.6 and awaits green dev CI plus owner Windows artifact acceptance. See
+[WEAPON_VARIETY.md](WEAPON_VARIETY.md).
 
-The v0.0.5 dev candidate uses version 0.0.5; see [FIRST_BOSS.md](FIRST_BOSS.md).
-The owner authorized dev promotion on 2026-10-16 and confirmed manual acceptance
-on 2026-10-17. See [FIRST_BOSS.md](FIRST_BOSS.md) for the acceptance record.
+The accepted v0.0.5 implementation and manual record remain in
+[FIRST_BOSS.md](FIRST_BOSS.md).
 
 The sequential v0.0.6–v0.1.0 plan is documented in
 [ROADMAP.md](ROADMAP.md). Codex/FoxForge responsibility, new-primitive escalation,
 item-growth targets and small content pull-request policy are defined in
-[CONTENT_WORKFLOW.md](CONTENT_WORKFLOW.md). This planning work adds no future
-milestone gameplay.
+[CONTENT_WORKFLOW.md](CONTENT_WORKFLOW.md). v0.0.6 adds no v0.0.7 gameplay and no
+new item content.
 
 ## Requirements and setup
 
@@ -173,8 +176,7 @@ does not modify main, merge PRs, deploy, or publish releases.
 
 The dedicated release.yml publishes only version-tag pushes. Ordinary branch
 pushes retain the existing CI behavior. VERSION and project.godot describe the
-current dev candidate (0.0.5); the existing manual v0.0.1
-pre-release is untouched.
+current dev candidate (0.0.6). Historical pre-releases remain untouched.
 
 For each future milestone:
 

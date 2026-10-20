@@ -81,7 +81,7 @@ func test_ammo_pickup_requires_proximity_and_credits_only_its_collector() -> voi
 	var other: CombatPlayer = run.combat.player_scene.instantiate() as CombatPlayer
 	other.player_id = 22
 	run.combat.actors.add_child(other)
-	other.weapon.configure(run.combat.weapon_definition, 22, other.items)
+	other.configure_weapons(run.combat.weapon_definitions)
 	run.combat.players.append(other)
 	other.global_position = drop.global_position - Vector3.UP * 0.5
 	watch_signals(drop)

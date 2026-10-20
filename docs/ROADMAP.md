@@ -125,8 +125,8 @@ and release on 2026-10-16. The authored start → five-wave combat → treasure 
 boss-staging route preserves player state and seeded authority between rooms
 and resets the entire run on Replay. Movement/combat and presentation remain
 prototype quality. See [ROOM_FRAMEWORK.md](ROOM_FRAMEWORK.md) and ADR 0008.
-v0.0.5 First Boss was subsequently accepted; v0.0.6 Weapon Variety is the next
-authorized dev milestone.
+v0.0.5 First Boss was subsequently accepted and released; v0.0.6 Weapon Variety
+is the active development candidate.
 
 Goal:
 
@@ -150,8 +150,8 @@ Adds one pursuing telegraphed-slam boss, attributed damage/death, boss item choi
 and one-floor completion/restart. The owner requested one Treasure item plus one
 boss item, no wave items, and occasional small room-clear supplies. Exit panels
 are flush to the wall and room/EXIT text faces the camera. See
-[FIRST_BOSS.md](FIRST_BOSS.md) and ADR 0009. v0.0.6 is the authorized next dev
-milestone; no v0.0.6 gameplay is included in this planning update.
+[FIRST_BOSS.md](FIRST_BOSS.md) and ADR 0009. v0.0.6 is now implemented as a dev
+candidate and remains a separate acceptance boundary.
 
 Goal:
 
@@ -169,8 +169,9 @@ Complex cinematic behavior is out of scope.
 
 ## v0.0.6 — Weapon Variety
 
-Status: Authorized as the next dev milestone after accepted v0.0.5. This roadmap
-change defines its scope but does not implement its gameplay.
+Status: Development candidate implemented (`0.0.6`); automated and native build
+gates must pass on `dev`, followed by owner Windows artifact acceptance before
+main promotion or release. See [WEAPON_VARIETY.md](WEAPON_VARIETY.md) and ADR 0011.
 
 Goal:
 

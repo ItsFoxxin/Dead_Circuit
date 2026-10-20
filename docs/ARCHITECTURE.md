@@ -317,3 +317,16 @@ rolls only on full combat/boss-room clears through the run RNG; RoomSupplyPickup
 validates authority, collector identity and proximity, and consumes once. Existing
 standalone/staging content and all previous determinism fixtures remain. See
 [ADR 0009](adr/0009-first-boss-and-floor-reward.md) and [FIRST_BOSS.md](FIRST_BOSS.md).
+
+## v0.0.6 weapon-loadout boundary
+
+Every CombatPlayer owns a WeaponLoadout containing independent WeaponController
+instances created from the authored weapon catalog. CombatSession injects that
+catalog; no global weapon inventory or player singleton is used. Definitions own
+fire mode, base shot count, spread, ammo and timing configuration. Controllers own
+mutable ammunition and timers, while the loadout owns equipped-slot state and
+aggregates generic weapon events.
+
+Player input interprets generic semiautomatic/automatic modes and slot selection.
+Items continue to derive generic weapon stats and consume source-aware combat
+events without knowing weapon IDs. See ADR 0011.

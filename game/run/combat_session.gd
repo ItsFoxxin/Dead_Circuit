@@ -14,7 +14,7 @@ enum State { PREPARING, ACTIVE, DEAD, COMPLETED, SELECTING_ITEM }
 
 @export var player_scene: PackedScene
 @export var enemy_scene: PackedScene
-@export var weapon_definition: WeaponDefinition
+@export var weapon_definitions: Array[WeaponDefinition] = []
 @export var wave_definition: WaveDefinition
 @export var item_catalog: Array[ItemDefinition] = []
 @export var local_player_id: int = 1
@@ -35,6 +35,9 @@ var damage_targets: Array[DamageableBody] = []
 var item_offers: Dictionary[int, ItemOffer] = {}
 var run_random: RunRandom = RunRandom.new()
 var enemy_spawn_order: Array[int] = []
+var weapon_definition: WeaponDefinition:
+	get:
+		return weapon_definitions[0] if not weapon_definitions.is_empty() else null
 
 @onready var arena: CombatArena = $Arena
 @onready var waves: WaveManager = $Waves
@@ -83,21 +86,21 @@ func restart_session() -> void:
 	actors.add_child(local_player)
 	local_player.global_transform = arena.player_spawn.global_transform
 	local_player.camera.make_current()
-	local_player.weapon.configure(weapon_definition, local_player_id, local_player.items)
+	local_player.configure_weapons(weapon_definitions)
 	local_player.item_effects.targets = damage_targets
 	local_player.combat_enabled = false
 	local_player.local_input_enabled = interactive
 	players.append(local_player)
 	local_player.health.changed.connect(_on_health_changed)
 	local_player.health.died.connect(_on_player_died)
-	local_player.weapon.changed.connect(_refresh_hud)
+	local_player.weapons.changed.connect(_refresh_hud)
 	local_player.items.changed.connect(_refresh_hud)
 	_refresh_hud()
 	if not await _synchronize_arena(token):
 		return
 	state = State.ACTIVE
 	local_player.combat_enabled = true
-	local_player.weapon.enabled = true
+	local_player.weapons.enabled = true
 	if encounter_enabled:
 		waves.start()
 	_set_mouse_capture(true)
@@ -142,7 +145,7 @@ func set_paused(value: bool) -> void:
 	paused = value
 	for player: CombatPlayer in players:
 		player.combat_enabled = not paused
-		player.weapon.enabled = not paused
+		player.weapons.enabled = not paused
 		player.velocity = Vector3.ZERO
 	for enemy: MeleeEnemy in enemies.values():
 		enemy.combat_enabled = not paused
@@ -267,7 +270,7 @@ func _resume_after_items() -> void:
 	for player: CombatPlayer in players:
 		if not player.health.is_dead:
 			player.combat_enabled = true
-			player.weapon.enabled = true
+			player.weapons.enabled = true
 	if waves.state == WaveManager.State.WAITING_FOR_REWARD:
 		waves.continue_after_reward(waves.session_token, waves.wave_number)
 	else:
@@ -354,7 +357,7 @@ func change_room(scene: PackedScene, definition: WaveDefinition) -> void:
 	state = State.ACTIVE
 	for player: CombatPlayer in players:
 		player.combat_enabled = not player.health.is_dead
-		player.weapon.enabled = not player.health.is_dead
+		player.weapons.enabled = not player.health.is_dead
 	if encounter_enabled:
 		waves.start()
 	_set_mouse_capture(true)

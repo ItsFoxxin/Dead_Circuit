@@ -269,6 +269,12 @@ Content-only work remains subject to useful targeted tests, fail-closed content
 validation and every existing regression gate. See
 [CONTENT_WORKFLOW.md](CONTENT_WORKFLOW.md) for the Codex/FoxForge boundary.
 
+The v0.0.6 candidate implements the Weapon Variety coverage with loadout unit
+tests, held-fire input behavior, per-slot restart/persistence checks, attributed
+hits and representative modifier/kill-effect integration across all three authored
+weapons. Content validation requires exactly three unique authored weapon
+definitions for this milestone's sandbox composition.
+
 ## Release verification
 
 release.yml adds approval and packaging around the existing foundation.yml gates;

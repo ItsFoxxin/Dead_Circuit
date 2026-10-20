@@ -102,7 +102,7 @@ func test_independent_players_choose_separately_before_shared_wave_advances() ->
 	var other: CombatPlayer = session.player_scene.instantiate() as CombatPlayer
 	other.player_id = 22
 	session.actors.add_child(other)
-	other.weapon.configure(session.weapon_definition, 22, other.items)
+	other.configure_weapons(session.weapon_definitions)
 	session.players.append(other)
 	await _clear_wave()
 	var first: ItemOffer = session.item_offers[session.local_player_id]

@@ -10,9 +10,13 @@ var combat_enabled: bool = true
 var suppress_fire_until_release: bool = false
 var items: PlayerItemBuild = PlayerItemBuild.new()
 var item_effects: ItemEffectRunner
+var weapon: WeaponController:
+	get:
+		return weapons.current()
 
 @onready var camera: Camera3D = $Camera
-@onready var weapon: WeaponController = $Weapon
+@onready var weapons: WeaponLoadout = $Weapons
+@onready var weapon_body: MeshInstance3D = $Camera/WeaponBody
 
 
 func _ready() -> void:
@@ -23,8 +27,9 @@ func _ready() -> void:
 	item_effects.health = health
 	add_child(item_effects)
 	items.effect_requested.connect(item_effects.apply)
-	weapon.fired.connect(_on_weapon_fired)
-	weapon.shot_created.connect(_on_shot_created)
+	weapons.fired.connect(_on_weapon_fired)
+	weapons.shot_created.connect(_on_shot_created)
+	weapons.equipped_changed.connect(_on_weapon_equipped)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -48,17 +53,23 @@ func movement_velocity(axis: Vector2, sprinting: bool) -> Vector3:
 func _physics_process(delta: float) -> void:
 	if not combat_enabled or health.is_dead:
 		return
-	weapon.advance(delta)
+	weapons.advance(delta)
 	var axis: Vector2 = Vector2.ZERO
 	var sprinting: bool = false
 	if local_input_enabled:
 		axis = Input.get_vector("move_left", "move_right", "move_forward", "move_back")
 		sprinting = Input.is_action_pressed("sprint")
+		for index: int in range(3):
+			if Input.is_action_just_pressed(StringName("weapon_%d" % (index + 1))):
+				switch_weapon(index)
 		if Input.is_action_just_pressed("reload"):
 			weapon.begin_reload()
 		if not Input.is_action_pressed("fire"):
 			suppress_fire_until_release = false
-		if Input.is_action_just_pressed("fire") and not suppress_fire_until_release:
+		var wants_fire: bool = Input.is_action_just_pressed("fire")
+		if weapon.definition.fire_mode == WeaponDefinition.FireMode.AUTOMATIC:
+			wants_fire = Input.is_action_pressed("fire")
+		if wants_fire and not suppress_fire_until_release:
 			shoot()
 	var planar: Vector3 = movement_velocity(axis, sprinting)
 	velocity.x = planar.x
@@ -78,9 +89,21 @@ func shoot() -> DamageContext:
 	)
 
 
+func configure_weapons(definitions: Array[WeaponDefinition]) -> void:
+	weapons.configure(definitions, player_id, items)
+	_update_weapon_visual()
+
+
+func switch_weapon(index: int) -> bool:
+	if not combat_enabled or health.is_dead or not weapons.equip(index):
+		return false
+	_update_weapon_visual()
+	return true
+
+
 func disable_combat() -> void:
 	combat_enabled = false
-	weapon.enabled = false
+	weapons.enabled = false
 	velocity = Vector3.ZERO
 
 
@@ -96,3 +119,18 @@ func _on_weapon_fired(context: DamageContext) -> void:
 
 func _on_shot_created(context: DamageContext, origin: Vector3) -> void:
 	items.handle_event(CombatEvent.new(CombatEvent.Kind.SHOT_CREATED, context, origin))
+
+
+func _on_weapon_equipped(_previous_index: int, _current_index: int) -> void:
+	_update_weapon_visual()
+
+
+func _update_weapon_visual() -> void:
+	if weapon == null or weapon.definition == null or not is_instance_valid(weapon_body):
+		return
+	var mesh: BoxMesh = weapon_body.mesh.duplicate() as BoxMesh
+	mesh.size = weapon.definition.view_size
+	weapon_body.mesh = mesh
+	var material: StandardMaterial3D = weapon_body.material_override.duplicate()
+	material.albedo_color = weapon.definition.view_color
+	weapon_body.material_override = material

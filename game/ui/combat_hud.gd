@@ -33,10 +33,12 @@ func refresh(
 	active_enemies: int = -1
 ) -> void:
 	status.text = (
-		"HP %d / %d\nAmmo %d / %d   Reserve %d%s\nWave %d / %d   Enemies %d\nSeed %d"
+		"HP %d / %d\n[%d] %s   Ammo %d / %d   Reserve %d%s\nWave %d / %d   Enemies %d\nSeed %d"
 		% [
 			player.health.current,
 			player.health.maximum,
+			player.weapons.equipped_index + 1,
+			player.weapon.definition.display_name,
 			player.weapon.magazine,
 			player.weapon.definition.magazine_capacity,
 			player.weapon.reserve,
@@ -60,9 +62,10 @@ func refresh(
 		names.append(item.display_name)
 	var stats: WeaponStats = player.weapon.combat_stats()
 	build_text.text = (
-		"BUILD\n%s\n\nShots %d x %.1f damage\nFire rate %.2f/s"
+		"BUILD\n%s\n\n%s\nShots %d x %.1f damage\nFire rate %.2f/s"
 		% [
 			"None" if names.is_empty() else "\n".join(names),
+			player.weapon.definition.display_name,
 			stats.shot_count,
 			stats.damage * stats.shot_damage_scale,
 			stats.fire_rate

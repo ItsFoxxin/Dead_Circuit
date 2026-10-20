@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://game/player/combat_player.gd" id="1"]
 [ext_resource type="Script" path="res://game/combat/health_component.gd" id="2"]
-[ext_resource type="Script" path="res://game/weapons/weapon_controller.gd" id="3"]
+[ext_resource type="Script" path="res://game/weapons/weapon_loadout.gd" id="4"]
 
 [sub_resource type="CapsuleShape3D" id="Capsule"]
 radius = 0.35
@@ -32,8 +32,8 @@ shape = SubResource("Capsule")
 [node name="Health" type="Node" parent="."]
 script = ExtResource("2")
 
-[node name="Weapon" type="Node" parent="."]
-script = ExtResource("3")
+[node name="Weapons" type="Node" parent="."]
+script = ExtResource("4")
 
 [node name="Camera" type="Camera3D" parent="."]
 position = Vector3(0, 1.55, 0)

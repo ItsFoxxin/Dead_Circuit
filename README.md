@@ -46,12 +46,17 @@ for the downloadable build once publication completes.
 **v0.0.5 — First Boss** is complete and accepted, with a telegraphed boss,
 boss reward, floor completion and the requested item pacing / exit-sign fixes.
 The project owner approved it for main and release on 2026-10-17; see
-[First Boss](docs/FIRST_BOSS.md). **v0.0.6 — Weapon Variety** is the authorized
-next dev milestone. The documented path through the first complete vertical slice
-is in the [Roadmap](docs/ROADMAP.md), with bounded Codex and FoxForge
-responsibilities in the
-[Content Production Workflow](docs/CONTENT_WORKFLOW.md). This planning update adds
-no v0.0.6+ gameplay.
+[First Boss](docs/FIRST_BOSS.md).
+
+**v0.0.6 — Weapon Variety** is the active development candidate. It retains the
+Service Pistol and adds the automatic Relay SMG, multi-pellet Scatterline Shotgun,
+1/2/3 switching and independent weapon state through one reusable per-player
+loadout. All five existing items remain compatible through shared modifiers and
+source-aware events. Windows artifact manual acceptance is pending; see
+[Weapon Variety](docs/WEAPON_VARIETY.md). The documented path through the first
+complete vertical slice is in the [Roadmap](docs/ROADMAP.md), with bounded Codex
+and FoxForge responsibilities in the
+[Content Production Workflow](docs/CONTENT_WORKFLOW.md).
 
 For setup, validation, tests, and exports, see [Development](docs/DEVELOPMENT.md).
 

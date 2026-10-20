@@ -162,7 +162,7 @@ func test_multiple_player_actors_and_builds_survive_room_transition() -> void:
 	var other: CombatPlayer = run.combat.player_scene.instantiate() as CombatPlayer
 	other.player_id = 22
 	run.combat.actors.add_child(other)
-	other.weapon.configure(run.combat.weapon_definition, 22, other.items)
+	other.configure_weapons(run.combat.weapon_definitions)
 	other.items.acquire(run.combat.item_catalog[0])
 	other.receive_damage(DamageContext.new(15.0))
 	run.combat.players.append(other)
@@ -222,7 +222,7 @@ func test_treasure_waits_for_each_explicit_player_choice() -> void:
 	var other: CombatPlayer = run.combat.player_scene.instantiate() as CombatPlayer
 	other.player_id = 22
 	run.combat.actors.add_child(other)
-	other.weapon.configure(run.combat.weapon_definition, 22, other.items)
+	other.configure_weapons(run.combat.weapon_definitions)
 	run.combat.players.append(other)
 	await _exit_room()
 	assert_eq(run.combat.item_offers.size(), 2)
