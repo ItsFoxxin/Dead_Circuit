@@ -47,6 +47,27 @@ func test_wall_blocks_hitscan() -> void:
 	assert_eq(player.weapon.magazine, 11)
 
 
+func test_each_authored_hitscan_ray_creates_a_short_lived_tracer() -> void:
+	var player: CombatPlayer = session.local_player
+	player.camera.rotation.x = 1.2
+	var expected_total: int = 0
+	for index: int in range(player.weapons.controllers.size()):
+		if index > 0:
+			assert_true(player.switch_weapon(index))
+		var expected_for_weapon: int = player.weapon.definition.base_shot_count
+		expected_total += expected_for_weapon
+		assert_not_null(player.shoot())
+		var tracers: Array[BulletTracer] = []
+		for child: Node in session.actors.get_children():
+			if child is BulletTracer:
+				tracers.append(child as BulletTracer)
+		assert_eq(tracers.size(), expected_total)
+		var latest: BulletTracer = tracers.back()
+		assert_eq(latest.source_player_id, player.player_id)
+		assert_eq(latest.source_weapon_id, player.weapon.definition.id)
+		assert_gt(latest.ray_origin.distance_to(latest.ray_endpoint), 1.0)
+
+
 func test_enemy_melee_uses_health_interface_and_cooldown() -> void:
 	var player: CombatPlayer = session.local_player
 	var enemy: MeleeEnemy = session.enemies.values()[0]

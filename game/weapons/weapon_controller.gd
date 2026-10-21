@@ -5,6 +5,9 @@ extends Node
 signal changed
 signal fired(context: DamageContext)
 signal shot_created(context: DamageContext, origin: Vector3)
+signal trace_created(
+	context: DamageContext, origin: Vector3, endpoint: Vector3, config: WeaponDefinition
+)
 signal hit(context: DamageContext, target_entity_id: int, position: Vector3, applied: float)
 
 var definition: WeaponDefinition
@@ -121,6 +124,8 @@ func fire_hitscan(
 			origin, origin + ray * definition.range_metres, 7, [excluded]
 		)
 		var ray_result: Dictionary = world.direct_space_state.intersect_ray(query)
+		var endpoint: Vector3 = ray_result.get("position", origin + ray * definition.range_metres)
+		trace_created.emit(shot, origin, endpoint, definition)
 		var collider: Variant = ray_result.get("collider")
 		if collider is DamageableBody:
 			var body: DamageableBody = collider

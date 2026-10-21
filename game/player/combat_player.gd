@@ -31,6 +31,7 @@ func _ready() -> void:
 	items.effect_requested.connect(item_effects.apply)
 	weapons.fired.connect(_on_weapon_fired)
 	weapons.shot_created.connect(_on_shot_created)
+	weapons.trace_created.connect(_on_trace_created)
 	weapons.hit.connect(_on_weapon_hit)
 	weapons.equipped_changed.connect(_on_weapon_equipped)
 	health.damaged.connect(_on_health_damaged)
@@ -138,6 +139,16 @@ func _on_weapon_fired(context: DamageContext) -> void:
 
 func _on_shot_created(context: DamageContext, origin: Vector3) -> void:
 	items.handle_event(CombatEvent.new(CombatEvent.Kind.SHOT_CREATED, context, origin))
+
+
+func _on_trace_created(
+	context: DamageContext, origin: Vector3, endpoint: Vector3, config: WeaponDefinition
+) -> void:
+	var tracer: BulletTracer = BulletTracer.new()
+	get_parent().add_child(tracer)
+	tracer.configure(
+		context, origin, endpoint, config.tracer_color, config.tracer_width, config.tracer_lifetime
+	)
 
 
 func _on_weapon_hit(

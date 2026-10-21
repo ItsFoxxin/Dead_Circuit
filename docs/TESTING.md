@@ -272,7 +272,8 @@ validation and every existing regression gate. See
 The v0.0.6 candidate implements the Weapon Variety coverage with loadout unit
 tests, held-fire input behavior, per-slot restart/persistence checks, attributed
 hits and representative modifier/kill-effect integration across all three authored
-weapons. Content validation requires exactly three unique authored weapon
+weapons. Integration coverage also requires one visual tracer per authored hitscan
+ray while damage remains on the existing raycast path. Content validation requires exactly three unique authored weapon
 definitions for this milestone's sandbox composition.
 
 The faction-item expansion adds schema and registration checks for five factions

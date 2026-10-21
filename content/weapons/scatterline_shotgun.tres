@@ -17,3 +17,6 @@ spread_degrees = 6.0
 damage_tags = PackedStringArray("hitscan", "shotgun", "multi_pellet")
 view_size = Vector3(0.18, 0.2, 0.72)
 view_color = Color(0.48, 0.22, 0.12, 1)
+tracer_color = Color(1, 0.42, 0.12, 1)
+tracer_width = 0.008
+tracer_lifetime = 0.07

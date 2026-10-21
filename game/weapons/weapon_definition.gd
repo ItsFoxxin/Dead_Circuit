@@ -17,6 +17,9 @@ enum FireMode { SEMI_AUTOMATIC, AUTOMATIC }
 @export var damage_tags: PackedStringArray = ["hitscan"]
 @export var view_size: Vector3 = Vector3(0.12, 0.15, 0.42)
 @export var view_color: Color = Color(0.18, 0.2, 0.25, 1.0)
+@export var tracer_color: Color = Color(1.0, 0.72, 0.24, 1.0)
+@export var tracer_width: float = 0.012
+@export var tracer_lifetime: float = 0.08
 
 
 func validation_errors() -> PackedStringArray:
@@ -41,4 +44,8 @@ func validation_errors() -> PackedStringArray:
 		or view_size.z <= 0.0
 	):
 		errors.append("Weapon view size must be finite and positive")
+	if not is_finite(tracer_width) or tracer_width <= 0.0:
+		errors.append("Weapon tracer width must be finite and positive")
+	if not is_finite(tracer_lifetime) or tracer_lifetime <= 0.0:
+		errors.append("Weapon tracer lifetime must be finite and positive")
 	return errors
