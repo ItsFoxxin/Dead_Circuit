@@ -288,6 +288,12 @@ verify expanded seeded offers and clean restart of guards, buffs and companions.
 The independent sandbox and room probes intentionally pin the new 15-item seeded
 sequence. The accepted release routes and reward pacing remain unchanged.
 
+The v0.0.6 development console has integration coverage for explicit-player
+resolution, item grants, weapon selection, ammo refill, health mutation,
+source-attributed enemy removal, seeded full-run restart, overlay pause restoration
+and output clearing. Release builds do not mount the console. See
+[DEVELOPER_CONSOLE.md](DEVELOPER_CONSOLE.md).
+
 ## Release verification
 
 release.yml adds approval and packaging around the existing foundation.yml gates;

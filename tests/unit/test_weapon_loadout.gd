@@ -71,6 +71,19 @@ func test_reset_restores_every_weapon_and_equips_first_slot() -> void:
 		assert_eq(controller.fire_remaining, 0.0)
 
 
+func test_refill_ammunition_restores_every_slot_without_changing_equipped_weapon() -> void:
+	for controller: WeaponController in loadout.controllers:
+		controller.try_fire()
+		controller.begin_reload()
+	loadout.equip(2)
+	loadout.refill_ammunition()
+	assert_eq(loadout.equipped_index, 2)
+	for controller: WeaponController in loadout.controllers:
+		assert_eq(controller.magazine, controller.definition.magazine_capacity)
+		assert_eq(controller.reserve, controller.definition.starting_reserve)
+		assert_false(controller.reloading)
+
+
 func test_invalid_firing_configuration_is_rejected() -> void:
 	var invalid: WeaponDefinition = WeaponDefinition.new()
 	invalid.id = &"invalid"

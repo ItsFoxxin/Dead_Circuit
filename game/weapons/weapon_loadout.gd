@@ -75,6 +75,11 @@ func reset() -> void:
 	changed.emit()
 
 
+func refill_ammunition() -> void:
+	for controller: WeaponController in controllers:
+		controller.refill_ammunition()
+
+
 func _register(controller: WeaponController) -> void:
 	controllers.append(controller)
 	controller.changed.connect(_on_controller_changed)
