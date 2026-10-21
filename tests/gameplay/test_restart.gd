@@ -1,6 +1,9 @@
 extends GutTest
 
 const Sandbox: PackedScene = preload("res://content/rooms/combat_sandbox.tscn")
+const Emergency: ItemDefinition = preload("res://content/items/emergency_reboot.tres")
+const Kinetic: ItemDefinition = preload("res://content/items/kinetic_escalator.tres")
+const Sentinel: ItemDefinition = preload("res://content/items/sentinel_node.tres")
 
 var session: CombatSession
 
@@ -54,6 +57,31 @@ func test_restart_discards_damaged_player_ammo_enemies_and_timers() -> void:
 	var current_id: int = session.enemies.keys()[0]
 	session.waves.remove_enemy(current_id, token)
 	assert_eq(session.waves.remaining(), 3)
+	await get_tree().process_frame
+	assert_false(is_instance_valid(previous))
+
+
+func test_restart_discards_item_runtime_guards_buffs_and_companions() -> void:
+	var previous: CombatPlayer = session.local_player
+	assert_true(previous.items.acquire(Emergency))
+	assert_true(previous.items.acquire(Kinetic))
+	assert_true(previous.items.acquire(Sentinel))
+	var hit: DamageContext = DamageContext.new(
+		10.0, previous.player_id, &"pistol", &"ballistic", ["hitscan", "weapon"], 1, 1
+	)
+	previous.items.handle_event(
+		CombatEvent.new(CombatEvent.Kind.TARGET_DAMAGED, hit, Vector3.ZERO, 10, 10.0)
+	)
+	assert_eq(previous.health.lethal_protections, 1)
+	assert_gt(previous.items.derive(&"damage", 30.0), 30.0)
+	assert_not_null(previous.item_effects.get_node_or_null("AutonomousCompanion"))
+	session.restart_session()
+	await session.session_started
+	assert_true(session.local_player.items.definitions().is_empty())
+	assert_eq(session.local_player.health.lethal_protections, 0)
+	assert_eq(session.local_player.health.invulnerability_remaining, 0.0)
+	assert_eq(session.local_player.items.derive(&"damage", 30.0), 30.0)
+	assert_null(session.local_player.item_effects.get_node_or_null("AutonomousCompanion"))
 	await get_tree().process_frame
 	assert_false(is_instance_valid(previous))
 

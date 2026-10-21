@@ -225,7 +225,7 @@ def verify_room_samples(samples: list) -> None:
         raise RuntimeError("Independent room run processes diverged")
     record = samples[0]
     if (record.get("rooms") != ["prototype_start", "prototype_combat", "prototype_treasure", "prototype_boss"]
-            or record.get("completed") is not True or record.get("draw_count") != 64
+            or record.get("completed") is not True or record.get("draw_count") != 70
             or record.get("restart") != {"room": "prototype_start", "draw_count": 0, "items": 0,
                                          "health": 100, "magazine": 12, "reserve": 240}):
         raise RuntimeError("Incomplete room route or stale restart state")
@@ -251,9 +251,9 @@ def verify_run_samples(samples: list) -> None:
         if (record.get("wave") != index + 1 or not isinstance(spawns, list)
                 or sorted(spawns) != list(range(12))
                 or not isinstance(choices, list) or not all(isinstance(item, str) for item in choices)
-                or len(choices) != (3, 3, 3, 2, 0)[index] or len(set(choices)) != len(choices)
+                or len(choices) != (3, 3, 3, 3, 0)[index] or len(set(choices)) != len(choices)
                 or acquired.intersection(choices)
-                or record.get("draw_count") != (25, 39, 52, 64, 64)[index]):
+                or record.get("draw_count") != (25, 39, 53, 67, 67)[index]):
             raise RuntimeError("Invalid authoritative encounter/reward rolls")
         if choices:
             acquired.add(choices[0])

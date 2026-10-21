@@ -35,7 +35,7 @@ func test_seeded_encounter_places_each_enemy_at_its_rolled_marker() -> void:
 	var ids: Array[StringName] = []
 	for item: ItemDefinition in session.item_offers[session.local_player_id].choices:
 		ids.append(item.id)
-	assert_eq(ids, [&"rapid_mechanism", &"heavy_lead", &"vampiric_ammo"])
+	assert_eq(ids, [&"emergency_reboot", &"split_chamber", &"arc_conductor"])
 
 
 func test_new_seed_discards_old_combat_and_reward_state() -> void:

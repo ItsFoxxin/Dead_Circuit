@@ -1,0 +1,34 @@
+[gd_resource type="Resource" script_class="ItemDefinition" load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://game/items/item_definition.gd" id="item"]
+[ext_resource type="Script" path="res://game/items/item_trigger.gd" id="trigger"]
+[ext_resource type="Script" path="res://game/items/item_condition.gd" id="condition"]
+[ext_resource type="Script" path="res://game/items/item_effect.gd" id="effect"]
+[ext_resource type="Resource" path="res://content/factions/helix_directorate.tres" id="faction"]
+
+[sub_resource type="Resource" id="Any"]
+script = ExtResource("condition")
+
+[sub_resource type="Resource" id="Guard"]
+script = ExtResource("effect")
+kind = 5
+amount = 1.0
+threshold = 1
+duration = 3.0
+
+[sub_resource type="Resource" id="Acquire"]
+script = ExtResource("trigger")
+event = 5
+condition = SubResource("Any")
+effects = Array[ExtResource("effect")]([SubResource("Guard")])
+
+[resource]
+script = ExtResource("item")
+id = &"emergency_reboot"
+display_name = "Emergency Reboot"
+description = "Once per run, lethal damage leaves you at 1 HP with 3 seconds of invulnerability."
+flavor_text = "Death is a recoverable system state."
+faction = ExtResource("faction")
+classification = &"biotechnology"
+tags = PackedStringArray("defense", "survival")
+triggers = Array[ExtResource("trigger")]([SubResource("Acquire")])

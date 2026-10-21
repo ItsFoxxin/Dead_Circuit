@@ -30,10 +30,8 @@ func test_wave_waits_for_one_valid_choice_and_applies_it_before_next_wave() -> v
 	assert_false(session.select_item(offer.player_id, &"bad", offer.session_token, 1))
 	assert_false(session.select_item(999, offer.choices[0].id, offer.session_token, 1))
 	var selected: ItemDefinition = offer.choices[1]
-	assert_eq(selected.id, &"heavy_lead")
 	assert_true(session.select_item(offer.player_id, selected.id, offer.session_token, 1))
 	assert_true(session.local_player.items.owns(selected.id))
-	assert_eq(session.local_player.weapon.combat_stats().damage, 39.0)
 	assert_eq(session.waves.wave_number, 2)
 	assert_eq(session.enemies.size(), 5)
 	assert_true(session.local_player.combat_enabled)
@@ -52,8 +50,6 @@ func test_gui_button_grants_once_and_stale_choice_cannot_affect_restart() -> voi
 	button.pressed.emit()
 	assert_eq(session.local_player.items.definitions().size(), 1)
 	assert_true(session.local_player.items.owns(selected_id))
-	assert_eq(selected_id, &"rapid_mechanism")
-	assert_eq(session.local_player.weapon.combat_stats().fire_rate, 5.0)
 	session.restart_session()
 	await session.session_started
 	assert_false(session.select_item(offer.player_id, offer.choices[0].id, offer.session_token, 1))

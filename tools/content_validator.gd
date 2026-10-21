@@ -215,8 +215,9 @@ func _validate_item_catalog(
 		else:
 			seen[item.id] = true
 			errors.append_array(item.validation_errors())
-			if item.faction != null and not item.faction.resource_path.begins_with(
-				"res://content/factions/"
+			if (
+				item.faction != null
+				and not item.faction.resource_path.begins_with("res://content/factions/")
 			):
 				errors.append("Item faction must reference authored faction metadata: " + path)
 			if not item.resource_path.begins_with("res://content/items/"):

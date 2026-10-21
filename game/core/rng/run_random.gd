@@ -40,6 +40,15 @@ func sample_indices(size: int, count: int) -> Array[int]:
 	return result
 
 
+func chance(probability: float) -> bool:
+	if probability <= 0.0:
+		return false
+	if probability >= 1.0:
+		return true
+	draw_count += 1
+	return _generator.randf() < probability
+
+
 static func parse_seed(text: String) -> int:
 	var value: String = text.strip_edges()
 	if value.length() > 10 or not value.is_valid_int():

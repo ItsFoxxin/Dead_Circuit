@@ -6,6 +6,7 @@ signal changed
 signal equipped_changed(previous_index: int, current_index: int)
 signal fired(context: DamageContext)
 signal shot_created(context: DamageContext, origin: Vector3)
+signal hit(context: DamageContext, target_entity_id: int, position: Vector3, applied: float)
 
 var controllers: Array[WeaponController] = []
 var equipped_index: int = 0
@@ -77,6 +78,12 @@ func _register(controller: WeaponController) -> void:
 	controller.fired.connect(func(context: DamageContext) -> void: fired.emit(context))
 	controller.shot_created.connect(
 		func(context: DamageContext, origin: Vector3) -> void: shot_created.emit(context, origin)
+	)
+	controller.hit.connect(
+		func(
+			context: DamageContext, target_entity_id: int, position: Vector3, applied: float
+		) -> void:
+			hit.emit(context, target_entity_id, position, applied)
 	)
 
 

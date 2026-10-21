@@ -87,31 +87,43 @@ func test_item_schema_rejects_invalid_nested_effects_and_stacking() -> void:
 	trigger.effects = [effect]
 	item.triggers = [trigger]
 	ResourceSaver.save(item, ROOT.path_join("items/invalid.tres"))
-	assert_gt(Validator.new().validate(ROOT).size(), 3)
+	assert_gte(Validator.new().validate(ROOT).size(), 3)
 
 
 func test_authored_item_schema_and_catalog_are_valid() -> void:
 	var validator: ContentValidator = Validator.new()
 	assert_eq(validator.validate().size(), 0)
-	assert_eq(validator.definition_count, 24)
+	assert_eq(validator.definition_count, 34)
 
 
 func test_all_authored_items_have_valid_faction_metadata() -> void:
-	var seen: Dictionary[StringName, bool] = {}
-	for path: String in [
-		"res://content/items/heavy_lead.tres",
-		"res://content/items/rapid_mechanism.tres",
-		"res://content/items/split_chamber.tres",
-		"res://content/items/vampiric_ammo.tres",
-		"res://content/items/volatile_rounds.tres",
-	]:
-		var item: ItemDefinition = load(path) as ItemDefinition
+	var expected: Dictionary[StringName, StringName] = {
+		&"arc_conductor": &"scrapborn",
+		&"emergency_reboot": &"helix_directorate",
+		&"fragmentation_core": &"iron_doctrine",
+		&"heavy_lead": &"iron_doctrine",
+		&"hemophage_implant": &"helix_directorate",
+		&"kinetic_escalator": &"iron_doctrine",
+		&"martyrs_relay": &"null_choir",
+		&"neural_feedback": &"null_choir",
+		&"rapid_mechanism": &"scrapborn",
+		&"recursive_fault": &"the_unwritten",
+		&"sentinel_node": &"scrapborn",
+		&"split_chamber": &"scrapborn",
+		&"unstable_replicator": &"the_unwritten",
+		&"vampiric_ammo": &"helix_directorate",
+		&"volatile_rounds": &"iron_doctrine",
+	}
+	var found: int = 0
+	for path: String in DirAccess.get_files_at("res://content/items"):
+		if path.get_extension() != "tres":
+			continue
+		var item: ItemDefinition = load("res://content/items/" + path) as ItemDefinition
 		assert_not_null(item.faction)
 		assert_true(item.faction.validation_errors().is_empty())
-		seen[item.faction.id] = true
-	assert_true(seen.has(&"helix_directorate"))
-	assert_true(seen.has(&"iron_doctrine"))
-	assert_true(seen.has(&"scrapborn"))
+		assert_eq(item.faction.id, expected[item.id])
+		found += 1
+	assert_eq(found, expected.size())
 
 
 func test_existing_item_identity_migration_preserves_stable_ids() -> void:

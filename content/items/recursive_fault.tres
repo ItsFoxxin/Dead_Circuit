@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="ItemDefinition" load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://game/items/item_definition.gd" id="item"]
+[ext_resource type="Script" path="res://game/items/item_trigger.gd" id="trigger"]
+[ext_resource type="Script" path="res://game/items/item_condition.gd" id="condition"]
+[ext_resource type="Script" path="res://game/items/item_effect.gd" id="effect"]
+[ext_resource type="Resource" path="res://content/factions/the_unwritten.tres" id="faction"]
+
+[sub_resource type="Resource" id="Any"]
+script = ExtResource("condition")
+
+[sub_resource type="Resource" id="Repeat"]
+script = ExtResource("effect")
+kind = 8
+amount = 1.0
+chance = 0.12
+
+[sub_resource type="Resource" id="Acquire"]
+script = ExtResource("trigger")
+event = 5
+condition = SubResource("Any")
+effects = Array[ExtResource("effect")]([SubResource("Repeat")])
+
+[resource]
+script = ExtResource("item")
+id = &"recursive_fault"
+display_name = "Recursive Fault"
+description = "12% seeded chance to repeat an approved offensive item effect once."
+flavor_text = "The system insists this event has already occurred."
+faction = ExtResource("faction")
+classification = &"corrupted_technology"
+tags = PackedStringArray("offense", "recursion")
+triggers = Array[ExtResource("trigger")]([SubResource("Acquire")])

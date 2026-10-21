@@ -5,6 +5,7 @@ extends Node
 signal changed
 signal fired(context: DamageContext)
 signal shot_created(context: DamageContext, origin: Vector3)
+signal hit(context: DamageContext, target_entity_id: int, position: Vector3, applied: float)
 
 var definition: WeaponDefinition
 var items: PlayerItemBuild
@@ -15,6 +16,7 @@ var fire_remaining: float = 0.0
 var reload_remaining: float = 0.0
 var reloading: bool = false
 var enabled: bool = true
+var attack_sequence: int = 0
 
 
 func configure(config: WeaponDefinition, player_id: int, build: PlayerItemBuild = null) -> void:
@@ -31,6 +33,7 @@ func reset() -> void:
 	reload_remaining = 0.0
 	reloading = false
 	enabled = true
+	attack_sequence = 0
 	changed.emit()
 
 
@@ -61,6 +64,7 @@ func try_fire(entity_id: int = 0) -> DamageContext:
 	if not enabled or reloading or magazine <= 0 or fire_remaining > 0.0:
 		return null
 	magazine -= 1
+	attack_sequence += 1
 	var stats: WeaponStats = combat_stats()
 	fire_remaining = 1.0 / stats.fire_rate
 	var context: DamageContext = DamageContext.new(
@@ -69,7 +73,8 @@ func try_fire(entity_id: int = 0) -> DamageContext:
 		definition.id,
 		&"ballistic",
 		definition.damage_tags,
-		entity_id
+		entity_id,
+		attack_sequence
 	)
 	if not context.tags.has("weapon"):
 		context.tags.append("weapon")
@@ -85,19 +90,29 @@ func fire_hitscan(
 	var context: DamageContext = try_fire(entity_id)
 	if context == null:
 		return null
-	for index: int in range(count):
+	var ray_scales: Array[float] = []
+	for _index: int in range(count):
+		ray_scales.append(1.0)
+	if items != null:
+		ray_scales.append_array(items.extra_ray_scales(context))
+	for index: int in range(ray_scales.size()):
 		var shot: DamageContext = DamageContext.new(
-			context.amount,
+			context.amount * ray_scales[index],
 			source_player_id,
 			definition.id,
 			context.damage_type,
 			context.tags,
-			entity_id
+			entity_id,
+			context.attack_id
 		)
+		if index >= count:
+			shot = context.secondary(
+				context.amount * ray_scales[index], context.damage_type, ["replicated"], true, true
+			)
 		shot_created.emit(shot, origin)
 		var angle: float = 0.0
-		if count > 1:
-			var fraction: float = float(index) / float(count - 1)
+		if ray_scales.size() > 1:
+			var fraction: float = float(index) / float(ray_scales.size() - 1)
 			angle = deg_to_rad(
 				lerpf(-definition.spread_degrees, definition.spread_degrees, fraction)
 			)
@@ -105,11 +120,14 @@ func fire_hitscan(
 		var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(
 			origin, origin + ray * definition.range_metres, 7, [excluded]
 		)
-		var hit: Dictionary = world.direct_space_state.intersect_ray(query)
-		var collider: Variant = hit.get("collider")
+		var ray_result: Dictionary = world.direct_space_state.intersect_ray(query)
+		var collider: Variant = ray_result.get("collider")
 		if collider is DamageableBody:
 			var body: DamageableBody = collider
-			body.receive_damage(shot)
+			var applied: float = body.receive_damage(shot)
+			if applied > 0.0:
+				var position: Vector3 = ray_result.get("position", body.global_position)
+				hit.emit(shot, body.get_instance_id(), position, applied)
 	return context
 
 

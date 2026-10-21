@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="ItemDefinition" load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://game/items/item_definition.gd" id="item"]
+[ext_resource type="Script" path="res://game/items/item_trigger.gd" id="trigger"]
+[ext_resource type="Script" path="res://game/items/item_condition.gd" id="condition"]
+[ext_resource type="Script" path="res://game/items/item_effect.gd" id="effect"]
+[ext_resource type="Resource" path="res://content/factions/iron_doctrine.tres" id="faction"]
+
+[sub_resource type="Resource" id="ExplosionKill"]
+script = ExtResource("condition")
+required_tags = PackedStringArray("explosion")
+excluded_tags = PackedStringArray("fragment")
+
+[sub_resource type="Resource" id="Fragments"]
+script = ExtResource("effect")
+kind = 4
+amount = 1.0
+radius = 4.0
+damage_scale = 0.2
+target_count = 3
+
+[sub_resource type="Resource" id="Kill"]
+script = ExtResource("trigger")
+event = 2
+condition = SubResource("ExplosionKill")
+effects = Array[ExtResource("effect")]([SubResource("Fragments")])
+
+[resource]
+script = ExtResource("item")
+id = &"fragmentation_core"
+display_name = "Fragmentation Core"
+description = "Explosion kills launch 3 short-range fragments at 20% of explosion damage."
+flavor_text = "Secondary casualties are considered successful deployment."
+faction = ExtResource("faction")
+classification = &"military_hardware"
+tags = PackedStringArray("offense", "explosion")
+triggers = Array[ExtResource("trigger")]([SubResource("Kill")])

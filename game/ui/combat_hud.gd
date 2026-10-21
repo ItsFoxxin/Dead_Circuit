@@ -86,7 +86,7 @@ func show_offer(offer: ItemOffer) -> void:
 	for item: ItemDefinition in offer.choices:
 		var button: Button = Button.new()
 		button.text = (
-			"%s — %s\n%s\n\"%s\""
+			'%s — %s\n%s\n"%s"'
 			% [item.display_name, item.faction.display_name, item.description, item.flavor_text]
 		)
 		button.custom_minimum_size.y = 82.0
