@@ -15,17 +15,17 @@ The system must avoid explicitly coding every possible synergy.
 Bad:
 
 ```text
-if player owns Split Chamber and Volatile Rounds:
+if player owns Bifurcation Array and Volatile Payload:
     run special SplitVolatile behavior
 ```
 
 Good:
 
 ```text
-Split Chamber
+Bifurcation Array
 → modifies projectile count
 
-Volatile Rounds
+Volatile Payload
 → reacts to eligible enemy kills
 ```
 
@@ -128,24 +128,30 @@ ModifyCooldown
 
 Specific item definitions should reuse these primitives when possible.
 
-## Example: Split Chamber
+## Example: Bifurcation Array
 
 ```text
 Name:
-Split Chamber
+Bifurcation Array
+
+Stable ID:
+split_chamber
 
 Modifiers:
 projectile_count +1
 projectile_damage ×0.85
 ```
 
-It does not know what Volatile Rounds is.
+It does not know what Volatile Payload is.
 
-## Example: Volatile Rounds
+## Example: Volatile Payload
 
 ```text
 Name:
-Volatile Rounds
+Volatile Payload
+
+Stable ID:
+volatile_rounds
 
 Trigger:
 ENEMY_KILLED
@@ -157,11 +163,11 @@ Effect:
 spawn explosion at killed enemy position
 ```
 
-It does not know what Split Chamber is.
+It does not know what Bifurcation Array is.
 
 ## Expected Interaction
 
-If Split Chamber causes more projectiles to create more kills, Volatile Rounds naturally receives more eligible kill events.
+If Bifurcation Array causes more rays to create more kills, Volatile Payload naturally receives more eligible kill events.
 
 No combination-specific implementation is necessary.
 
@@ -229,13 +235,13 @@ content/items/. Each CombatPlayer has its own PlayerItemBuild and effect runner;
 there is no global inventory. Definitions are shared read-only configuration.
 See [ADR 0005](adr/0005-item-composition-and-wave-choices.md).
 
-| Item | Prototype behavior |
-| --- | --- |
-| Heavy Lead | Weapon damage x1.30; fire rate x0.90 |
-| Split Chamber | +1 independently resolved hitscan ray; per-ray damage x0.85 |
-| Volatile Rounds | Eligible primary hitscan kills explode for 45 damage within 3.5 m |
-| Rapid Mechanism | Fire rate x1.25 |
-| Vampiric Ammo | Owned weapon kills heal 5 HP, including owned explosion kills |
+| Current identity | Stable ID | Previous identity | Prototype behavior |
+| --- | --- | --- | --- |
+| Titan-Core Rounds | `heavy_lead` | Heavy Lead | Weapon damage x1.30; fire rate x0.90 |
+| Bifurcation Array | `split_chamber` | Split Chamber | +1 independently resolved hitscan ray; per-ray damage x0.85 |
+| Volatile Payload | `volatile_rounds` | Volatile Rounds | Eligible primary hitscan kills explode for 45 damage within 3.5 m |
+| Overclocked Actuator | `rapid_mechanism` | Rapid Mechanism | Fire rate x1.25 |
+| Hemophage Protocol | `vampiric_ammo` | Vampiric Ammo | Owned weapon kills heal 5 HP, including owned explosion kills |
 
 All five are unique/non-repeatable within an attempt. Duplicate grants fail.
 Modifiers apply additions first, then multipliers, ordered by stable item ID and
@@ -244,30 +250,86 @@ per-shot scaling do not also multiply the fixed explosion or healing amounts.
 
 A successful trigger pull spends one magazine round and starts one derived-rate
 cooldown. Each ray gets an independent DamageContext and physics query, including
-misses. Split Chamber produces two 25.5-damage rays from the base pistol, at fixed
-yaw offsets of -0.6 and +0.6 degrees. Heavy Lead increases that to 33.15 per ray.
-No physical projectiles or gameplay randomness are introduced.
+misses. Bifurcation Array produces two 25.5-damage rays from the base pistol, at
+fixed yaw offsets of -0.6 and +0.6 degrees. Titan-Core Rounds increases that to
+33.15 per ray. No physical projectiles or gameplay randomness are introduced.
 
-Events currently implemented are WEAPON_FIRED, SHOT_CREATED and ENEMY_KILLED.
+The original events are WEAPON_FIRED, SHOT_CREATED and ENEMY_KILLED.
 Triggers match the event and tag conditions; only a build matching the context's
 source player can react. Primary weapon contexts include weapon/hitscan tags.
-Volatile Rounds requires both and excludes secondary damage. An additional runner
+Volatile Payload requires both and excludes secondary damage. An additional runner
 guard prevents explosions from effect_depth > 0, so blast kills never create more
 blasts. Secondary contexts copy player/entity/weapon attribution, preserve tags,
 add secondary/explosion and increment depth. Blasts use HealthComponent through
 the shared damage interface, affect enemies only, and are blocked by solid-world
 geometry. A short primitive sphere supplies development feedback.
 
-Vampiric Ammo requires the weapon tag, so eligible secondary kills also heal their
-source player. Healing clamps to maximum health and cannot resurrect. Repeated
-damage to an already dead entity produces no additional kill or heal.
+Hemophage Protocol requires the weapon tag, so eligible secondary kills also heal
+their source player. Healing clamps to maximum health and cannot resurrect.
+Repeated damage to an already dead entity produces no additional kill or heal.
 
 In v0.0.6, modifiers derive from each equipped controller's authored base stats.
-Split Chamber adds one shot to the Service Pistol, Relay SMG or Scatterline
-Shotgun base count; Heavy Lead and Rapid Mechanism use the same generic damage and
-fire-rate stats for all three. Volatile Rounds and Vampiric Ammo consume the same
-owned damage/kill events regardless of weapon ID. Weapon switching does not change
-the per-player item build.
+Bifurcation Array adds one shot to the Service Pistol, Relay SMG or Scatterline
+Shotgun base count; Titan-Core Rounds and Overclocked Actuator use the same generic
+damage and fire-rate stats for all three. Volatile Payload and Hemophage Protocol
+consume the same owned damage/kill events regardless of weapon ID. Weapon switching
+does not change the per-player item build.
+
+## Faction item expansion candidate
+
+Faction membership is descriptive metadata. It changes display and lore only;
+players may combine every faction and no offer or ownership rule filters by
+faction.
+
+| Faction | Mechanical identity |
+| --- | --- |
+| Helix Directorate | Healing, regeneration, survival and biological conversion |
+| Iron Doctrine | Weapon damage, explosives and sustained combat |
+| Null Choir | Risk/reward, self-sacrifice and neural amplification |
+| Scrapborn | Electrical systems, drones and improvised machinery |
+| The Unwritten | Bounded recursion, duplication and seeded probability |
+
+The current candidate catalog contains 15 unique items:
+
+| Item | Faction | Implemented behavior |
+| --- | --- | --- |
+| Titan-Core Rounds | Iron Doctrine | Damage x1.30 and fire rate x0.90 |
+| Bifurcation Array | Scrapborn | +1 ray and per-ray damage x0.85 |
+| Volatile Payload | Iron Doctrine | Primary hitscan kills explode for 45 damage in 3.5 m |
+| Overclocked Actuator | Scrapborn | Fire rate x1.25 |
+| Hemophage Protocol | Helix Directorate | Eligible owned kills heal 5 HP |
+| Hemophage Implant | Helix Directorate | Every 9 qualifying target hits heals 2 HP; one count per target/attack |
+| Emergency Reboot | Helix Directorate | Once per run, lethal damage leaves 1 HP and grants 3 seconds invulnerability |
+| Kinetic Escalator | Iron Doctrine | Successful attacks add 2% damage, maximum 10 stacks, with 3-second expiry |
+| Fragmentation Core | Iron Doctrine | Explosion kills send up to 3 fragments for 20% explosion damage |
+| Martyr's Relay | Null Choir | Q spends up to 10 HP, never below 1, for +30% damage for 6 seconds |
+| Neural Feedback | Null Choir | Actual HP damage grants +20% fire rate for 4 seconds; refresh only |
+| Sentinel Node | Scrapborn | Owned drone attacks within 12 m once/second for 8 base damage |
+| Arc Conductor | Scrapborn | Every 6 qualifying hits chains 25% hit damage to up to 3 targets in 5 m |
+| Recursive Fault | The Unwritten | 12% seeded chance to repeat an approved offensive effect once |
+| Unstable Replicator | The Unwritten | 15% seeded chance for one 50% ray without ammunition cost |
+The expansion adds TARGET_DAMAGED, PLAYER_DAMAGED, ITEM_ACQUIRED and ACTIVE_ABILITY
+events. They remain synchronous and local to the owning player/session; no global
+gameplay event bus is introduced.
+
+Runtime state remains per player. Originating attack IDs let multi-ray and
+multi-target effects de-duplicate correctly. Secondary contexts declare whether
+they may advance hit counters or kill healing. Fragment and chain damage cannot
+recurse; Recursive Fault only repeats effects whose data explicitly opts in and
+the repeat carries a recursion marker. All probability uses the injected run RNG.
+
+Sentinel Node applies the owner's generic `damage` modifiers exactly once. It does
+not inherit weapon fire rate, shot count or ammunition, and its attacks are not
+eligible for weapon-hit counters or kill healing. Martyr's Relay uses a health
+resource-cost path, so it emits no damage event and cannot activate Neural
+Feedback. A future armor layer must report actual HP applied; a fully absorbed hit
+does not activate damage-reactive effects.
+
+The current HUD shows faction, description and flavor in item choices and shows
+faction-qualified names in the owned build. Q is the prototype active-item input.
+Presentation uses development geometry/effects; icons, final VFX, balance and
+production item UI remain manual iteration work. See
+[ADR 0012](adr/0012-faction-items-and-bounded-effect-runtime.md).
 
 ## v0.0.2 prototype choices and build visibility
 

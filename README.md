@@ -58,6 +58,14 @@ complete vertical slice is in the [Roadmap](docs/ROADMAP.md), with bounded Codex
 and FoxForge responsibilities in the
 [Content Production Workflow](docs/CONTENT_WORKFLOW.md).
 
+A focused faction-item expansion is under review for the next playable development
+test. It keeps the five established item IDs and mechanics while giving them new
+player-facing identities, adds five lore factions as unrestricted metadata, and
+expands the authored pool to 15 items. New generic effects cover hit counters,
+timed buffs, lethal protection, fragments, chain damage, bounded seeded repeats,
+extra rays, health costs and an owned companion. This work does not change the
+project version or mark v0.0.6 accepted; see [Item System](docs/ITEM_SYSTEM.md).
+
 For setup, validation, tests, and exports, see [Development](docs/DEVELOPMENT.md).
 
 Current development priority:

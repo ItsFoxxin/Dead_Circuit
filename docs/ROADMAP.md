@@ -201,6 +201,13 @@ Acceptance question:
 Production animation, audio, recoil polish and a large weapon library are out of
 scope.
 
+A focused faction-item expansion branch builds on the v0.0.6 development candidate
+without changing its acceptance state or version. It raises the current authored
+pool to 15, rebrands the original five while retaining their stable IDs, and adds
+generic bounded effect primitives. This is a playable development test rather than
+a new numbered milestone. v0.0.7 remains Enemy Variety after v0.0.6 is accepted;
+no enemy-variety, economy or later milestone work is included here.
+
 ## v0.0.7 — Enemy Variety
 
 Status: Planned after accepted v0.0.6.
@@ -308,7 +315,7 @@ cumulative planning targets:
 
 | Milestone | Approximate cumulative target |
 | --- | ---: |
-| v0.0.6 | 10–12 items |
+| v0.0.6 development line | 15 items in the faction expansion candidate |
 | v0.0.7 | 12–15 items |
 | v0.0.8 | 15–18 items |
 | v0.0.9 | 18–25 items when safe and useful |
