@@ -120,7 +120,7 @@ func restart_with_seed(value: int) -> bool:
 
 
 func _input(event: InputEvent) -> void:
-	if not interactive:
+	if not interactive or _text_entry_has_focus():
 		return
 	if (
 		event.is_action_pressed("restart")
@@ -131,6 +131,11 @@ func _input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 	elif event.is_action_pressed("release_mouse") and state == State.ACTIVE:
 		set_paused(not paused)
+
+
+func _text_entry_has_focus() -> bool:
+	var focus: Control = get_viewport().gui_get_focus_owner()
+	return focus is LineEdit or focus is TextEdit
 
 
 func _unhandled_input(event: InputEvent) -> void:
