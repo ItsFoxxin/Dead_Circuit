@@ -58,6 +58,10 @@ complete vertical slice is in the [Roadmap](docs/ROADMAP.md), with bounded Codex
 and FoxForge responsibilities in the
 [Content Production Workflow](docs/CONTENT_WORKFLOW.md).
 
+Development builds include a bounded testing console opened with backtick or F10.
+It can inspect and set up player, item, weapon, health, enemy and run state without
+being mounted in release builds. See the [Development Console](docs/DEVELOPER_CONSOLE.md).
+
 A focused faction-item expansion is under review for the next playable development
 test. It keeps the five established item IDs and mechanics while giving them new
 player-facing identities, adds five lore factions as unrestricted metadata, and

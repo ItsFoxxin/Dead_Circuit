@@ -357,3 +357,13 @@ initial companion derives the generic `damage` stat once, retains player/entity
 ownership, and opts out of weapon-hit counters and healing triggers. It does not
 inherit shot count, weapon fire rate or ammunition behavior. See
 [ADR 0012](adr/0012-faction-items-and-bounded-effect-runtime.md).
+
+## Development console boundary
+
+Development builds may mount the bounded console in `game/dev/` from the root
+composition node. The console receives the active `RoomRunSession`, resolves
+players by explicit ID and uses normal gameplay authority APIs. It is not a
+singleton and cannot evaluate arbitrary code. Release feature flags and build
+metadata both prevent it from being mounted in release exports. See
+[Development Console](DEVELOPER_CONSOLE.md) and
+[ADR 0013](adr/0013-development-console-authority-boundary.md).

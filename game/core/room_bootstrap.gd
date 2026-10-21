@@ -3,9 +3,11 @@ extends Node
 ## New room-run composition boundary; the original combat bootstrap remains usable.
 
 const BuildInfo = preload("res://game/core/utilities/build_info.gd")
+const DeveloperConsoleScene: PackedScene = preload("res://game/dev/developer_console.tscn")
 
 @export var startup_scene: PackedScene
 var run: RoomRunSession
+var developer_console: DeveloperConsole
 
 
 func _ready() -> void:
@@ -17,6 +19,10 @@ func _ready() -> void:
 		get_tree().quit(1)
 		return
 	add_child(run)
+	if _development_console_enabled():
+		developer_console = DeveloperConsoleScene.instantiate() as DeveloperConsole
+		add_child(developer_console)
+		developer_console.configure(run)
 	if "--smoke" in OS.get_cmdline_user_args():
 		await run.run_started
 		var provenance: Dictionary = BuildInfo.metadata()
@@ -51,3 +57,10 @@ func _ready() -> void:
 			)
 		)
 		get_tree().quit(0)
+
+
+func _development_console_enabled() -> bool:
+	return (
+		not OS.has_feature("release")
+		and str(BuildInfo.metadata().get("build_type", "local")) != "release"
+	)

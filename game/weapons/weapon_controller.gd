@@ -40,6 +40,14 @@ func reset() -> void:
 	changed.emit()
 
 
+func refill_ammunition() -> void:
+	magazine = definition.magazine_capacity
+	reserve = definition.starting_reserve
+	reload_remaining = 0.0
+	reloading = false
+	changed.emit()
+
+
 func advance(delta: float) -> void:
 	if not enabled:
 		return

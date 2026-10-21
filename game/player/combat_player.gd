@@ -104,8 +104,16 @@ func configure_weapons(definitions: Array[WeaponDefinition]) -> void:
 
 
 func switch_weapon(index: int) -> bool:
-	if not combat_enabled or health.is_dead or not weapons.equip(index):
+	if not combat_enabled or health.is_dead or index == weapons.equipped_index:
 		return false
+	return equip_weapon(index)
+
+
+func equip_weapon(index: int) -> bool:
+	if health.is_dead or index < 0 or index >= weapons.controllers.size():
+		return false
+	if index != weapons.equipped_index:
+		weapons.equip(index)
 	_update_weapon_visual()
 	return true
 

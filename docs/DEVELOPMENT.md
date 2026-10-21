@@ -67,7 +67,9 @@ checksums of both new and cached downloads before extracting. Dependencies stay
 local and ignored; GUT's upstream MIT license is retained in addons/gut/.
 Press Run Project in Godot to open the authored room route. No editor plugin
 needs to be enabled to run command-line tests. The GUT plugin may optionally be
-enabled locally for interactive test discovery.
+enabled locally for interactive test discovery. Development builds also expose a
+bounded in-game testing console with backtick or F10; see
+[DEVELOPER_CONSOLE.md](DEVELOPER_CONSOLE.md) for its commands and release boundary.
 
 ## Commands
 
