@@ -94,3 +94,30 @@ func test_overlay_pauses_and_restores_active_combat_and_supports_clear() -> void
 	assert_true(run.combat.paused, "Restarted combat stays paused behind the open console")
 	console.set_open(false)
 	assert_false(run.combat.paused)
+
+
+func test_enter_submits_focused_console_text_without_restarting_the_run() -> void:
+	run.combat.interactive = true
+	var console: DeveloperConsole = ConsoleScene.instantiate() as DeveloperConsole
+	add_child_autoqfree(console)
+	console.configure(run)
+	console.set_open(true)
+	console.entry.grab_focus()
+	await get_tree().process_frame
+	var player_instance_id: int = run.combat.local_player.get_instance_id()
+	var attempt_token: int = run.progress.attempt_token
+	console.entry.text = "status"
+	var press: InputEventKey = InputEventKey.new()
+	press.keycode = KEY_ENTER
+	press.physical_keycode = KEY_ENTER
+	press.pressed = true
+	get_viewport().push_input(press)
+	var release: InputEventKey = press.duplicate() as InputEventKey
+	release.pressed = false
+	get_viewport().push_input(release)
+	await get_tree().process_frame
+	assert_eq(run.combat.local_player.get_instance_id(), player_instance_id)
+	assert_eq(run.progress.attempt_token, attempt_token)
+	assert_true(run.combat.paused)
+	assert_string_contains(console.output.text, "> status")
+	assert_string_contains(console.output.text, "player=1")
