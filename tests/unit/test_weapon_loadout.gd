@@ -22,6 +22,8 @@ func test_authored_weapons_have_distinct_data_driven_firing_semantics() -> void:
 	assert_gt(Shotgun.spread_degrees, Pistol.spread_degrees)
 	for definition: WeaponDefinition in [Pistol, Smg, Shotgun]:
 		assert_true(definition.validation_errors().is_empty())
+		assert_gt(definition.tracer_width, 0.0)
+		assert_gt(definition.tracer_lifetime, 0.0)
 
 
 func test_switching_preserves_independent_ammo_reload_and_cooldown_state() -> void:
@@ -75,4 +77,6 @@ func test_invalid_firing_configuration_is_rejected() -> void:
 	invalid.display_name = "Invalid"
 	invalid.base_shot_count = 0
 	invalid.spread_degrees = 90.0
+	invalid.tracer_width = 0.0
+	invalid.tracer_lifetime = 0.0
 	assert_gt(invalid.validation_errors().size(), 1)

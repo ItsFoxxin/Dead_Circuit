@@ -36,7 +36,9 @@ catalog into each player actor. The equipped controller remains available throug
 the existing player weapon surface, while loadout state is never global.
 
 Hits remain deterministic authored ray patterns. Physics results are not promised
-to reproduce across machines. Weapon switching consumes no run RNG.
+to reproduce across machines. Every ray also creates a short-lived, weapon-colored
+tracer to its wall, enemy or maximum-range endpoint. Tracers are visual-only:
+they have no collision, damage or RNG effect. Weapon switching consumes no run RNG.
 
 See ADR 0011 for the decision and [TESTING.md](TESTING.md) for automated coverage.
 
@@ -48,6 +50,7 @@ Manual Windows artifact acceptance is pending. Verify:
 - the pistol fires once per click
 - the Relay SMG continues firing while the button is held
 - the Scatterline Shotgun creates a visibly wider multi-pellet hit pattern
+- pistol, SMG and every shotgun pellet show readable tracers that stop at surfaces
 - each weapon reloads from its own reserve and retains state after switching
 - item choices affect the equipped weapon without disabling another slot
 - room changes preserve all weapon states

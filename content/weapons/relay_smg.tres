@@ -17,3 +17,6 @@ spread_degrees = 1.8
 damage_tags = PackedStringArray("hitscan", "automatic", "smg")
 view_size = Vector3(0.14, 0.17, 0.55)
 view_color = Color(0.12, 0.35, 0.5, 1)
+tracer_color = Color(0.25, 0.85, 1, 1)
+tracer_width = 0.009
+tracer_lifetime = 0.055
