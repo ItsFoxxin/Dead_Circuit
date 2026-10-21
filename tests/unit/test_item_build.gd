@@ -4,6 +4,7 @@ const Heavy: ItemDefinition = preload("res://content/items/heavy_lead.tres")
 const Split: ItemDefinition = preload("res://content/items/split_chamber.tres")
 const Rapid: ItemDefinition = preload("res://content/items/rapid_mechanism.tres")
 const Vampiric: ItemDefinition = preload("res://content/items/vampiric_ammo.tres")
+const TestFaction: ItemFaction = preload("res://content/factions/iron_doctrine.tres")
 
 var build: PlayerItemBuild
 var weapon: WeaponController
@@ -96,6 +97,8 @@ func test_invalid_definitions_and_modifier_values_cannot_be_acquired() -> void:
 	item.id = &"bad"
 	item.display_name = "Bad"
 	item.description = "Invalid stat"
+	item.flavor_text = "Invalid on purpose."
+	item.faction = TestFaction
 	var modifier: StatModifier = StatModifier.new()
 	modifier.stat = &"unknown"
 	item.modifiers = [modifier]

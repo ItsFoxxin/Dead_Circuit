@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="ItemDefinition" load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://game/items/item_definition.gd" id="item"]
+[ext_resource type="Script" path="res://game/items/item_trigger.gd" id="trigger"]
+[ext_resource type="Script" path="res://game/items/item_condition.gd" id="condition"]
+[ext_resource type="Script" path="res://game/items/item_effect.gd" id="effect"]
+[ext_resource type="Resource" path="res://content/factions/iron_doctrine.tres" id="faction"]
+
+[sub_resource type="Resource" id="Eligible"]
+script = ExtResource("condition")
+required_tags = PackedStringArray("hitscan", "weapon")
+
+[sub_resource type="Resource" id="Escalate"]
+script = ExtResource("effect")
+kind = 3
+amount = 0.02
+duration = 3.0
+stat = &"damage"
+max_stacks = 10
+accumulates = true
+
+[sub_resource type="Resource" id="Hit"]
+script = ExtResource("trigger")
+event = 3
+condition = SubResource("Eligible")
+effects = Array[ExtResource("effect")]([SubResource("Escalate")])
+
+[resource]
+script = ExtResource("item")
+id = &"kinetic_escalator"
+display_name = "Kinetic Escalator"
+description = "Successful weapon attacks gain +2% damage for 3 seconds, up to 10 stacks."
+flavor_text = "The longer the engagement, the less remains of the target."
+faction = ExtResource("faction")
+classification = &"military_hardware"
+tags = PackedStringArray("offense", "sustain")
+triggers = Array[ExtResource("trigger")]([SubResource("Hit")])

@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ItemFaction" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/items/item_faction.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"the_unwritten"
+display_name = "The Unwritten"
+philosophy = "Unknown. Their technology does not behave according to established rules."
+specialty = "Corrupted systems, impossible neural signatures and unpredictable technology."
+mechanical_identity = "Recursion, duplication, probability manipulation and unusual interactions."

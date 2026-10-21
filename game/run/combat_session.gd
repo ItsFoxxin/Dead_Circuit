@@ -87,6 +87,8 @@ func restart_session() -> void:
 	local_player.global_transform = arena.player_spawn.global_transform
 	local_player.camera.make_current()
 	local_player.configure_weapons(weapon_definitions)
+	local_player.items.run_random = run_random
+	local_player.item_effects.run_random = run_random
 	local_player.item_effects.targets = damage_targets
 	local_player.combat_enabled = false
 	local_player.local_input_enabled = interactive
@@ -328,8 +330,7 @@ func change_room(scene: PackedScene, definition: WaveDefinition) -> void:
 	var token: int = waves.session_token
 	for player: CombatPlayer in players:
 		player.disable_combat()
-		for effect: Node in player.item_effects.get_children():
-			effect.queue_free()
+		player.item_effects.clear_transient_visuals()
 	for enemy: MeleeEnemy in enemies.values():
 		enemy.disable_combat()
 		enemy.queue_free()

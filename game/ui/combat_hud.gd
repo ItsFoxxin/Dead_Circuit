@@ -59,7 +59,7 @@ func refresh(
 		_validate_seed(seed_input.text)
 	var names: PackedStringArray = []
 	for item: ItemDefinition in player.items.definitions():
-		names.append(item.display_name)
+		names.append("%s — %s" % [item.display_name, item.faction.display_name])
 	var stats: WeaponStats = player.weapon.combat_stats()
 	build_text.text = (
 		"BUILD\n%s\n\n%s\nShots %d x %.1f damage\nFire rate %.2f/s"
@@ -85,8 +85,11 @@ func show_offer(offer: ItemOffer) -> void:
 		return
 	for item: ItemDefinition in offer.choices:
 		var button: Button = Button.new()
-		button.text = item.display_name + "\n" + item.description
-		button.custom_minimum_size.y = 62.0
+		button.text = (
+			'%s — %s\n%s\n"%s"'
+			% [item.display_name, item.faction.display_name, item.description, item.flavor_text]
+		)
+		button.custom_minimum_size.y = 82.0
 		button.pressed.connect(_select.bind(offer, item.id))
 		choices.add_child(button)
 	if choices.get_child_count() > 0:

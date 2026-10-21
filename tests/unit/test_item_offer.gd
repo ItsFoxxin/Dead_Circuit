@@ -43,9 +43,10 @@ func test_selection_requires_matching_player_session_wave_and_offered_id() -> vo
 
 
 func test_short_and_exhausted_pools_offer_only_eligible_items() -> void:
+	var short_catalog: Array[ItemDefinition] = catalog.slice(0, 5)
 	for index: int in range(3):
-		build.acquire(catalog[index])
-	assert_eq(ItemOffer.new(catalog, build, 1, 4, RunRandom.new(12345)).choices.size(), 2)
+		build.acquire(short_catalog[index])
+	assert_eq(ItemOffer.new(short_catalog, build, 1, 4, RunRandom.new(12345)).choices.size(), 2)
 	for item: ItemDefinition in catalog:
 		build.acquire(item)
 	var random: RunRandom = RunRandom.new(12345)

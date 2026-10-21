@@ -4,6 +4,7 @@
 [ext_resource type="Script" path="res://game/items/item_trigger.gd" id="trigger"]
 [ext_resource type="Script" path="res://game/items/item_condition.gd" id="condition"]
 [ext_resource type="Script" path="res://game/items/item_effect.gd" id="effect"]
+[ext_resource type="Resource" path="res://content/factions/helix_directorate.tres" id="faction"]
 
 [sub_resource type="Resource" id="Eligible"]
 script = ExtResource("condition")
@@ -21,7 +22,9 @@ effects = Array[ExtResource("effect")]([SubResource("Heal")])
 [resource]
 script = ExtResource("item")
 id = &"vampiric_ammo"
-display_name = "Vampiric Ammo"
-description = "Your weapon kills heal 5 HP, including owned explosion kills."
+display_name = "Hemophage Protocol"
+description = "Owned weapon and eligible explosion kills restore 5 HP."
+flavor_text = "Biological material recovered. Reconstruction authorized."
+faction = ExtResource("faction")
 tags = PackedStringArray("healing")
 triggers = Array[ExtResource("trigger")]([SubResource("Kill")])

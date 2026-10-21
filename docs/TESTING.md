@@ -275,6 +275,18 @@ hits and representative modifier/kill-effect integration across all three author
 weapons. Content validation requires exactly three unique authored weapon
 definitions for this milestone's sandbox composition.
 
+The faction-item expansion adds schema and registration checks for five factions
+and 15 items while retaining the established IDs of the original five. Unit tests
+cover per-attack hit de-duplication, health clamping/costs, lethal prevention,
+invulnerability expiry, timed stack/refresh/expiry behavior, zero-applied-damage
+suppression, seeded probability and secondary-context metadata. Integration tests
+cover bounded Arc Conductor/Recursive Fault repeats, unique chain targets,
+fragment target limits and non-recursion, Sentinel Node scaling/ownership and
+Bifurcation Array/Unstable Replicator ray and ammunition behavior. Gameplay tests
+verify expanded seeded offers and clean restart of guards, buffs and companions.
+The independent sandbox and room probes intentionally pin the new 15-item seeded
+sequence. The accepted release routes and reward pacing remain unchanged.
+
 ## Release verification
 
 release.yml adds approval and packaging around the existing foundation.yml gates;

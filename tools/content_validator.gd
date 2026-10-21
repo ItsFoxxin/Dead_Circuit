@@ -3,7 +3,7 @@ extends RefCounted
 ## Schema implementations will be registered here as content types are introduced.
 
 const CONTENT_DIRECTORIES: PackedStringArray = [
-	"items", "weapons", "enemies", "bosses", "rooms", "loot_tables"
+	"items", "factions", "weapons", "enemies", "bosses", "rooms", "loot_tables"
 ]
 var definition_count: int = 0
 var ids: Dictionary[StringName, String] = {}
@@ -48,7 +48,11 @@ func _scan(path: String, errors: PackedStringArray) -> void:
 func _validate_definition(path: String, errors: PackedStringArray) -> void:
 	var resource: Resource = load(path)
 	var id: StringName
-	if resource is WeaponDefinition and "/weapons/" in path:
+	if resource is ItemFaction and "/factions/" in path:
+		var faction: ItemFaction = resource
+		id = faction.id
+		errors.append_array(faction.validation_errors())
+	elif resource is WeaponDefinition and "/weapons/" in path:
 		var weapon: WeaponDefinition = resource
 		id = weapon.id
 		errors.append_array(weapon.validation_errors())
@@ -201,8 +205,8 @@ func _validate_item_catalog(
 	catalog: Array[ItemDefinition], path: String, errors: PackedStringArray
 ) -> void:
 	var seen: Dictionary[StringName, bool] = {}
-	if catalog.size() != 5:
-		errors.append("Prototype sandbox requires five items: " + path)
+	if catalog.size() != 15:
+		errors.append("Faction item expansion requires fifteen items: " + path)
 	for item: ItemDefinition in catalog:
 		if item == null:
 			errors.append("Null catalog item: " + path)
@@ -211,6 +215,11 @@ func _validate_item_catalog(
 		else:
 			seen[item.id] = true
 			errors.append_array(item.validation_errors())
+			if (
+				item.faction != null
+				and not item.faction.resource_path.begins_with("res://content/factions/")
+			):
+				errors.append("Item faction must reference authored faction metadata: " + path)
 			if not item.resource_path.begins_with("res://content/items/"):
 				errors.append("Catalog must reference authored item definitions: " + path)
 

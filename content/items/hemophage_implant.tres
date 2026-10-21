@@ -1,0 +1,34 @@
+[gd_resource type="Resource" script_class="ItemDefinition" load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://game/items/item_definition.gd" id="item"]
+[ext_resource type="Script" path="res://game/items/item_trigger.gd" id="trigger"]
+[ext_resource type="Script" path="res://game/items/item_condition.gd" id="condition"]
+[ext_resource type="Script" path="res://game/items/item_effect.gd" id="effect"]
+[ext_resource type="Resource" path="res://content/factions/helix_directorate.tres" id="faction"]
+
+[sub_resource type="Resource" id="Eligible"]
+script = ExtResource("condition")
+required_tags = PackedStringArray("weapon")
+
+[sub_resource type="Resource" id="Sustain"]
+script = ExtResource("effect")
+kind = 2
+amount = 2.0
+threshold = 9
+
+[sub_resource type="Resource" id="Hit"]
+script = ExtResource("trigger")
+event = 3
+condition = SubResource("Eligible")
+effects = Array[ExtResource("effect")]([SubResource("Sustain")])
+
+[resource]
+script = ExtResource("item")
+id = &"hemophage_implant"
+display_name = "Hemophage Implant"
+description = "Every 9 qualifying enemy hits restores 2 HP; one count per target per attack."
+flavor_text = "The implant does not distinguish between treatment and consumption."
+faction = ExtResource("faction")
+classification = &"biotechnology"
+tags = PackedStringArray("healing", "sustain")
+triggers = Array[ExtResource("trigger")]([SubResource("Hit")])

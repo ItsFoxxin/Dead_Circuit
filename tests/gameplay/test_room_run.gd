@@ -95,7 +95,7 @@ func test_combat_clear_preserves_player_health_ammo_items_and_rng_into_treasure(
 	assert_eq(run.combat.enemies.size(), 0)
 	assert_eq(run.combat.damage_targets.size(), 0)
 	assert_gt(run.combat.waves.session_token, previous_token)
-	assert_eq(run.run_random.draw_count, draws, "Only one unowned item remains")
+	assert_eq(run.run_random.draw_count, draws + 3, "Treasure rolls three unowned choices")
 
 
 func test_treasure_grants_once_and_boss_is_staging_before_framework_completion() -> void:
@@ -103,7 +103,7 @@ func test_treasure_grants_once_and_boss_is_staging_before_framework_completion()
 	await _clear_combat()
 	await _exit_room()
 	var offer: ItemOffer = run.combat.item_offers[1]
-	assert_eq(offer.choices.size(), 1)
+	assert_eq(offer.choices.size(), 3)
 	assert_true(run.combat.select_item(1, offer.choices[0].id, offer.session_token, 0))
 	assert_false(run.combat.select_item(1, offer.choices[0].id, offer.session_token, 0))
 	assert_eq(run.progress.state, RoomProgress.State.UNLOCKED)

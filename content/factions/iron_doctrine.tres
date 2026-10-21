@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ItemFaction" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/items/item_faction.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"iron_doctrine"
+display_name = "Iron Doctrine"
+philosophy = "Control through superior force."
+specialty = "Enhanced soldiers, experimental ammunition, heavy weapons and autonomous defenses."
+mechanical_identity = "Weapon damage, armor, explosives, penetration and sustained combat."

@@ -87,6 +87,11 @@ interact={
 "events": [Object(InputEventKey,"physical_keycode":69)]
 }
 
+activate_item={
+"deadzone": 0.2,
+"events": [Object(InputEventKey,"physical_keycode":81)]
+}
+
 [rendering]
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"

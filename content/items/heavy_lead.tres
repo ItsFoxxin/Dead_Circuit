@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://game/items/item_definition.gd" id="item"]
 [ext_resource type="Script" path="res://game/items/stat_modifier.gd" id="stat"]
+[ext_resource type="Resource" path="res://content/factions/iron_doctrine.tres" id="faction"]
 
 [sub_resource type="Resource" id="Damage"]
 script = ExtResource("stat")
@@ -16,7 +17,9 @@ value = 0.9
 [resource]
 script = ExtResource("item")
 id = &"heavy_lead"
-display_name = "Heavy Lead"
-description = "Damage x1.30; fire rate x0.90."
+display_name = "Titan-Core Rounds"
+description = "Military-grade ammunition: weapon damage x1.30; fire rate x0.90."
+flavor_text = "Recoil compensation was deemed optional."
+faction = ExtResource("faction")
 tags = PackedStringArray("offense")
 modifiers = Array[ExtResource("stat")]([SubResource("Damage"), SubResource("Rate")])

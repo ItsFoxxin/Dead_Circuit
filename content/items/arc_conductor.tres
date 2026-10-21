@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="ItemDefinition" load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://game/items/item_definition.gd" id="item"]
+[ext_resource type="Script" path="res://game/items/item_trigger.gd" id="trigger"]
+[ext_resource type="Script" path="res://game/items/item_condition.gd" id="condition"]
+[ext_resource type="Script" path="res://game/items/item_effect.gd" id="effect"]
+[ext_resource type="Resource" path="res://content/factions/scrapborn.tres" id="faction"]
+
+[sub_resource type="Resource" id="Eligible"]
+script = ExtResource("condition")
+required_tags = PackedStringArray("hitscan", "weapon")
+
+[sub_resource type="Resource" id="Chain"]
+script = ExtResource("effect")
+kind = 7
+amount = 1.0
+radius = 5.0
+threshold = 6
+damage_scale = 0.25
+target_count = 3
+recursive_repeat_eligible = true
+
+[sub_resource type="Resource" id="Hit"]
+script = ExtResource("trigger")
+event = 3
+condition = SubResource("Eligible")
+effects = Array[ExtResource("effect")]([SubResource("Chain")])
+
+[resource]
+script = ExtResource("item")
+id = &"arc_conductor"
+display_name = "Arc Conductor"
+description = "Every 6 weapon hits chains 25% hit damage to up to 3 enemies within 5 m."
+flavor_text = "Grounding was removed to improve operational efficiency."
+faction = ExtResource("faction")
+classification = &"electrical_augmentation"
+tags = PackedStringArray("offense", "electrical")
+triggers = Array[ExtResource("trigger")]([SubResource("Hit")])

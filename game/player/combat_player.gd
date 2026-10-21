@@ -24,12 +24,16 @@ func _ready() -> void:
 	items.player_id = player_id
 	item_effects = ItemEffectRunner.new()
 	item_effects.player_id = player_id
+	item_effects.owner_player = self
 	item_effects.health = health
+	item_effects.build = items
 	add_child(item_effects)
 	items.effect_requested.connect(item_effects.apply)
 	weapons.fired.connect(_on_weapon_fired)
 	weapons.shot_created.connect(_on_shot_created)
+	weapons.hit.connect(_on_weapon_hit)
 	weapons.equipped_changed.connect(_on_weapon_equipped)
+	health.damaged.connect(_on_health_damaged)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -53,6 +57,8 @@ func movement_velocity(axis: Vector2, sprinting: bool) -> Vector3:
 func _physics_process(delta: float) -> void:
 	if not combat_enabled or health.is_dead:
 		return
+	health.advance(delta)
+	items.advance(delta)
 	weapons.advance(delta)
 	var axis: Vector2 = Vector2.ZERO
 	var sprinting: bool = false
@@ -64,6 +70,8 @@ func _physics_process(delta: float) -> void:
 				switch_weapon(index)
 		if Input.is_action_just_pressed("reload"):
 			weapon.begin_reload()
+		if Input.is_action_just_pressed("activate_item"):
+			activate_item_ability()
 		if not Input.is_action_pressed("fire"):
 			suppress_fire_until_release = false
 		var wants_fire: bool = Input.is_action_just_pressed("fire")
@@ -101,6 +109,17 @@ func switch_weapon(index: int) -> bool:
 	return true
 
 
+func activate_item_ability() -> void:
+	if not combat_enabled or health.is_dead:
+		return
+	var context: DamageContext = DamageContext.new(
+		1.0, player_id, weapon.definition.id, &"ability", ["active_ability"], get_instance_id()
+	)
+	context.trigger_eligible = false
+	context.healing_eligible = false
+	items.handle_event(CombatEvent.new(CombatEvent.Kind.ACTIVE_ABILITY, context, global_position))
+
+
 func disable_combat() -> void:
 	combat_enabled = false
 	weapons.enabled = false
@@ -119,6 +138,26 @@ func _on_weapon_fired(context: DamageContext) -> void:
 
 func _on_shot_created(context: DamageContext, origin: Vector3) -> void:
 	items.handle_event(CombatEvent.new(CombatEvent.Kind.SHOT_CREATED, context, origin))
+
+
+func _on_weapon_hit(
+	context: DamageContext, target_entity_id: int, position: Vector3, applied: float
+) -> void:
+	items.handle_event(
+		CombatEvent.new(
+			CombatEvent.Kind.TARGET_DAMAGED, context, position, target_entity_id, applied
+		)
+	)
+
+
+func _on_health_damaged(context: DamageContext, applied: float) -> void:
+	if applied <= 0.0:
+		return
+	items.handle_event(
+		CombatEvent.new(
+			CombatEvent.Kind.PLAYER_DAMAGED, context, global_position, get_instance_id(), applied
+		)
+	)
 
 
 func _on_weapon_equipped(_previous_index: int, _current_index: int) -> void:

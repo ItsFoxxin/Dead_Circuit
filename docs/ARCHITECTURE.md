@@ -330,3 +330,30 @@ aggregates generic weapon events.
 Player input interprets generic semiautomatic/automatic modes and slot selection.
 Items continue to derive generic weapon stats and consume source-aware combat
 events without knowing weapon IDs. See ADR 0011.
+
+## Faction-item effect boundary
+
+Faction identity is immutable descriptive content in `ItemFaction` Resources.
+`ItemDefinition` references one faction but ownership and offer eligibility remain
+faction-neutral. Concrete faction and item definitions live in `content/`; core
+runtime systems neither branch on item IDs nor faction IDs.
+
+`DamageContext` carries the originating attack ID, primary/secondary state,
+effect depth and separate trigger/healing eligibility in addition to player,
+entity and weapon attribution. `WeaponController` allocates attack IDs per owner
+and preserves them across all rays. Secondary effects copy attribution and declare
+their eligibility explicitly.
+
+Per-player `PlayerItemBuild` owns counters and timed modifiers. Its injected
+`RunRandom` is the sole source for item probabilities. `ItemEffectRunner` applies
+generic spatial/health/effect primitives to an injected target roster. Explicit
+eligibility, approved repeat flags and bounded effect depth prevent secondary
+effects from recursively reproducing themselves. Health expenditure bypasses
+damage events; future armor must report zero applied HP damage when it fully
+absorbs a hit.
+
+Owned autonomous companions are children of the player's effect runner. The
+initial companion derives the generic `damage` stat once, retains player/entity
+ownership, and opts out of weapon-hit counters and healing triggers. It does not
+inherit shot count, weapon fire rate or ammunition behavior. See
+[ADR 0012](adr/0012-faction-items-and-bounded-effect-runtime.md).

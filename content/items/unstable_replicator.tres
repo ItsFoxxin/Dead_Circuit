@@ -1,0 +1,36 @@
+[gd_resource type="Resource" script_class="ItemDefinition" load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://game/items/item_definition.gd" id="item"]
+[ext_resource type="Script" path="res://game/items/item_trigger.gd" id="trigger"]
+[ext_resource type="Script" path="res://game/items/item_condition.gd" id="condition"]
+[ext_resource type="Script" path="res://game/items/item_effect.gd" id="effect"]
+[ext_resource type="Resource" path="res://content/factions/the_unwritten.tres" id="faction"]
+
+[sub_resource type="Resource" id="PrimaryWeapon"]
+script = ExtResource("condition")
+required_tags = PackedStringArray("hitscan", "weapon")
+excluded_tags = PackedStringArray("replicated")
+
+[sub_resource type="Resource" id="Replicate"]
+script = ExtResource("effect")
+kind = 9
+amount = 1.0
+chance = 0.15
+damage_scale = 0.5
+
+[sub_resource type="Resource" id="Attack"]
+script = ExtResource("trigger")
+event = 0
+condition = SubResource("PrimaryWeapon")
+effects = Array[ExtResource("effect")]([SubResource("Replicate")])
+
+[resource]
+script = ExtResource("item")
+id = &"unstable_replicator"
+display_name = "Unstable Replicator"
+description = "15% seeded chance per weapon attack for one extra ray at 50% damage and no ammo cost."
+flavor_text = "An additional discharge was recorded before the trigger was pulled."
+faction = ExtResource("faction")
+classification = &"corrupted_technology"
+tags = PackedStringArray("offense", "duplication")
+triggers = Array[ExtResource("trigger")]([SubResource("Attack")])

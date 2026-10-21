@@ -66,10 +66,10 @@ def test_development_files_cannot_leak_into_export(path):
 
 
 def run_probe_fixture():
-    choices = [["a", "b", "c"], ["b", "c", "d"], ["c", "d", "e"], ["d", "e"], []]
+    choices = [["a", "b", "c"], ["b", "c", "d"], ["c", "d", "e"], ["d", "e", "f"], []]
     return [{"wave": index + 1, "spawn_order": list(range(12)), "choices": choices[index],
              "build_order": list("abcd"[:min(index + 1, 4)]),
-             "draw_count": (25, 39, 52, 64, 64)[index]} for index in range(5)]
+             "draw_count": (25, 39, 53, 67, 67)[index]} for index in range(5)]
 
 
 def test_complete_matching_production_run_probes_pass():
@@ -111,7 +111,7 @@ def test_incomplete_or_invalid_production_run_probe_fails(failure):
 
 def room_probe_fixture():
     return {"rooms": ["prototype_start", "prototype_combat", "prototype_treasure", "prototype_boss"],
-            "waves": run_probe_fixture(), "completed": True, "draw_count": 64,
+            "waves": run_probe_fixture(), "completed": True, "draw_count": 70,
             "build": list("abcde"), "restart": {"room": "prototype_start", "draw_count": 0,
                 "items": 0, "health": 100, "magazine": 12, "reserve": 240}}
 

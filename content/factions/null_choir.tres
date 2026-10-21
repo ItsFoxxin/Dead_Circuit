@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ItemFaction" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/items/item_faction.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"null_choir"
+display_name = "Null Choir"
+philosophy = "Individual consciousness is an evolutionary limitation."
+specialty = "Neural integration, consciousness transfer and power through biological instability."
+mechanical_identity = "Risk, sacrifice, neural feedback, damage amplification and dangerous augmentation."

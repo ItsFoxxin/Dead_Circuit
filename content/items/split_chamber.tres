@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://game/items/item_definition.gd" id="item"]
 [ext_resource type="Script" path="res://game/items/stat_modifier.gd" id="stat"]
+[ext_resource type="Resource" path="res://content/factions/scrapborn.tres" id="faction"]
 
 [sub_resource type="Resource" id="Count"]
 script = ExtResource("stat")
@@ -17,7 +18,9 @@ value = 0.85
 [resource]
 script = ExtResource("item")
 id = &"split_chamber"
-display_name = "Split Chamber"
-description = "+1 hitscan shot; damage per shot x0.85. One round per pull."
+display_name = "Bifurcation Array"
+description = "Splits each discharge: +1 hitscan ray; per-ray damage x0.85."
+flavor_text = "One firing solution. Two trajectories. Neither approved."
+faction = ExtResource("faction")
 tags = PackedStringArray("offense", "multishot")
 modifiers = Array[ExtResource("stat")]([SubResource("Count"), SubResource("Scale")])
